@@ -1,29 +1,23 @@
 var canvas,
     ctx,
     positions = [],
-    flag = false; //是否存在节点移动：false-无
+    flag = false, //是否存在节点移动：false-无
+    ATTACH_FACTOR = 10,
+    CULUN_FACTOR = 1 / (4 * Math.PI);
     
 window.onload = function () {
     canvas = document.getElementById('mycanvas');
     ctx = canvas.getContext('2d');
     for (var i = 0; i < data.nodes; i++) {
-        positions.push([400, 300]);
+        positions.push([400 + 10 * i, 300 + 10 * i]);
     }
-    console.log(positions);
     Draw();
 }
 
 function Draw() {
-    console.log('Draw() called');
     for (var i = 0; i < data.nodes; i++) {
         draw(i);
     }
-    // while(!flag) {
-    //     flag = false;
-    //     for (var i = 0; i < data.nodes; i++) {
-    //         draw(i);
-    //     }
-    // }
 }
 
 function draw(node) {
@@ -34,7 +28,7 @@ function draw(node) {
 
     if(node === 0) {
         ctx.beginPath();
-        ctx.arc(400, 300, 4, 0, Math.PI * 2, true);
+        ctx.arc(positions[0][0], positions[0][1], 4, 0, Math.PI * 2, true);
         ctx.closePath();
         ctx.lineWidth = 1;
         ctx.fillStyle = 'green';
@@ -52,11 +46,7 @@ function draw(node) {
             // console.log(attachForce);
             attachForce = computeForce(attachForce, CalcAttractionForce(node, data.links[i]["source"]));
         }
-        // if ((data.links[i]["source"] === node) || (data.links[i]["target"] === node)) {
-        //     attachForce = computeForce(attachForce, CalcAttractionForce(node, data.links[i]["target"]));
-        // }
     }
-    console.log('------');
     //计算斥力的合力
     for (var i = 0; i < data.nodes; i++) {
         if (i === node) {
@@ -75,8 +65,11 @@ function draw(node) {
 
 
 function CalcRepulsionForce(x, y) {
+    // console.log(x + " - " + y);
     var weight = 0;
-    var degree = 0;
+    var degree = {};
+    weight = CULUN_FACTOR * data.links[x]['value'] * data.links[y]['value'] / Math.pow(distance(x, y), 2);
+    degree = getDegree(x, y);
 
     return {
         'weight': weight,
@@ -85,11 +78,10 @@ function CalcRepulsionForce(x, y) {
 }
 
 function CalcAttractionForce(x, y) {
-    // if (x <= y) {
-    //     return;
-    // }
-    var weight = "w";
-    var degree = "d";
+    var weight = 0;
+    var degree = {};
+    weight = - ATTACH_FACTOR * distance(x, y);
+    degree = getDegree(x, y);
 
     return {
         'weight': weight,
@@ -104,9 +96,23 @@ function computeForce(A, B) { //计算两个力的合力
 }
 
 
+function distance(x, y) {
+    var distance = Math.sqrt(Math.pow(positions[x][0] - positions[y][0]) + Math.pow(positions[x][1] - positions[y][1]) + Math.pow(positions[x][2] - positions[y][2]));
+    return distance;
+}
 
-
-
+function getDegree(x, y) {
+    var degree = {'x': 0, 'y': 0, 'z': 0};
+    var vec = {'x': positions[x][0] - positions[y][0], 'y': positions[x][1] - positions[y][1], 'z': positions[x][2] - positions[y][2]};
+    var x = {'x': 1, 'y': 0, 'z': 0};
+    var y = {'x': 0, 'y': 1, 'z': 0};
+    var z = {'x': 0, 'y': 0, 'z': 1};
+    degree['x'] = vec['x'] * x['x'] / (Math.sqrt(Math.pow(vec['x']) + Math.pow(vec['y']) + Math.pow(vec['z'])));
+    degree['y'] = vec['y'] * y['y'] / (Math.sqrt(Math.pow(vec['x']) + Math.pow(vec['y']) + Math.pow(vec['z'])));
+    degree['z'] = vec['z'] * z['z'] / (Math.sqrt(Math.pow(vec['x']) + Math.pow(vec['y']) + Math.pow(vec['z'])));
+    // console.log('~~~~~~~' + degree['x']);
+    return degree;
+}
 
 
 var data = {
