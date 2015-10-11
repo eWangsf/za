@@ -2,7 +2,7 @@ var canvas,
     ctx,
     positions = [],
     flag = false, //是否存在节点移动：false-无
-    ATTACH_FACTOR = 0.1,
+    ATTACH_FACTOR = 0.6,
     CULUN_FACTOR = 600000 / (4 * Math.PI);
     
 window.onload = function () {
@@ -19,16 +19,30 @@ function Draw() {
     for (var i = 0; i < data.nodes; i++) {
         draw(i);
     }
-    while(flag) {
-        for (var i = 0; i < data.nodes; i++) {
-            draw(i);
-        }
+    console.log(flag);
+    // while(flag) {
+    //     flag = false;
+    //     for (var i = 0; i < data.nodes; i++) {
+    //         draw(i);
+    //     }
+    // }
+    for(var j = 0; j < data.nodes; j++) {
+        ctx.beginPath();
+        ctx.arc(positions[j][0], positions[j][1], 6, 0, Math.PI * 2, true);
+        ctx.closePath();
+        ctx.lineWidth = 1;
+        ctx.fillStyle = 'green';
+        ctx.fill();
     }
-    alert('finished');
+    for (var k = 0; k < data.links.length; k++) {
+        ctx.moveTo(positions[data.links[k]['source']][0], positions[data.links[k]['source']][1]);
+        ctx.lineTo(positions[data.links[k]['target']][0], positions[data.links[k]['target']][1]);
+        ctx.stroke();
+    }
+    console.log('finished');
 }
 
 function draw(node) {
-    console.log('node: ' + node + '  position: (' + positions[node][0] + ', ' + positions[node][1] + ', ' + positions[node][2] + ')');
     var attachForce = {
             'weight': 0, 
             'degree': {'x': 0, 'y': 0, 'z': 0}
@@ -39,15 +53,6 @@ function draw(node) {
         },
         aimPosi = [];
 
-    if(node === 0) {
-        ctx.beginPath();
-        ctx.arc(positions[node][0], positions[node][1], 4, 0, Math.PI * 2, true);
-        ctx.closePath();
-        ctx.lineWidth = 1;
-        ctx.fillStyle = 'green';
-        ctx.fill();
-        return ;
-    }
     //计算弹力的合力
     for (var i in data.links) {
         if (data.links[i]["source"] === node) {
@@ -56,7 +61,6 @@ function draw(node) {
             attachForce = computeForce(attachForce, CalcAttractionForce(node, data.links[i]["source"]));
         }
     }
-    // console.log(attachForce);
     //计算斥力的合力
     for (var i = 0; i < data.nodes; i++) {
         if (i === node) {
@@ -64,34 +68,22 @@ function draw(node) {
         }
         repForce = computeForce(repForce, CalcRepulsionForce(node, i));
     }
-    // console.log(repForce);
     //计算作用在这个节点上的合力的方向
     var force_total = computeForce(attachForce, repForce);
-    // console.log(force_total);
-    var beforePos = positions[node];
-    var pos_x = beforePos[0];
-        pos_y = beforePos[1],
-        pos_z = beforePos[2]; 
-    positions[node] = [
-        pos_x + force_total['weight'] * force_total['degree']['x'],
-        pos_y + force_total['weight'] * force_total['degree']['y'],
-        pos_z + force_total['weight'] * force_total['degree']['z'],
-    ];
-    var nowPos = positions[node];
-    // console.log('position change : ' + beforePos + ' to ' + nowPos);
-    ctx.beginPath();
-    ctx.arc(positions[node][0], positions[node][1], 4, 0, Math.PI * 2, true);
-    ctx.closePath();
-    ctx.lineWidth = 1;
-    ctx.fillStyle = 'green';
-    ctx.fill();
-
-    // 置flag
-    if ((nowPos[0] != beforePos[0]) || (nowPos[1] != beforePos[1])) {
+    //置flag
+    if (force_total['weight'] != 0) {
         flag = true;
         console.log(node);
     }
-    
+    var beforePos = positions[node];
+    var pos_x = beforePos[0];
+        pos_y = beforePos[1],
+        pos_z = beforePos[2];
+    positions[node] = [
+        pos_x + force_total['weight'] * force_total['degree']['x'],
+        pos_y + force_total['weight'] * force_total['degree']['y'],
+        pos_z + force_total['weight'] * force_total['degree']['z']
+    ];
 }
 
 
@@ -99,8 +91,9 @@ function draw(node) {
 function CalcRepulsionForce(x, y) {
     var weight = 0;
     var degree = {};
-    weight = (CULUN_FACTOR * data.links[x]['value'] * data.links[y]['value']) / Math.pow(distance(x, y), 2);
-    degree = getDegree(x, y);
+    // weight = (CULUN_FACTOR * data.links[x]['value'] * data.links[y]['value']) / Math.pow(distance(x, y), 2);
+    weight = (CULUN_FACTOR * 1 * 1) / Math.pow(distance(x, y), 2);
+    degree = getDegree(y, x);
 
     return {
         'weight': weight,
@@ -152,13 +145,15 @@ function getDegree(x, y) {
 
 
 var data = {
-  "nodes": 5,
+  "nodes": 8,
   "links": [
     {"source": 0, "target": 1, "value": 1},
-    {"source": 1, "target": 2, "value": 1},
     {"source": 0, "target": 2, "value": 1},
-    {"source": 1, "target": 3, "value": 1},
-    {"source": 2, "target": 4, "value": 1}
+    {"source": 0, "target": 3, "value": 1},
+    {"source": 0, "target": 4, "value": 1},
+    {"source": 0, "target": 5, "value": 1},
+    {"source": 0, "target": 6, "value": 1},
+    {"source": 0, "target": 7, "value": 1},
   ]
 }
 
