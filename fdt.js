@@ -2,14 +2,14 @@ var canvas,
     ctx,
     positions = [],
     flag = false, //是否存在节点移动：false-无
-    ATTACH_FACTOR = 10,
-    CULUN_FACTOR = 100000 / (4 * Math.PI);
+    ATTACH_FACTOR = 0.1,
+    CULUN_FACTOR = 600000 / (4 * Math.PI);
     
 window.onload = function () {
     canvas = document.getElementById('mycanvas');
     ctx = canvas.getContext('2d');
     for (var i = 0; i < data.nodes; i++) {
-        positions.push([400 + 100 * Math.random() * i, 300 + 100 * Math.random() * i, 0]);
+        positions.push([400 + 200 * (Math.random() - 0.5), 300 + 200 * (Math.random() - 0.5), 200 * (Math.random() - 0.5)]);
     }
     console.log(positions);
     Draw();
@@ -19,6 +19,12 @@ function Draw() {
     for (var i = 0; i < data.nodes; i++) {
         draw(i);
     }
+    while(flag) {
+        for (var i = 0; i < data.nodes; i++) {
+            draw(i);
+        }
+    }
+    alert('finished');
 }
 
 function draw(node) {
@@ -45,15 +51,12 @@ function draw(node) {
     //计算弹力的合力
     for (var i in data.links) {
         if (data.links[i]["source"] === node) {
-            // console.log('source === node, ' + 'target = ' + data.links[i]['target']);
-            // console.log(attachForce);
             attachForce = computeForce(attachForce, CalcAttractionForce(node, data.links[i]["target"]));
         } else if (data.links[i]["target"] === node) {
-            // console.log('target === node, ' + 'source = ' + data.links[i]['source']);
-            // console.log(attachForce);
             attachForce = computeForce(attachForce, CalcAttractionForce(node, data.links[i]["source"]));
         }
     }
+    // console.log(attachForce);
     //计算斥力的合力
     for (var i = 0; i < data.nodes; i++) {
         if (i === node) {
@@ -61,14 +64,33 @@ function draw(node) {
         }
         repForce = computeForce(repForce, CalcRepulsionForce(node, i));
     }
+    // console.log(repForce);
     //计算作用在这个节点上的合力的方向
     var force_total = computeForce(attachForce, repForce);
-    console.log(force_total);
+    // console.log(force_total);
+    var beforePos = positions[node];
+    var pos_x = beforePos[0];
+        pos_y = beforePos[1],
+        pos_z = beforePos[2]; 
+    positions[node] = [
+        pos_x + force_total['weight'] * force_total['degree']['x'],
+        pos_y + force_total['weight'] * force_total['degree']['y'],
+        pos_z + force_total['weight'] * force_total['degree']['z'],
+    ];
+    var nowPos = positions[node];
+    // console.log('position change : ' + beforePos + ' to ' + nowPos);
+    ctx.beginPath();
+    ctx.arc(positions[node][0], positions[node][1], 4, 0, Math.PI * 2, true);
+    ctx.closePath();
+    ctx.lineWidth = 1;
+    ctx.fillStyle = 'green';
+    ctx.fill();
 
-    //置flag
-    // if ((aimPosi[0] != positions[node][0]) || (aimPosi[1] != positions[node][1])) {
-    //     flag = true;
-    // }
+    // 置flag
+    if ((nowPos[0] != beforePos[0]) || (nowPos[1] != beforePos[1])) {
+        flag = true;
+        console.log(node);
+    }
     
 }
 
