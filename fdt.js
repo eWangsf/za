@@ -2,8 +2,8 @@ var canvas,
     ctx,
     positions = [],
     flag = false, //是否存在节点移动：false-无
-    ATTACH_FACTOR = 0.6,
-    CULUN_FACTOR = 600000 / (4 * Math.PI);
+    ATTACH_FACTOR = 0.5,
+    CULUN_FACTOR = 6000 / (4 * Math.PI);
     
 window.onload = function () {
     canvas = document.getElementById('mycanvas');
@@ -11,27 +11,34 @@ window.onload = function () {
     for (var i = 0; i < data.nodes; i++) {
         positions.push([400 + 200 * (Math.random() - 0.5), 300 + 200 * (Math.random() - 0.5), 200 * (Math.random() - 0.5)]);
     }
-    console.log(positions);
+    // console.log(positions);
     Draw();
+
+    // for (var i = 0; i < data.nodes; i++) {
+    //     positions.push([800 + 200 * (Math.random() - 0.5), 700 + 200 * (Math.random() - 0.5), 200 * (Math.random() - 0.5)]);
+    // }
+    // Draw();
 }
 
 function Draw() {
-    for (var i = 0; i < data.nodes; i++) {
-        draw(i);
+    while(1) {
+        console.log('!');
+        flag = false;
+
+        for (var i = 0; i < data.nodes; i++) {
+            draw(i);
+        }
+        if(!flag) {
+            break;
+        }
+
     }
-    console.log(flag);
-    // while(flag) {
-    //     flag = false;
-    //     for (var i = 0; i < data.nodes; i++) {
-    //         draw(i);
-    //     }
-    // }
     for(var j = 0; j < data.nodes; j++) {
         ctx.beginPath();
         ctx.arc(positions[j][0], positions[j][1], 6, 0, Math.PI * 2, true);
         ctx.closePath();
         ctx.lineWidth = 1;
-        ctx.fillStyle = 'green';
+        ctx.fillStyle = j === 0 ? 'red' : 'green';
         ctx.fill();
     }
     for (var k = 0; k < data.links.length; k++) {
@@ -52,7 +59,6 @@ function draw(node) {
             'degree': {'x': 0, 'y': 0, 'z': 0}
         },
         aimPosi = [];
-
     //计算弹力的合力
     for (var i in data.links) {
         if (data.links[i]["source"] === node) {
@@ -61,19 +67,20 @@ function draw(node) {
             attachForce = computeForce(attachForce, CalcAttractionForce(node, data.links[i]["source"]));
         }
     }
+    // console.log("attach:  " + attachForce['weight']);
     //计算斥力的合力
     for (var i = 0; i < data.nodes; i++) {
         if (i === node) {
             continue;
         }
-        repForce = computeForce(repForce, CalcRepulsionForce(node, i));
+        repForce = computeForce(repForce, CalcRepulsionForce(i, node));
     }
+    // console.log("repul:  " + repForce['weight']);
     //计算作用在这个节点上的合力的方向
     var force_total = computeForce(attachForce, repForce);
     //置flag
-    if (force_total['weight'] != 0) {
+    if (force_total['weight'].toFixed(2) != 0) {
         flag = true;
-        console.log(node);
     }
     var beforePos = positions[node];
     var pos_x = beforePos[0];
@@ -92,8 +99,8 @@ function CalcRepulsionForce(x, y) {
     var weight = 0;
     var degree = {};
     // weight = (CULUN_FACTOR * data.links[x]['value'] * data.links[y]['value']) / Math.pow(distance(x, y), 2);
-    weight = (CULUN_FACTOR * 1 * 1) / Math.pow(distance(x, y), 2);
-    degree = getDegree(y, x);
+    weight = (CULUN_FACTOR * data['charges'][x] * data['charges'][y]) / Math.pow(distance(x, y), 2);
+    degree = getDegree(x, y);
 
     return {
         'weight': weight,
@@ -104,8 +111,8 @@ function CalcRepulsionForce(x, y) {
 function CalcAttractionForce(x, y) {
     var weight = 0;
     var degree = {};
-    weight = ATTACH_FACTOR * distance(x, y);
-    degree = getDegree(x, y);
+    weight = ATTACH_FACTOR * Math.abs(distance(x, y) - 50);
+    degree = distance(x, y) < 50 ? getDegree(y, x) : getDegree(x, y);
 
     return {
         'weight': weight,
@@ -119,9 +126,9 @@ function computeForce(A, B) { //计算两个力的合力
     var y_force = A['weight'] * A['degree']['y'] + B['weight'] * B['degree']['y'];
     var z_force = A['weight'] * A['degree']['z'] + B['weight'] * B['degree']['z'];
     force['weight'] = Math.sqrt(Math.pow(x_force, 2) + Math.pow(y_force, 2) + Math.pow(z_force, 2));
-    force['degree']['x'] = x_force /force['weight'];
-    force['degree']['y'] = y_force /force['weight'];
-    force['degree']['z'] = z_force /force['weight'];
+    force['degree']['x'] = x_force / force['weight'];
+    force['degree']['y'] = y_force / force['weight'];
+    force['degree']['z'] = z_force / force['weight'];
     return force;
 }
 
@@ -145,15 +152,40 @@ function getDegree(x, y) {
 
 
 var data = {
-  "nodes": 8,
-  "links": [
-    {"source": 0, "target": 1, "value": 1},
-    {"source": 0, "target": 2, "value": 1},
-    {"source": 0, "target": 3, "value": 1},
-    {"source": 0, "target": 4, "value": 1},
-    {"source": 0, "target": 5, "value": 1},
-    {"source": 0, "target": 6, "value": 1},
-    {"source": 0, "target": 7, "value": 1},
-  ]
+    "charges": [10, 1, 1, 1, 1, 1, 1, 1],
+    "nodes": 8,
+    "links": [
+      {"source": 0, "target": 1, "value": 1},
+      {"source": 0, "target": 2, "value": 1},
+      {"source": 0, "target": 3, "value": 1},
+      {"source": 0, "target": 4, "value": 1},
+      {"source": 0, "target": 5, "value": 1},
+      {"source": 0, "target": 6, "value": 1},
+      {"source": 0, "target": 7, "value": 1},
+      // {"source": 1, "target": 2, "value": 1},
+      // {"source": 1, "target": 3, "value": 1},
+      // {"source": 1, "target": 4, "value": 1},
+      // {"source": 1, "target": 5, "value": 1},
+      // {"source": 1, "target": 6, "value": 1},
+      // {"source": 2, "target": 3, "value": 1},
+      // {"source": 2, "target": 4, "value": 1},
+      // {"source": 2, "target": 5, "value": 1},
+      // {"source": 2, "target": 6, "value": 1},
+      // {"source": 3, "target": 4, "value": 1},
+      // {"source": 3, "target": 5, "value": 1},
+      // {"source": 3, "target": 6, "value": 1},
+      // {"source": 4, "target": 5, "value": 1},
+      // {"source": 4, "target": 6, "value": 1},
+      // {"source": 5, "target": 6, "value": 1},
+
+      // {"source": 7, "target": 8, "value": 1},
+      // {"source": 7, "target": 9, "value": 1},
+      // {"source": 7, "target": 10, "value": 1},
+      // {"source": 7, "target": 11, "value": 1},
+      // {"source": 7, "target": 12, "value": 1},
+
+
+      // {"source": 0, "target": 7, "value": 1},
+    ]
 }
 
