@@ -2,25 +2,27 @@ var canvas,
     ctx,
     positions = [],
     totalDisplacement = 0,
-    maxDisplacement = 2;
+    maxDisplacement = 1;
     
 window.onload = function () {
     canvas = document.getElementById('mycanvas');
     ctx = canvas.getContext('2d');
     for (var i = 0; i < data.nodes; i++) {
-        positions.push([500 + 100 * (Math.random() - 0.5), 400 + 100 * (Math.random() - 0.5)]);
+        positions.push([500 + 50 * (Math.random() - 0.5), 400 + 50 * (Math.random() - 0.5)]);
     }
     Draw();
+    
 }
 
 function Draw() {
-    while(1) {
+    var count = 0;
+    while(count <= 2000) {
         console.log('!');
         totalDisplacement = 0;
         for (var i = 0; i < data.nodes; i++) {
             var forceTotal = draw(i);
             //移动值
-            console.log(forceTotal['weight']);
+            // console.log(forceTotal['weight'] || 10);
             totalDisplacement += forceTotal['weight'];
             positions[i][0] = positions[i][0] + forceTotal['weight'] * forceTotal['degree']['x'],
             positions[i][1] = positions[i][1] + forceTotal['weight'] * forceTotal['degree']['y']
@@ -28,26 +30,12 @@ function Draw() {
         if(totalDisplacement < maxDisplacement) {
             break;
         }
-
+        count++;
     }
-
-    for(var ind = 0; ind < positions[0].length; ind++) {
-        var c = 0;
-        for(var i = 0; i < positions.length; i++) {
-            c = Math.max(parseInt(positions[i][ind] / 1000), c);
-        }
-        console.log(c);
-        for(var k = 0; k < positions.length; k++) {
-            if(positions[k][ind] < 0) {
-                positions[k][ind] += 1000 * (c + 1);
-            } else {
-                positions[k][ind] -= 1000 * c;
-            }
-            
-        }
-    }
-
+    console.log('before');
     console.log(positions);
+
+    transForm(positions);
     for(var j = 0; j < data.nodes; j++) {
         ctx.beginPath();
         ctx.arc(positions[j][0], positions[j][1], 6, 0, Math.PI * 2, true);
@@ -61,7 +49,12 @@ function Draw() {
         ctx.lineTo(positions[data.links[k]['target']][0], positions[data.links[k]['target']][1]);
         ctx.stroke();
     }
-    console.log('finished');
+    
+    console.log('after');
+    console.log(positions);
+    
+    
+    console.log('finished with count= ' + count);
 }
 
 function draw(node) {
@@ -104,7 +97,10 @@ function draw(node) {
 function CalcRepulsionForce(x, y) {
     var weight = 0;
     var degree = {};
-    weight = 10000 / Math.pow(distance(x, y), 2);
+    var distanceinstance = Math.pow(distance(x, y), 2);
+    if(distanceinstance > 0) {
+        weight = 10000 / distanceinstance;
+    }
     degree = getDegree(x, y);
     var result = {
         'weight': weight,
@@ -130,8 +126,10 @@ function computeForce(A, B) { //计算两个力的合力
     var x_force = A['weight'] * A['degree']['x'] + B['weight'] * B['degree']['x'];
     var y_force = A['weight'] * A['degree']['y'] + B['weight'] * B['degree']['y'];
     force['weight'] = Math.sqrt(Math.pow(x_force, 2) + Math.pow(y_force, 2));
-    force['degree']['x'] = x_force / force['weight'];
-    force['degree']['y'] = y_force / force['weight'];
+    if(force['weight'] > 0) {
+        force['degree']['x'] = x_force / force['weight'];
+        force['degree']['y'] = y_force / force['weight'];
+    }
     return force;
 }
 
@@ -146,14 +144,36 @@ function getDegree(x, y) {
     var vec = {'x': positions[y][0] - positions[x][0], 'y': positions[y][1] - positions[x][1]};
     var x = {'x': 1, 'y': 0};
     var y = {'x': 0, 'y': 1};
-    degree['x'] = (vec['x'] * x['x']) / (Math.sqrt(Math.pow(vec['x'], 2) + Math.pow(vec['y'], 2)));
-    degree['y'] = (vec['y'] * y['y']) / (Math.sqrt(Math.pow(vec['x'], 2) + Math.pow(vec['y'], 2)));
+    verctorlength = Math.sqrt(Math.pow(vec['x'], 2) + Math.pow(vec['y'], 2));
+    if(verctorlength > 0) {
+        degree['x'] = (vec['x'] * x['x']) / verctorlength;
+        degree['y'] = (vec['y'] * y['y']) / verctorlength;
+    }
     return degree;
+}
+
+function transForm(arr) {
+    for(var ind = 0; ind < arr[0].length; ind++) {
+        var c = 0;
+        for(var i = 0; i < arr.length; i++) {
+            var thiscount = parseInt(arr[i][ind] / 1000);
+            console.log('thiscount: ' + thiscount + " when c: " + c);
+            c = Math.abs(thiscount) > Math.abs(c) ? thiscount : c;
+            // console.log("c:" + c);
+        }
+        c = c < 0 ? c - 1 : c;
+        console.log(c);
+        for(var k = 0; k < arr.length; k++) {
+            arr[k][ind] -= 1000 * c;
+        }
+    }
+    positions = arr;
+
 }
 
 
 var data = {
-    "nodes": 13,
+    "nodes": 20,
     "links": [
       // {"source": 0, "target": 1, "value": 1},
       // {"source": 1, "target": 2, "value": 1},
@@ -168,11 +188,19 @@ var data = {
       {"source": 0, "target": 5, "value": 1},
       {"source": 0, "target": 6, "value": 1},
       {"source": 0, "target": 7, "value": 1},
-      {"source": 6, "target": 8, "value": 1},
-      {"source": 6, "target": 9, "value": 1},
+      {"source": 0, "target": 8, "value": 1},
+      {"source": 0, "target": 9, "value": 1},
       {"source": 8, "target": 10, "value": 1},
       {"source": 9, "target": 11, "value": 1},
       {"source": 9, "target": 12, "value": 1},
+      {"source": 10, "target": 13, "value": 1},
+
+      {"source": 13, "target": 14, "value": 1},
+      {"source": 13, "target": 15, "value": 1},
+      // {"source": 13, "target": 16, "value": 1},
+      // {"source": 13, "target": 17, "value": 1},
+      // {"source": 13, "target": 18, "value": 1},
+      // {"source": 13, "target": 19, "value": 1},
 
       ]
   };
