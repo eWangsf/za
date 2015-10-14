@@ -1,7 +1,7 @@
 var canvas,
     ctx,
     positions = [],
-    totalDisplacement = 0,
+    totalDisplacement = 100,
     maxDisplacement = 2;
     
 window.onload = function () {
@@ -12,6 +12,8 @@ window.onload = function () {
         positions.push([50 * (Math.random() - 0.5), 50 * (Math.random() - 0.5)]);
     }
     Draw();
+    // console.log('before');
+    // console.log(positions);
 
     transForm();
 
@@ -29,64 +31,53 @@ window.onload = function () {
         ctx.moveTo(positions[data.links[k]['source']][0], positions[data.links[k]['source']][1]);
         ctx.lineTo(positions[data.links[k]['target']][0], positions[data.links[k]['target']][1]);
         ctx.stroke();
-    }    
+    }
 }
 
 function Draw() {
-    var count = 0;
-    while(count < 10000) {
-        console.log('!');
+    var count = 1;
+    while(totalDisplacement >= maxDisplacement) {
+        // console.log('!');
         totalDisplacement = 0;
         for (var i = 0; i < data.nodes; i++) {
-            var forceTotal = draw(i);
-            //移动值
-            totalDisplacement += forceTotal['weight'];
-            positions[i][0] = positions[i][0] + forceTotal['weight'] * forceTotal['degree']['x'],
-            positions[i][1] = positions[i][1] + forceTotal['weight'] * forceTotal['degree']['y']
+            draw(i);
         }
-        if(totalDisplacement < maxDisplacement) {
-            break;
-        }
-        count++;
     }
-    console.log('before');
-    console.log(positions);
 
 }
 
 function draw(node) {
-    var attachForce = {
+    var force_total = {
             'weight': 0, 
             'degree': {'x': 0, 'y': 0}
-        },
-        repForce = {
-            'weight': 0, 
-            'degree': {'x': 0, 'y': 0}
-        },
-        aimPosi = [];
-    //计算弹力的合力
-    for (var i in data.links) {
-        var tmp = CalcAttractionForce(node, data.links[i]["target"]);
-        if (data.links[i]["source"] === node) {
-            attachForce = computeForce(attachForce, tmp);
-        } else if (data.links[i]["target"] === node) {
-            tmp = CalcAttractionForce(node, data.links[i]["source"]);
-            attachForce = computeForce(attachForce, tmp);
-        } else {
-            continue;
-        }
-    }
+        };
+        
     //计算斥力的合力
     for (var i = 0; i < data.nodes; i++) {
         if (i === node) {
             continue;
         }
-        repForce = computeForce(repForce, CalcRepulsionForce(i, node));
+        force_total = computeForce(force_total, CalcRepulsionForce(i, node));
     }
-    // 计算作用在这个节点上的合力的方向
-    var force_total = computeForce(attachForce, repForce);
 
-    return force_total;
+    //计算弹力的合力
+    for (var i in data.links) {
+        var tmp = CalcAttractionForce(node, data.links[i]["target"]);
+        if (data.links[i]["source"] === node) {
+            force_total = computeForce(force_total, tmp);
+        } else if (data.links[i]["target"] === node) {
+            tmp = CalcAttractionForce(node, data.links[i]["source"]);
+            force_total = computeForce(force_total, tmp);
+        } else {
+            continue;
+        }
+    }
+
+    totalDisplacement += force_total['weight'];
+    positions[node][0] = positions[node][0] + force_total['weight'] * force_total['degree']['x'];
+    positions[node][1] = positions[node][1] + force_total['weight'] * force_total['degree']['y'];
+    // return force_total;
+
 }
 
 function CalcRepulsionForce(x, y) {
@@ -136,59 +127,31 @@ function distance(x, y) {
 
 function getDegree(x, y) {
     var degree = {'x': 0, 'y': 0};
-    var vec = {'x': positions[y][0] - positions[x][0], 'y': positions[y][1] - positions[x][1]};
-    var x = {'x': 1, 'y': 0};
-    var y = {'x': 0, 'y': 1};
-    verctorlength = Math.sqrt(Math.pow(vec['x'], 2) + Math.pow(vec['y'], 2));
+    var vec = {'x': positions[y][0] - positions[x][0], 'y': positions[y][1] - positions[x][1]};    verctorlength = Math.sqrt(Math.pow(vec['x'], 2) + Math.pow(vec['y'], 2));
     if(verctorlength > 0) {
-        degree['x'] = (vec['x'] * x['x']) / verctorlength;
-        degree['y'] = (vec['y'] * y['y']) / verctorlength;
+        degree['x'] = vec['x'] / verctorlength;
+        degree['y'] = vec['y'] / verctorlength;
     }
     return degree;
 }
 
 function transForm() {
-    // alert('transform!');
-    // for(var j = 0; j < positions[0].length; j++) {
-    //     var c = 0;
-    //     for(var i = 0; i < positions.length; i++) {
-    //         console.log(positions[i][j]);
-    //         var thiscount = parseInt(positions[i][j] / 1000);
-    //         console.log(thiscount + " c = " + c);
-    //         c = Math.abs(thiscount) > Math.abs(c) ? thiscount : c;
-    //         console.log(' f: ' + c);
-    //     }
-    //     c = c < 0 ? (c - 1) : c;
-    //     for(var i = 0; i < positions.length; i++) {
-    //         positions[i][j] = positions[i][j] - 1000 * c;
-    //     }
-    // }
     var nodenumber = positions.length;
     var dimennumber = positions[0].length;
     for(var j = 0; j < dimennumber; j++) {
         var c = positions[0][j];
         for (var i = 1; i < nodenumber; i++) {
             var pos = positions[i][j];
-            // console.log("c= " + c + "  pos= " + pos);
             if(parseInt(c) === parseInt(pos)) {
                 break;
             }
-            // c = ((c - pos) > 1) ? parseInt(pos) : parseInt(c);
-            c = ((c - pos) > 1) ? (pos) : (c);
+            c = ((c - pos) >= 1) ? pos : c;
         }
         for (var i = 0; i < nodenumber; i++) {
             positions[i][j] -= c;
+            positions[i][j] += 200;
         }
     }
-
-    // for(var j = 0; j < positions[0].length; j++) {
-    //     for(var i = 0; i < positions.length; i++) {
-    //         positions[i][j] %= 1000;
-    //         if(positions[i][j] < 0) {
-    //             positions[i][j] += 1000;
-    //         }
-    //     }
-    // }
 
 }
 
@@ -196,12 +159,6 @@ function transForm() {
 var data = {
     "nodes": 17,
     "links": [
-      // {"source": 0, "target": 1, "value": 1},
-      // {"source": 1, "target": 2, "value": 1},
-      // {"source": 2, "target": 3, "value": 1},
-      // {"source": 3, "target": 4, "value": 1},
-      // {"source": 4, "target": 5, "value": 1},
-
       {"source": 0, "target": 1, "value": 1},
       {"source": 0, "target": 2, "value": 1},
       {"source": 0, "target": 3, "value": 1},
@@ -214,6 +171,7 @@ var data = {
       {"source": 8, "target": 10, "value": 1},
       {"source": 9, "target": 11, "value": 1},
       {"source": 9, "target": 12, "value": 1},
+      // {"source": 9, "target": 13, "value": 1},
       {"source": 10, "target": 13, "value": 1},
 
       {"source": 13, "target": 14, "value": 1},
@@ -222,6 +180,40 @@ var data = {
       // {"source": 13, "target": 17, "value": 1},
       // {"source": 13, "target": 18, "value": 1},
       // {"source": 13, "target": 19, "value": 1},
+      // {"source": 16, "target": 17, "value": 1},
+      // {"source": 14, "target": 18, "value": 1},
+
+
+
+      // {"source":1,"target":0,"value":1},
+      // {"source":2,"target":0,"value":8},
+      // {"source":3,"target":0,"value":10},
+      // // {"source":3,"target":2,"value":6},
+      // {"source":4,"target":0,"value":1},
+      // {"source":5,"target":0,"value":1},
+      // {"source":6,"target":0,"value":1},
+      // {"source":7,"target":0,"value":1},
+      // {"source":8,"target":0,"value":2},
+      // {"source":9,"target":0,"value":1},
+      // {"source":11,"target":10,"value":1},
+      // {"source":11,"target":3,"value":3},
+      // {"source":11,"target":2,"value":3},
+      // {"source":11,"target":0,"value":5},
+      // {"source":12,"target":11,"value":1},
+      // {"source":13,"target":11,"value":1},
+      // {"source":14,"target":11,"value":1},
+      // {"source":15,"target":11,"value":1},
+      // {"source":17,"target":16,"value":4},
+      // {"source":18,"target":16,"value":4},
+      // {"source":18,"target":17,"value":4},
+      // {"source":19,"target":16,"value":4},
+      // {"source":19,"target":17,"value":4},
+      // {"source":19,"target":18,"value":4},
+      // {"source":20,"target":16,"value":3},
+      // {"source":20,"target":17,"value":3},
+      // {"source":20,"target":18,"value":3},
+      // {"source":20,"target":19,"value":4},
+      // {"source":21,"target":16,"value":3},
 
       ]
   };
