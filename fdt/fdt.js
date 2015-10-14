@@ -2,27 +2,43 @@ var canvas,
     ctx,
     positions = [],
     totalDisplacement = 0,
-    maxDisplacement = 1;
+    maxDisplacement = 10;
     
 window.onload = function () {
     canvas = document.getElementById('mycanvas');
     ctx = canvas.getContext('2d');
-    for (var i = 0; i < data.nodes; i++) {
+    var nodelength = data.nodes;
+    for (var i = 0; i < nodelength; i++) {
         positions.push([500 + 50 * (Math.random() - 0.5), 400 + 50 * (Math.random() - 0.5)]);
     }
     Draw();
-    
+
+
+    console.log('after');
+    console.log(positions);
+    for(var j = 0; j < nodelength; j++) {
+        ctx.beginPath();
+        ctx.arc(positions[j][0], positions[j][1], 6, 0, Math.PI * 2, true);
+        ctx.closePath();
+        ctx.lineWidth = 1;
+        ctx.fillStyle = 'green';
+        ctx.fill();
+    }
+    for (var k = 0; k < data.links.length; k++) {
+        ctx.moveTo(positions[data.links[k]['source']][0], positions[data.links[k]['source']][1]);
+        ctx.lineTo(positions[data.links[k]['target']][0], positions[data.links[k]['target']][1]);
+        ctx.stroke();
+    }    
 }
 
 function Draw() {
     var count = 0;
-    while(count <= 2000) {
-        console.log('!');
+    while(count < 10000) {
+        // console.log('!');
         totalDisplacement = 0;
         for (var i = 0; i < data.nodes; i++) {
             var forceTotal = draw(i);
             //移动值
-            // console.log(forceTotal['weight'] || 10);
             totalDisplacement += forceTotal['weight'];
             positions[i][0] = positions[i][0] + forceTotal['weight'] * forceTotal['degree']['x'],
             positions[i][1] = positions[i][1] + forceTotal['weight'] * forceTotal['degree']['y']
@@ -35,26 +51,7 @@ function Draw() {
     console.log('before');
     console.log(positions);
 
-    transForm(positions);
-    for(var j = 0; j < data.nodes; j++) {
-        ctx.beginPath();
-        ctx.arc(positions[j][0], positions[j][1], 6, 0, Math.PI * 2, true);
-        ctx.closePath();
-        ctx.lineWidth = 1;
-        ctx.fillStyle = 'green';
-        ctx.fill();
-    }
-    for (var k = 0; k < data.links.length; k++) {
-        ctx.moveTo(positions[data.links[k]['source']][0], positions[data.links[k]['source']][1]);
-        ctx.lineTo(positions[data.links[k]['target']][0], positions[data.links[k]['target']][1]);
-        ctx.stroke();
-    }
-    
-    console.log('after');
-    console.log(positions);
-    
-    
-    console.log('finished with count= ' + count);
+    transForm();
 }
 
 function draw(node) {
@@ -91,8 +88,6 @@ function draw(node) {
 
     return force_total;
 }
-
-
 
 function CalcRepulsionForce(x, y) {
     var weight = 0;
@@ -152,22 +147,49 @@ function getDegree(x, y) {
     return degree;
 }
 
-function transForm(arr) {
-    for(var ind = 0; ind < arr[0].length; ind++) {
-        var c = 0;
-        for(var i = 0; i < arr.length; i++) {
-            var thiscount = parseInt(arr[i][ind] / 1000);
-            console.log('thiscount: ' + thiscount + " when c: " + c);
-            c = Math.abs(thiscount) > Math.abs(c) ? thiscount : c;
-            // console.log("c:" + c);
+function transForm() {
+    // alert('transform!');
+    // for(var j = 0; j < positions[0].length; j++) {
+    //     var c = 0;
+    //     for(var i = 0; i < positions.length; i++) {
+    //         console.log(positions[i][j]);
+    //         var thiscount = parseInt(positions[i][j] / 1000);
+    //         console.log(thiscount + " c = " + c);
+    //         c = Math.abs(thiscount) > Math.abs(c) ? thiscount : c;
+    //         console.log(' f: ' + c);
+    //     }
+    //     c = c < 0 ? (c - 1) : c;
+    //     for(var i = 0; i < positions.length; i++) {
+    //         positions[i][j] = positions[i][j] - 1000 * c;
+    //     }
+    // }
+    var nodenumber = positions.length;
+    var dimennumber = positions[0].length;
+    for(var j = 0; j < dimennumber; j++) {
+        var c = positions[0][j];
+        // console.log(c);
+        for (var i = 1; i < nodenumber; i++) {
+            var pos = positions[i][j];
+            console.log("c= " + c + "  pos= " + pos);
+            if(parseInt(c) === parseInt(pos)) {
+                break;
+            }
+            c = ((c - pos) > 1) ? parseInt(pos) : parseInt(c);
+            // console.log(c);
+            // c = Math.abs(thiscount) > Math.abs(c) ? thiscount : c;
+            // console.log(' f: ' + c);
         }
-        c = c < 0 ? c - 1 : c;
-        console.log(c);
-        for(var k = 0; k < arr.length; k++) {
-            arr[k][ind] -= 1000 * c;
+        // c = c < 0 ? (c - 1) : c;
+        for (var i = 0; i < nodenumber; i++) {
+            positions[i][j] -= c;
         }
     }
-    positions = arr;
+
+    // for(var j = 0; j < positions[0].length; j++) {
+    //     for(var i = 0; i < positions.length; i++) {
+    //         positions[i][j] %= 1000;
+    //     }
+    // }
 
 }
 
@@ -197,10 +219,10 @@ var data = {
 
       {"source": 13, "target": 14, "value": 1},
       {"source": 13, "target": 15, "value": 1},
-      // {"source": 13, "target": 16, "value": 1},
-      // {"source": 13, "target": 17, "value": 1},
-      // {"source": 13, "target": 18, "value": 1},
-      // {"source": 13, "target": 19, "value": 1},
+      {"source": 13, "target": 16, "value": 1},
+      {"source": 13, "target": 17, "value": 1},
+      {"source": 13, "target": 18, "value": 1},
+      {"source": 13, "target": 19, "value": 1},
 
       ]
   };
