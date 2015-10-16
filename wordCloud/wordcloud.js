@@ -13,7 +13,8 @@ window.onload = function () {
     for(var i = 0; i < list.length; i++) {
         putWord(list[i][0], list[i][1]);
     }
-    console.log(option.gridSize);
+    // console.log(option.gridSize);
+    console.log(paras);
 }
 
 
@@ -22,6 +23,7 @@ function putWord(key, weight) {
     //获取绘制参数
     var position = [parseInt(Math.random() * 600) + 200, parseInt(Math.random() * 400) + 200];
     var degree = (Math.random() - 0.5) * Math.PI;
+    paras.push([position[0], position[1], degree]);
 
     
     // for(var i = 0; i < paras.length; i++) {
@@ -40,7 +42,6 @@ function putWord(key, weight) {
     //     // ctx.closePath();
 
     // }
-   
         ctx.fillStyle = option.color();
         ctx.font = option.weightFactor(weight) + "px " + option.fontFamily;
         ctx.textAlign = option.align;
@@ -49,19 +50,13 @@ function putWord(key, weight) {
         ctx.rotate(degree);
         ctx.fillText(key, 0, 0);
         ctx.restore();
-        // paras.push([position[0], position[1], degree]);
+        if (ctx.isPointInPath(position[0], position[1])) {
+            alert('p');
+        }
     
     
     
     // var thisTextWidth = ctx.measureText(key).width;
-    
-    // var points = [
-    //     [],
-    //     [],
-    //     [],
-    //     []
-    // ];
-
     
 
 }
