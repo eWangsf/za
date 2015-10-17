@@ -2,6 +2,8 @@ var canvas,
     ctx,
     list;
 var paras = [];
+var testx;
+var testy;
 
 window.onload = function () {
     canvas = document.getElementById("canvas");
@@ -10,53 +12,62 @@ window.onload = function () {
     ctx = canvas.getContext("2d"); 
     list = option.list;
     canvas.style.backgroundColor = option.backgroundColor;
+
     for(var i = 0; i < list.length; i++) {
-        putWord(list[i][0], list[i][1]);
+        var position = [300, 400];
+        var degree = (Math.random() - 0.5) * Math.PI;
+        var color = option.color();
+        var weight = option.weightFactor(list[i][1]);
+        paras.push([position[0], position[1], degree, color, list[i][0], weight]);
     }
-    // console.log(option.gridSize);
+
     console.log(paras);
+    for(var i = 0; i < list.length; i++) {
+        putWord(i);
+    }
+    // console.log(paras);
 }
 
 
 
-function putWord(key, weight) {
-    //获取绘制参数
-    var position = [parseInt(Math.random() * 600) + 200, parseInt(Math.random() * 400) + 200];
-    var degree = (Math.random() - 0.5) * Math.PI;
-    paras.push([position[0], position[1], degree]);
-
+function putWord(ind) {
+//     //获取绘制参数
+//     // var position = [parseInt(Math.random() * 600) + 200, parseInt(Math.random() * 400) + 200];
+        
     
-    // for(var i = 0; i < paras.length; i++) {
-    //     ctx.beginPath();
-    //     ctx.fillStyle = option.color();
-    //     ctx.font = option.weightFactor(weight) + "px " + option.fontFamily;
-    //     ctx.textAlign = option.align;
-    //     ctx.save();
-    //     ctx.translate(paras[i][0], paras[i][1]);
-    //     ctx.rotate(paras[i][2]);
-    //     ctx.fillText(key, 0, 0);
-    //     ctx.restore();
-    //     if(ctx.isPointInPath(300, 400)) {
-    //         alert('hh');
-    //     }
-    //     // ctx.closePath();
-
-    // }
-        ctx.fillStyle = option.color();
-        ctx.font = option.weightFactor(weight) + "px " + option.fontFamily;
-        ctx.textAlign = option.align;
+    for(var i = 0; i < ind; i++) {
+        var set = paras[i];
+        // ctx.beginPath();
         ctx.save();
-        ctx.translate(position[0], position[1]);
-        ctx.rotate(degree);
-        ctx.fillText(key, 0, 0);
+        ctx.fillStyle = set[3];
+        ctx.font = set[5] + "px " + option.fontFamily;
+        ctx.textAlign = option.align;
+        ctx.translate(set[0], set[1]);
+        ctx.rotate(set[2]);
+        ctx.fillText(set[4], 0, 0);
         ctx.restore();
-        if (ctx.isPointInPath(position[0], position[1])) {
-            alert('p');
+        if(ctx.isPointInPath(310, 410)) {
+            console.log('h');
+        } else {
+            console.log('g');
         }
+    }
+    
+//         // ctx.fillStyle = option.color();
+//         // ctx.font = option.weightFactor(weight) + "px " + option.fontFamily;
+//         // ctx.textAlign = option.align;
+//         // ctx.save();
+//         // ctx.translate(position[0], position[1]);
+//         // ctx.rotate(degree);
+//         // ctx.fillText(key, 0, 0);
+//         // ctx.restore();
+//         // if (ctx.isPointInPath(position[0], position[1])) {
+//         //     alert('p');
+//         // }
     
     
     
-    // var thisTextWidth = ctx.measureText(key).width;
+//     // var thisTextWidth = ctx.measureText(key).width;
     
 
 }
@@ -101,16 +112,3 @@ var option = {
 
 
 
-
-
-// function renderPic() {
-//     pic = new Image();
-//     pic.src="http://pic1.nipic.com/2008-11-13/2008111384358912_2.jpg";
-//     pic.onload = renderPic;
-//     var redTexture = ctx.createPattern(pic, "repeat");   
-//     ctx.strokeStyle = redTexture; 
-//     ctx.moveTo(80,10);
-//     ctx.lineTo(10,90);
-//     ctx.lineWidth = 500;    //定义线段粗度为8像素
-//     ctx.stroke();
-// }
