@@ -1,73 +1,30 @@
-var canvas,
-    ctx,
+var svg,
     list;
-var paras = [];
-var testx;
-var testy;
 
 window.onload = function () {
-    canvas = document.getElementById("canvas");
-    var canvasWidth = canvas.getAttribute('width');
-    var canvasHeight = canvas.getAttribute('height');
-    ctx = canvas.getContext("2d"); 
+    svg = document.getElementById("svg");
+    // var canvasWidth = canvas.getAttribute('width');
+    // var canvasHeight = canvas.getAttribute('height');
     list = option.list;
-    canvas.style.backgroundColor = option.backgroundColor;
 
     for(var i = 0; i < list.length; i++) {
-        var position = [300, 400];
-        var degree = (Math.random() - 0.5) * Math.PI;
-        var color = option.color();
-        var weight = option.weightFactor(list[i][1]);
-        paras.push([position[0], position[1], degree, color, list[i][0], weight]);
+        putWord(list[i][0], list[i][1]);
     }
 
-    console.log(paras);
-    for(var i = 0; i < list.length; i++) {
-        putWord(i);
-    }
-    // console.log(paras);
 }
 
 
 
-function putWord(ind) {
-//     //获取绘制参数
-//     // var position = [parseInt(Math.random() * 600) + 200, parseInt(Math.random() * 400) + 200];
-        
-    
-    for(var i = 0; i < ind; i++) {
-        var set = paras[i];
-        // ctx.beginPath();
-        ctx.save();
-        ctx.fillStyle = set[3];
-        ctx.font = set[5] + "px " + option.fontFamily;
-        ctx.textAlign = option.align;
-        ctx.translate(set[0], set[1]);
-        ctx.rotate(set[2]);
-        ctx.fillText(set[4], 0, 0);
-        ctx.restore();
-        if(ctx.isPointInPath(310, 410)) {
-            console.log('h');
-        } else {
-            console.log('g');
-        }
-    }
-    
-//         // ctx.fillStyle = option.color();
-//         // ctx.font = option.weightFactor(weight) + "px " + option.fontFamily;
-//         // ctx.textAlign = option.align;
-//         // ctx.save();
-//         // ctx.translate(position[0], position[1]);
-//         // ctx.rotate(degree);
-//         // ctx.fillText(key, 0, 0);
-//         // ctx.restore();
-//         // if (ctx.isPointInPath(position[0], position[1])) {
-//         //     alert('p');
-//         // }
-    
-    
-    
-//     // var thisTextWidth = ctx.measureText(key).width;
+function putWord(key, weight) {
+    var txthtml = "";
+    var position = [parseInt(Math.random() * 600) + 200, parseInt(Math.random() * 400) + 200];
+    // var degree = (Math.random() - 0.5) * Math.PI;
+    var degree = ((Math.random() - 0.5) * 180).toFixed(2);
+    txthtml = "<text x='" + position[0] + "' y='" + position[1] + "' style='fill: " + option.color() + "; font-size: " + option.weightFactor(weight) + "px;' transform='rotate(" + degree + " "+ position[0] +", "+ position[1] +")'>" + key + "</text>";
+    // console.log(txthtml);
+    var now = svg.innerHTML;
+    svg.innerHTML = now + txthtml;
+    // console.log(now);
     
 
 }
@@ -107,7 +64,7 @@ var option = {
         var color = 'rgb(' + (parseInt(Math.random() * 205) + 50) + ', ' + (parseInt(Math.random() * 205) + 50) + ', ' + (parseInt(Math.random() * 205) + 50) + ')';
         return color;
     },
-    gridSize: Math.round(16 * parseInt(document.getElementById('canvas').getAttribute("width")) / 1024)
+    // gridSize: Math.round(16 * parseInt(document.getElementById('canvas').getAttribute("width")) / 1024)
 }
 
 
