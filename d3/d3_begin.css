@@ -5,3 +5,15 @@
     /*height: 75px;*/
     background: green;
 }
+
+.xs path,
+.xs line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+.xs text {
+    font-family: san-serif;
+    font-size: 11px;
+}

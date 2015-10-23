@@ -6,6 +6,11 @@
 // });
 
 
+
+
+
+
+//-------------------Drawing with data--------------------
 // var dataset = [ 25, 7, 5, 26, 11, 8, 25, 14, 23, 19,
 //                 14, 11, 22, 29, 11, 13, 12, 17, 18, 10,
 //                 24, 18, 25, 9, 3 ];
@@ -55,7 +60,6 @@
 //             return d * 2;
 //         }
 //     });
-
 
 
 
@@ -111,7 +115,7 @@
 //     });
 
 
-
+//-------------------Scales--------------------
 // var width = 500,
 //     height = 300,
 //     dataset = [
@@ -170,26 +174,95 @@
 
 
 
+//-------------------Axes--------------------
+// var width = 500,
+//     height = 300,
+//     padding = 50,
+//     // dataset = [
+//     //               [ 5,     20 ],
+//     //               [ 480,   90 ],
+//     //               [ 250,   50 ],
+//     //               [ 100,   33 ],
+//     //               [ 330,   95 ],
+//     //               [ 410,   12 ],
+//     //               [ 475,   44 ],
+//     //               [ 25,    67 ],
+//     //               [ 85,    21 ],
+//     //               [ 220,   88 ]
+//     //           ];
+//     dataset = [
+//                 [5, 20], [480, 90], [250, 50], [100, 33], [330, 95],
+//                 [410, 12], [475, 44], [25, 67], [85, 21], [220, 88],
+//                 [600, 150]
+//               ];
 
-var width = 500,
-    height = 300,
-    dataset = [
-                  [ 5,     20 ],
-                  [ 480,   90 ],
-                  [ 250,   50 ],
-                  [ 100,   33 ],
-                  [ 330,   95 ],
-                  [ 410,   12 ],
-                  [ 475,   44 ],
-                  [ 25,    67 ],
-                  [ 85,    21 ],
-                  [ 220,   88 ]
-              ];
+// var svg = d3.select('body')
+//     .append('svg')
+//     .attr('width', width)
+//     .attr('height', height);
 
-var svg = d3.select('body')
-    .append('svg')
-    .attr('width', width)
-    .attr('height', height);
+// var xscale = d3.scale.linear()
+//                     .domain([0, d3.max(dataset, function (d) {return d[0];})])
+//                     .range([padding, width - padding]);
+
+// var yscale = d3.scale.linear()
+//                     .domain([0, d3.max(dataset, function (d) {return d[1];})])
+//                     .range([height - padding, padding]);
+// svg.selectAll('circle')
+//     .data(dataset)
+//     .enter()
+//     .append('circle')
+//     .attr({
+//         'cx': function (d) {
+//             return xscale(d[0]);
+//         },
+//         'cy': function (d) {
+//             return yscale(d[1]);
+//         },
+//         'r': 3
+
+//     })
+
+// svg.selectAll('text')
+//     .data(dataset)
+//     .enter()
+//     .append('text')
+//     .attr({
+//         'x': function (d) {
+//             return xscale(d[0]);
+//         },
+//         'y': function (d) {
+//             return yscale(d[1]);
+//         },
+//         'fill': 'red',
+//         'style': 'font-size: 11px;'
+//     })
+//     .text(function (d) {
+//         return d[0] + ', ' + d[1];
+//     });
+
+// var xAxis = d3.svg.axis()
+//                     .scale(xscale)
+//                     .orient('bottom')
+//                     .ticks(5);
+// var yAxis = d3.svg.axis()
+//                     .scale(yscale)
+//                     .orient('left')
+//                     .ticks(5);
+
+// svg.append('g')
+//     .attr('class', 'xs')
+//     .attr("transform", "translate(0, " + (height - padding) + ")")
+//     .call(xAxis);
+
+// svg.append('g')
+//     .attr('class', 'xs')
+//     .attr("transform", "translate(" + padding + ",0)")
+//     .call(yAxis);
+
+
+
+
 
 
 
