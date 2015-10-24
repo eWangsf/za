@@ -6,6 +6,7 @@
     background: green;
 }
 
+
 .xs path,
 .xs line {
     fill: none;
@@ -16,4 +17,8 @@
 .xs text {
     font-family: san-serif;
     font-size: 11px;
+}
+
+text {
+    font-size: 12px;
 }

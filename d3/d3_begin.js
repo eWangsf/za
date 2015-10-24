@@ -265,6 +265,189 @@
 
 
 
+//-------------------Update, transition, motion(--------------------
+// var width = 600,
+//     height = 300,
+//     padding = 2,
+//     dataset = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13,
+//                 11, 12, 15, 20, 18, 17, 16, 18, 23, 25];
+
+// var svg = d3.select('body')
+//             .append('svg')
+//             .attr({
+//                 width: width,
+//                 height: height
+//             });
+
+// svg.selectAll('rect')
+//     .data(dataset)
+//     .enter()
+//     .append('rect')
+//     .attr({
+//         'x': function (d, i) {
+//             return i * width / dataset.length;
+//         },
+//         'y': function (d, i) {
+//             return height - d * (height / d3.max(dataset));
+//         },
+//         'width': function (d, i) {
+//             return width / dataset.length - padding;
+//         },
+//         'height': function (d, i) {
+//             return d * (height / d3.max(dataset));
+//         },
+//         'fill': function (d, i) {
+//             return 'rgb(0, ' + (d * 10) + ', 0)';
+//         }
+//     });
+
+// svg.selectAll('text')
+//     .data(dataset)
+//     .enter()
+//     .append('text')
+//     .attr({
+//         'x': function (d, i) {
+//             return i * width / dataset.length + 0.5 * (width / dataset.length - padding);
+//         },
+//         'y': function (d) {
+//             return height - d * (height / d3.max(dataset)) + 15;
+//         },
+//         'text-anchor': 'middle',
+//         'fill': 'white'
+//     })
+//     .text(function (d) {
+//         return d;
+//     });
+
+// var xscale = d3.scale.ordinal()
+//                 .domain(d3.range(dataset.length))
+//                 .rangeBands([0, width], 0.05, 0);
+//                 // console.log(xscale);
+// var yscale = d3.scale.linear()
+//                 .domain([0, d3.max(dataset)])
+//                 .range([0, height])
+// svg.selectAll("rect")
+//    .data(dataset)
+//    .enter()
+//    .append("rect")
+//    .attr({
+//         "x": function(d, i) {
+//           return xscale(i);         // <-- Set x values
+//        },
+//        "y": function (d, i) {
+//             return height - yscale(d);
+//         },
+//         "width": function (d, i) {
+//             return xscale.rangeBand();
+//         },
+//         "height": function (d, i) {
+//             return yscale(d);
+//         },
+//         "fill": function (d, i) {
+//             return 'rgb(0, ' + (d * 10) + ', 0)';
+//         }  
+
+//     })
+
+// svg.selectAll('text')
+//     .data(dataset)
+//     .enter()
+//     .append('text')
+//     .attr({
+//         'x': function (d, i) {
+//             return xscale(i) + 0.5 * (width / dataset.length - padding);
+//         },
+//         'y': function (d) {
+//             return height - yscale(d) + 15;
+//         },
+//         'text-anchor': 'middle',
+//         'fill': 'white'
+//     })
+//     .text(function (d) {
+//         return d;
+//     });
+
+
+
+// d3.select('p')
+//     .on('click', function () {
+//         // var dataset = [ 11, 12, 15, 20, 18, 17, 16, 18, 23, 25,
+//         //             5, 10, 13, 19, 21, 25, 22, 18, 15, 13 ];
+//         var numValues = dataset.length;               
+//         dataset = [];                                       
+//         for (var i = 0; i < numValues; i++) {               
+//             var newNumber = Math.floor(Math.random() * 100); 
+//             dataset.push(newNumber);                       
+//         }
+//         yscale.domain([0, d3.max(dataset)]);
+//         svg.selectAll("rect")
+//            .data(dataset)
+//            .transition()
+//            .delay(function(d, i) {
+//                return i / dataset.length * 1000;   // <-- Where the magic happens
+//            })
+//            .duration(500)
+//            // .ease('bounce')
+//            .attr("y", function(d) {
+//                 return height - yscale(d);
+//            })
+//            .attr("height", function(d) {
+//                 return yscale(d);
+//            })
+//            .attr("fill", function (d, i) {
+//                 return 'rgb(0, ' + (d * 10) + ', 0)';
+//             })
+
+//         svg.selectAll('text')
+//             .data(dataset)
+//             .transition()
+//             .delay(function(d, i) {
+//                 return i / dataset.length * 1000;   // <-- Where the magic happens
+//             })
+//             .duration(500)
+//             // .ease('bounce')
+//             .attr({
+//                 'x': function (d, i) {
+//                     return xscale(i) + 0.5 * (width / dataset.length - padding);
+//                 },
+//                 'y': function (d) {
+//                     return height - yscale(d) + 15;
+//                 },
+//                 'text-anchor': 'middle',
+//                 'fill': 'white'
+//             })
+//             .text(function (d) {
+//                 return d;
+//             });
+//         });
+
+
+
+
+
+
+
+//-------------------Update, transition, motion(axis)--------------------
+var width = 600,
+    height = 300,
+    padding = 2,
+    dataset = [];                                           //Initialize empty array
+
+var numDataPoints = 50;                                     //Number of dummy data points to create
+var maxRange = Math.random() * 1000;                        //Max range of new values
+for (var i = 0; i < numDataPoints; i++) {                   //Loop numDataPoints times
+    var newNumber1 = Math.floor(Math.random() * maxRange);  //New random integer
+    var newNumber2 = Math.floor(Math.random() * maxRange);  //New random integer
+    dataset.push([newNumber1, newNumber2]);                 //Add new number to array
+}
+var svg = d3.select('body')
+            .append('svg')
+            .attr({
+                width: width,
+                height: height
+            });
+
+
 
 
 
