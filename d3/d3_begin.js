@@ -540,9 +540,416 @@
 
 
 //-------------------Update, transition, motion(add, delete)--------------------
+// var width = 600,
+//     height = 300,
+//     padding = 2,
+//     dataset = [ { key: 0, value: 5 },
+//                 { key: 1, value: 10 },
+//                 { key: 2, value: 13 },
+//                 { key: 3, value: 19 },
+//                 { key: 4, value: 21 },
+//                 { key: 5, value: 25 },
+//                 { key: 6, value: 22 },
+//                 { key: 7, value: 18 },
+//                 { key: 8, value: 15 },
+//                 { key: 9, value: 13 },
+//                 { key: 10, value: 11 },
+//                 { key: 11, value: 12 },
+//                 { key: 12, value: 15 },
+//                 { key: 13, value: 20 },
+//                 { key: 14, value: 18 },
+//                 { key: 15, value: 17 },
+//                 { key: 16, value: 16 },
+//                 { key: 17, value: 18 },
+//                 { key: 18, value: 23 },
+//                 { key: 19, value: 25 } ];
+
+// var svg = d3.select('body')
+//             .append('svg')
+//             .attr({
+//                 width: width,
+//                 height: height
+//             });
+
+// var xscale = d3.scale.ordinal()
+//                 .domain(d3.range(dataset.length))
+//                 .rangeRoundBands([0, width], 0.05);
+// var yscale = d3.scale.linear()
+//                 .domain([0, d3.max(dataset, function (d) {
+//                     return d.value;
+//                 })])
+//                 .range([0, height]);
+
+// var key = function (d) {
+//     return d.key;
+// }
+
+// svg.selectAll('rect')
+//     .data(dataset, key)
+//     .enter()
+//     .append('rect')
+//     .attr({
+//         'x': function (d, i) {
+//             return xscale(i);
+//         },
+//         'y': function (d, i) {
+//             return height - yscale(d.value);
+//         },
+//         'width': function (d, i) {
+//             return xscale.rangeBand();
+//         },
+//         'height': function (d, i) {
+//             return yscale(d.value);
+//         },
+//         'fill': function (d, i) {
+//             return 'rgb(0, ' + (d.value * 10) + ', 0)';
+//         }
+//     });
+
+// svg.selectAll('text')
+//     .data(dataset, key)
+//     .enter()
+//     .append('text')
+//     .attr({
+//         'x': function (d, i) {
+//             return xscale(i) + 0.5 * xscale.rangeBand();
+//         },
+//         'y': function (d) {
+//             return height - yscale(d.value) + 15;
+//         },
+//         'text-anchor': 'middle',
+//         'fill': 'white'
+//     })
+//     .text(function (d) {
+//         return d.value;
+//     });
+
+// d3.select('#add')
+//     .on('click', function () {
+//         var newVal = Math.floor(Math.random() * d3.max(dataset, function (d) {
+//             return d.value;
+//         }));
+        
+//         dataset.push({
+//             key: dataset[dataset.length - 1].key + 1,
+//             value: newVal
+//         });
+
+//         xscale.domain(d3.range(dataset.length));
+//         yscale.domain([0, d3.max(dataset, function (d) {
+//             return d.value;
+//         })]);
+
+//         var bars = svg.selectAll('rect').data(dataset, key);
+//         var texts = svg.selectAll('text').data(dataset, key);
+//         bars.enter()
+//             .append('rect')
+//             .attr({
+//                 'x': width,
+//                 'y': function (d, i) {
+//                     return height - yscale(d.value);
+//                 },
+//                 'width': function (d, i) {
+//                     return xscale.rangeBand();
+//                 },
+//                 'height': function (d, i) {
+//                     return yscale(d.value);
+//                 },
+//                 'fill': function (d, i) {
+//                     return 'rgb(0, ' + (d.value * 10) + ', 0)';
+//                 }
+//             });
+
+//         bars.transition()
+//             .duration(500)
+//             .attr({
+//                 'x': function (d, i) {
+//                     return xscale(i);
+//                 },
+//                 'y': function (d, i) {
+//                     return height - yscale(d.value);
+//                 },
+//                 'width': function (d, i) {
+//                     return xscale.rangeBand();
+//                 },
+//                 'height': function (d, i) {
+//                     return yscale(d.value);
+//                 },
+//                 'fill': function (d) {
+//                     return 'rgb(0, ' + (d.value * 10) + ', 0)';
+//                 }
+//             });
+
+//         texts.enter()
+//             .append('text')
+//             .attr({
+//                 'x': width,
+//                 'y': function (d, i) {
+//                     return height - yscale(d.value);
+//                 },
+//                 'width': function (d, i) {
+//                     return xscale.rangeBand();
+//                 },
+//                 'height': function (d, i) {
+//                     return yscale(d.value);
+//                 },
+//                 'fill': function (d, i) {
+//                     return 'rgb(0, ' + (d.value * 10) + ', 0)';
+//                 }
+//             });
+
+//         texts.transition()
+//             .duration(500)
+//             .attr({
+//                 'x': function (d, i) {
+//                     return xscale(i) + 0.5 * xscale.rangeBand();
+//                 },
+//                 'y': function (d) {
+//                     return height - yscale(d.value) + 15;
+//                 },
+//                 'text-anchor': 'middle',
+//                 'fill': 'white'
+//             })
+//             .text(function (d) {
+//                 return d.value;
+//             });
+
+//     });
+
+// console.log(dataset);
+// d3.select('#remove')
+//     .on('click', function () {
+//         dataset.shift();
+//         xscale.domain(d3.range(dataset.length));
+//         yscale.domain([0, d3.max(dataset, function (d) {
+//                 return d.value;
+//             })
+//         ]);
+
+//         var bars = svg.selectAll('rect').data(dataset, key);
+//         var texts = svg.selectAll('text').data(dataset, key);
+
+//         bars.transition()
+//                     .duration(500)
+//                     .attr("x", function (d, i) {
+//                         return xscale(i);
+//                     })
+//                     .attr("y", function (d) {
+//                         return height - yscale(d.value);
+//                     })
+//                     .attr("width", xscale.rangeBand())
+//                     .attr("height", function (d) {
+//                         return yscale(d.value);
+//                     });
+
+//         bars.exit()
+//             .transition()
+//             .duration(500)
+//             .attr({
+//                 'x': -xscale.rangeBand()
+//             })
+//             .remove();
+
+//         texts.transition()
+//             .duration(500)
+//             .attr({
+//                 'x': function (d, i) {
+//                     return xscale(i) + 0.5 * xscale.rangeBand();
+//                 },
+//                 'y': function (d) {
+//                     return height - yscale(d.value) + 15;
+//                 },
+//                 'text-anchor': 'middle',
+//                 'fill': 'white'
+//             })
+//             .text(function (d) {
+//                 return d.value;
+//             });
+
+//         texts.exit()
+//             .transition()
+//             .duration(500)
+//             .attr({
+//                 'x': function (d, i) {
+//                     return -xscale.rangeBand();
+//                 }
+//             })
+//             .remove();
+
+        
+
+//     });
+
+
+
+
+
+
+
+//-------------------interaction--------------------
+// var width = 600,
+//     height = 300,
+//     padding = 2,
+//     // dataset = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13, 11, 12, 15, 20, 18, 17, 16, 18, 23, 25 ];
+//     dataset = [ { key: 0, value: 5 },
+//                 { key: 1, value: 10 },
+//                 { key: 2, value: 13 },
+//                 { key: 3, value: 19 },
+//                 { key: 4, value: 21 },
+//                 { key: 5, value: 25 },
+//                 { key: 6, value: 22 },
+//                 { key: 7, value: 18 },
+//                 { key: 8, value: 15 },
+//                 { key: 9, value: 13 },
+//                 { key: 10, value: 11 },
+//                 { key: 11, value: 12 },
+//                 { key: 12, value: 15 },
+//                 { key: 13, value: 20 },
+//                 { key: 14, value: 18 },
+//                 { key: 15, value: 17 },
+//                 { key: 16, value: 16 },
+//                 { key: 17, value: 18 },
+//                 { key: 18, value: 23 },
+//                 { key: 19, value: 25 } ];
+
+// var svg = d3.select('body')
+//             .append('svg')
+//             .attr({
+//                 width: width,
+//                 height: height
+//             });
+
+// var key = function (d) {
+//     return d.key;
+// }
+
+// var xscale = d3.scale.ordinal()
+//                 .domain(d3.range(dataset.length))
+//                 .rangeRoundBands([0, width], 0.05);
+// var yscale = d3.scale.linear()
+//                 .domain([0, d3.max(dataset, function (d) {
+//                     return d.value;
+//                 })])
+//                 .range([0, height]);
+
+// var sortorder = true;
+// var sortBars = function () {
+//     sortorder = !sortorder;
+//     svg.selectAll('rect')
+//         .sort(function (a, b) {
+//             if (sortorder) {
+//                 return d3.ascending(a.value, b.value);
+//             } else {
+//                 return d3.descending(a.value, b.value);
+//             }
+//         })
+//         .transition()
+//         .duration(1000)
+//         .delay(function (d, i) {
+//             return 30 * i;
+//         })
+//         .attr({
+//             'x': function (d, i) {
+//                 return xscale(i);
+//             }
+//         });
+
+
+    // svg.selectAll('text')
+    //     .transition()
+    //     .duration(1000)
+    //     .delay(function (d, i) {
+    //         return 30 * i;
+    //     })
+    //     .attr({
+    //             'x': function (d, i) {
+    //                 return xscale(i) + 0.5 * xscale.rangeBand();
+    //             },
+    //             'y': function (d) {
+    //                 return height - yscale(d.value) + 15;
+    //             },
+    //             'text-anchor': 'middle',
+    //             'fill': 'white'
+    //         })
+    //         .text(function (d) {
+    //             return d.value;
+    //         });
+    
+// }
+
+// svg.selectAll('rect')
+//     .data(dataset, key)
+//     .enter()
+//     .append('rect')
+//     .attr({
+//         'x': function (d, i) {
+//             return xscale(i);
+//         },
+//         'y': function (d, i) {
+//             return height - yscale(d.value);
+//         },
+//         'width': function (d, i) {
+//             return xscale.rangeBand();
+//         },
+//         'height': function (d, i) {
+//             return yscale(d.value);
+//         },
+//         'fill': function (d, i) {
+//             return 'rgb(0, ' + (d.value * 10) + ', 0)';
+//         }
+//     })
+//     .on('click', function () {
+//         sortBars();
+//     })
+    // .on('mouseover', function () {
+    //     d3.select(this)
+    //         .transition()
+    //         .duration(300)
+    //         .attr({
+    //         'fill': 'orange'
+    //     });
+    // })
+    // .on('mouseout', function () {
+    //     d3.select(this)
+    //         .transition()
+    //         .duration(300)
+    //         .attr({
+    //         'fill': function (d) {
+    //             return 'rgb(0, ' + (d.value * 10) + ', 0)';
+    //         }
+    //     });
+    // });
+
+// svg.selectAll('text')
+//     .data(dataset, key)
+//     .enter()
+//     .append('text')
+//     .attr({
+//         'x': function (d, i) {
+//             return xscale(i) + 0.5 * xscale.rangeBand();
+//         },
+//         'y': function (d) {
+//             return height - yscale(d.value) + 15;
+//         },
+//         'text-anchor': 'middle',
+//         'fill': 'white'
+//     })
+//     .text(function (d) {
+//         return d.value;
+//     });
+
+
+
+// d3.select('#sort')
+//     .on('click', sortBars);
+
+
+
+//-------------------tooltip--------------------
 var width = 600,
     height = 300,
     padding = 2,
+    // dataset = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13, 11, 12, 15, 20, 18, 17, 16, 18, 23, 25 ];
     dataset = [ { key: 0, value: 5 },
                 { key: 1, value: 10 },
                 { key: 2, value: 13 },
@@ -571,6 +978,10 @@ var svg = d3.select('body')
                 height: height
             });
 
+var key = function (d) {
+    return d.key;
+}
+
 var xscale = d3.scale.ordinal()
                 .domain(d3.range(dataset.length))
                 .rangeRoundBands([0, width], 0.05);
@@ -580,9 +991,18 @@ var yscale = d3.scale.linear()
                 })])
                 .range([0, height]);
 
-var key = function (d) {
-    return d.key;
-}
+var sortorder = true;
+// var getTitle = function () {
+//     svg.selectAll('rect')
+//         // .transition()
+//         // .duration(300)
+//         .attr({
+//             'title': function (d, i) {
+//                 return d.value;
+//             }
+//         });
+
+// }
 
 svg.selectAll('rect')
     .data(dataset, key)
@@ -604,181 +1024,54 @@ svg.selectAll('rect')
         'fill': function (d, i) {
             return 'rgb(0, ' + (d.value * 10) + ', 0)';
         }
-    });
-
-svg.selectAll('text')
-    .data(dataset, key)
-    .enter()
-    .append('text')
-    .attr({
-        'x': function (d, i) {
-            return xscale(i) + 0.5 * xscale.rangeBand();
-        },
-        'y': function (d) {
-            return height - yscale(d.value) + 15;
-        },
-        'text-anchor': 'middle',
-        'fill': 'white'
     })
-    .text(function (d) {
-        return d.value;
-    });
+    // .append('title')
+    // .text(function (d) {
+    //     return "this value is " + d.value;
+    // });
 
-d3.select('#add')
-    .on('click', function () {
-        var newVal = Math.floor(Math.random() * d3.max(dataset, function (d) {
-            return d.value;
-        }));
-        
-        dataset.push({
-            key: dataset[dataset.length - 1].key + 1,
-            value: newVal
-        });
+    // .on('mouseover', function (d, i) {
+    //     svg.append('text')
+    //         .attr({
+    //             'id': 'tooltip',
+    //             'x': xscale(i) + 0.5 * xscale.rangeBand(),
+    //             'y': height - yscale(d.value) + 15,
+    //             'text-anchor': 'middle'
+    //         })
+    //         .text(d.value);
+    // })
+    // .on('mouseout', function (d, i) {
+    //     d3.select('#tooltip').remove();
+    // })
 
-        xscale.domain(d3.range(dataset.length));
-        yscale.domain([0, d3.max(dataset, function (d) {
-            return d.value;
-        })]);
-
-        var bars = svg.selectAll('rect').data(dataset, key);
-        var texts = svg.selectAll('text').data(dataset, key);
-        bars.enter()
-            .append('rect')
-            .attr({
-                'x': width,
-                'y': function (d, i) {
-                    return height - yscale(d.value);
-                },
-                'width': function (d, i) {
-                    return xscale.rangeBand();
-                },
-                'height': function (d, i) {
-                    return yscale(d.value);
-                },
-                'fill': function (d, i) {
-                    return 'rgb(0, ' + (d.value * 10) + ', 0)';
-                }
-            });
-
-        bars.transition()
-            .duration(500)
-            .attr({
-                'x': function (d, i) {
-                    return xscale(i);
-                },
-                'y': function (d, i) {
-                    return height - yscale(d.value);
-                },
-                'width': function (d, i) {
-                    return xscale.rangeBand();
-                },
-                'height': function (d, i) {
-                    return yscale(d.value);
-                },
-                'fill': function (d) {
-                    return 'rgb(0, ' + (d.value * 10) + ', 0)';
-                }
-            });
-
-        texts.enter()
-            .append('text')
-            .attr({
-                'x': width,
-                'y': function (d, i) {
-                    return height - yscale(d.value);
-                },
-                'width': function (d, i) {
-                    return xscale.rangeBand();
-                },
-                'height': function (d, i) {
-                    return yscale(d.value);
-                },
-                'fill': function (d, i) {
-                    return 'rgb(0, ' + (d.value * 10) + ', 0)';
-                }
-            });
-
-        texts.transition()
-            .duration(500)
-            .attr({
-                'x': function (d, i) {
-                    return xscale(i) + 0.5 * xscale.rangeBand();
-                },
-                'y': function (d) {
-                    return height - yscale(d.value) + 15;
-                },
-                'text-anchor': 'middle',
-                'fill': 'white'
+    .on('mouseover', function (d, i) {
+        var xPosition = parseFloat(d3.select(this).attr("x")) + xscale.rangeBand() / 2;
+        var yPosition = parseFloat(d3.select(this).attr("y")) / 2 + height / 2;
+    
+        d3.select('#tooltip')
+            .style({
+                'left': xPosition + 'px',
+                'top': yPosition + 'px'
             })
-            .text(function (d) {
-                return d.value;
-            });
+            .select('#value')
+            .text(d.value);
 
-    });
-
-console.log(dataset);
-d3.select('#remove')
-    .on('click', function () {
-        dataset.shift();
-        xscale.domain(d3.range(dataset.length));
-        yscale.domain([0, d3.max(dataset, function (d) {
-                return d.value;
-            })
-        ]);
-
-        var bars = svg.selectAll('rect').data(dataset, key);
-        var texts = svg.selectAll('text').data(dataset, key);
-
-        bars.transition()
-                    .duration(500)
-                    .attr("x", function (d, i) {
-                        return xscale(i);
-                    })
-                    .attr("y", function (d) {
-                        return height - yscale(d.value);
-                    })
-                    .attr("width", xscale.rangeBand())
-                    .attr("height", function (d) {
-                        return yscale(d.value);
-                    });
-
-        bars.exit()
-            .transition()
-            .duration(500)
-            .attr({
-                'x': -xscale.rangeBand()
-            })
-            .remove();
-
-        texts.transition()
-            .duration(500)
-            .attr({
-                'x': function (d, i) {
-                    return xscale(i) + 0.5 * xscale.rangeBand();
-                },
-                'y': function (d) {
-                    return height - yscale(d.value) + 15;
-                },
-                'text-anchor': 'middle',
-                'fill': 'white'
-            })
-            .text(function (d) {
-                return d.value;
-            });
+        d3.select('#tooltip')
+            .classed('hidden', false);
                 
-        texts.exit()
-            .transition()
-            .duration(500)
-            .attr({
-                'x': function (d, i) {
-                    return -xscale.rangeBand();
-                }
-            })
-            .remove();
-
-        
-
-    });
+        // svg.append('text')
+        //     .attr({
+        //         'id': 'tooltip',
+        //         'x': xscale(i) + 0.5 * xscale.rangeBand(),
+        //         'y': height - yscale(d.value) + 15,
+        //         'text-anchor': 'middle'
+        //     })
+        //     .text(d.value);
+    })
+    .on('mouseout', function (d, i) {
+        d3.select('#tooltip')
+            .classed('hidden', true)
+    })
 
 
 
