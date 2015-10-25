@@ -428,18 +428,142 @@
 
 
 //-------------------Update, transition, motion(axis)--------------------
+// var width = 800,
+//     height = 500,
+//     padding = 30,
+//     dataset = [];                                           //Initialize empty array
+
+// var numDataPoints = 50;                                     //Number of dummy data points to create
+// var maxRange1 = Math.random() * width;                        //Max range of new values
+// var maxRange2 = Math.random() * height;                        //Max range of new values
+// console.log(maxRange1);
+// console.log(maxRange2);
+// for (var i = 0; i < numDataPoints; i++) {                   //Loop numDataPoints times
+//     var newNumber1 = Math.floor(Math.random() * maxRange1);  //New random integer
+//     var newNumber2 = Math.floor(Math.random() * maxRange2);  //New random integer
+//     dataset.push([newNumber1, newNumber2]);                 //Add new number to array
+// }
+// var svg = d3.select('body')
+//             .append('svg')
+//             .attr({
+//                 width: width,
+//                 height: height
+//             });
+
+// var xscale = d3.scale.linear()
+//                 .domain([0, d3.max(dataset, function(d) {
+//                         return d[0];
+//                     })
+//                 ])
+//                 .range([padding, width - padding]);
+// var yscale = d3.scale.linear()
+//                 .domain([0, d3.max(dataset, function (d) {
+//                         return d[1];
+//                     })
+//                 ])
+//                 .range([height - padding, padding]);
+
+
+// var xAxis = d3.svg.axis()
+//                 .scale(xscale)
+//                 .orient('bottom');
+// var yAxis = d3.svg.axis()
+//                 .scale(yscale)
+//                 .orient('left');
+
+// svg.append('g')
+//     .classed('x xs', true)
+//     .attr("transform", "translate(0," + (height - padding) + ")")
+//     .call(xAxis);
+// svg.append('g')
+//     .classed('y xs', true)
+//     .attr("transform", "translate(" + padding + ", 0)")
+//     .call(yAxis);
+
+// svg.selectAll('circle')
+//     .data(dataset)
+//     .enter()
+//     .append('circle')
+//     .attr({
+//         'cx': function (d, i) {
+//             return xscale(d[0]);
+//         },
+//         'cy': function (d, i) {
+//             return yscale(d[1]);
+//         },
+//         'r': 2
+//     });
+
+
+// d3.select('p')
+//     .on('click', function () {
+//         var numDataPoints = 50;                                     //Number of dummy data points to create
+//         var maxRange1 = Math.random() * width;                        //Max range of new values
+//         var maxRange2 = Math.random() * height; 
+//         dataset = [];
+//         for (var i = 0; i < numDataPoints; i++) {                   
+//             var newNumber1 = Math.floor(Math.random() * maxRange1);  
+//             var newNumber2 = Math.floor(Math.random() * maxRange2);  
+//             dataset.push([newNumber1, newNumber2]);                 
+//         }
+//         xscale.domain([0, d3.max(dataset, function(d) { return d[0]; })]);
+//         yscale.domain([0, d3.max(dataset, function(d) { return d[1]; })]);
+//         svg.selectAll('circle')
+//             .data(dataset)
+//             .transition()
+//             .duration(1000)
+//             .each("start", function() {
+//                d3.select(this)
+//                  .attr("r", 7);
+//             })
+//             .attr({
+//                 'cx': function (d, i) {
+//                     return xscale(d[0]);
+//                 },
+//                 'cy': function (d, i) {
+//                     return yscale(d[1]);
+//                 },
+//                 'r': 2
+//             });
+//         svg.select('.x.xs')
+//             .transition()
+//             .duration(1000)
+//             .call(xAxis);
+//         svg.select('.y.xs')
+//             .transition()
+//             .duration(1000)
+//             .call(yAxis);
+//     })
+
+
+
+
+
+//-------------------Update, transition, motion(add, delete)--------------------
 var width = 600,
     height = 300,
     padding = 2,
-    dataset = [];                                           //Initialize empty array
+    dataset = [ { key: 0, value: 5 },
+                { key: 1, value: 10 },
+                { key: 2, value: 13 },
+                { key: 3, value: 19 },
+                { key: 4, value: 21 },
+                { key: 5, value: 25 },
+                { key: 6, value: 22 },
+                { key: 7, value: 18 },
+                { key: 8, value: 15 },
+                { key: 9, value: 13 },
+                { key: 10, value: 11 },
+                { key: 11, value: 12 },
+                { key: 12, value: 15 },
+                { key: 13, value: 20 },
+                { key: 14, value: 18 },
+                { key: 15, value: 17 },
+                { key: 16, value: 16 },
+                { key: 17, value: 18 },
+                { key: 18, value: 23 },
+                { key: 19, value: 25 } ];
 
-var numDataPoints = 50;                                     //Number of dummy data points to create
-var maxRange = Math.random() * 1000;                        //Max range of new values
-for (var i = 0; i < numDataPoints; i++) {                   //Loop numDataPoints times
-    var newNumber1 = Math.floor(Math.random() * maxRange);  //New random integer
-    var newNumber2 = Math.floor(Math.random() * maxRange);  //New random integer
-    dataset.push([newNumber1, newNumber2]);                 //Add new number to array
-}
 var svg = d3.select('body')
             .append('svg')
             .attr({
@@ -447,7 +571,214 @@ var svg = d3.select('body')
                 height: height
             });
 
+var xscale = d3.scale.ordinal()
+                .domain(d3.range(dataset.length))
+                .rangeRoundBands([0, width], 0.05);
+var yscale = d3.scale.linear()
+                .domain([0, d3.max(dataset, function (d) {
+                    return d.value;
+                })])
+                .range([0, height]);
 
+var key = function (d) {
+    return d.key;
+}
+
+svg.selectAll('rect')
+    .data(dataset, key)
+    .enter()
+    .append('rect')
+    .attr({
+        'x': function (d, i) {
+            return xscale(i);
+        },
+        'y': function (d, i) {
+            return height - yscale(d.value);
+        },
+        'width': function (d, i) {
+            return xscale.rangeBand();
+        },
+        'height': function (d, i) {
+            return yscale(d.value);
+        },
+        'fill': function (d, i) {
+            return 'rgb(0, ' + (d.value * 10) + ', 0)';
+        }
+    });
+
+svg.selectAll('text')
+    .data(dataset, key)
+    .enter()
+    .append('text')
+    .attr({
+        'x': function (d, i) {
+            return xscale(i) + 0.5 * xscale.rangeBand();
+        },
+        'y': function (d) {
+            return height - yscale(d.value) + 15;
+        },
+        'text-anchor': 'middle',
+        'fill': 'white'
+    })
+    .text(function (d) {
+        return d.value;
+    });
+
+d3.select('#add')
+    .on('click', function () {
+        var newVal = Math.floor(Math.random() * d3.max(dataset, function (d) {
+            return d.value;
+        }));
+        
+        dataset.push({
+            key: dataset[dataset.length - 1].key + 1,
+            value: newVal
+        });
+
+        xscale.domain(d3.range(dataset.length));
+        yscale.domain([0, d3.max(dataset, function (d) {
+            return d.value;
+        })]);
+
+        var bars = svg.selectAll('rect').data(dataset, key);
+        var texts = svg.selectAll('text').data(dataset, key);
+        bars.enter()
+            .append('rect')
+            .attr({
+                'x': width,
+                'y': function (d, i) {
+                    return height - yscale(d.value);
+                },
+                'width': function (d, i) {
+                    return xscale.rangeBand();
+                },
+                'height': function (d, i) {
+                    return yscale(d.value);
+                },
+                'fill': function (d, i) {
+                    return 'rgb(0, ' + (d.value * 10) + ', 0)';
+                }
+            });
+
+        bars.transition()
+            .duration(500)
+            .attr({
+                'x': function (d, i) {
+                    return xscale(i);
+                },
+                'y': function (d, i) {
+                    return height - yscale(d.value);
+                },
+                'width': function (d, i) {
+                    return xscale.rangeBand();
+                },
+                'height': function (d, i) {
+                    return yscale(d.value);
+                },
+                'fill': function (d) {
+                    return 'rgb(0, ' + (d.value * 10) + ', 0)';
+                }
+            });
+
+        texts.enter()
+            .append('text')
+            .attr({
+                'x': width,
+                'y': function (d, i) {
+                    return height - yscale(d.value);
+                },
+                'width': function (d, i) {
+                    return xscale.rangeBand();
+                },
+                'height': function (d, i) {
+                    return yscale(d.value);
+                },
+                'fill': function (d, i) {
+                    return 'rgb(0, ' + (d.value * 10) + ', 0)';
+                }
+            });
+
+        texts.transition()
+            .duration(500)
+            .attr({
+                'x': function (d, i) {
+                    return xscale(i) + 0.5 * xscale.rangeBand();
+                },
+                'y': function (d) {
+                    return height - yscale(d.value) + 15;
+                },
+                'text-anchor': 'middle',
+                'fill': 'white'
+            })
+            .text(function (d) {
+                return d.value;
+            });
+
+    });
+
+console.log(dataset);
+d3.select('#remove')
+    .on('click', function () {
+        dataset.shift();
+        xscale.domain(d3.range(dataset.length));
+        yscale.domain([0, d3.max(dataset, function (d) {
+                return d.value;
+            })
+        ]);
+
+        var bars = svg.selectAll('rect').data(dataset, key);
+        var texts = svg.selectAll('text').data(dataset, key);
+
+        bars.transition()
+                    .duration(500)
+                    .attr("x", function (d, i) {
+                        return xscale(i);
+                    })
+                    .attr("y", function (d) {
+                        return height - yscale(d.value);
+                    })
+                    .attr("width", xscale.rangeBand())
+                    .attr("height", function (d) {
+                        return yscale(d.value);
+                    });
+
+        bars.exit()
+            .transition()
+            .duration(500)
+            .attr({
+                'x': -xscale.rangeBand()
+            })
+            .remove();
+
+        texts.transition()
+            .duration(500)
+            .attr({
+                'x': function (d, i) {
+                    return xscale(i) + 0.5 * xscale.rangeBand();
+                },
+                'y': function (d) {
+                    return height - yscale(d.value) + 15;
+                },
+                'text-anchor': 'middle',
+                'fill': 'white'
+            })
+            .text(function (d) {
+                return d.value;
+            });
+                
+        texts.exit()
+            .transition()
+            .duration(500)
+            .attr({
+                'x': function (d, i) {
+                    return -xscale.rangeBand();
+                }
+            })
+            .remove();
+
+        
+
+    });
 
 
 
