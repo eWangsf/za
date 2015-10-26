@@ -1,0 +1,10 @@
+#container {
+    margin: 0 auto;
+    width: 95%;
+    min-height: 400px;
+    border: 1px solid #ccc;
+}
+
+/*#svg {
+    color: red;
+}*/
