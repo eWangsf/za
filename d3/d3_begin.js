@@ -946,132 +946,342 @@
 
 
 //-------------------tooltip--------------------
-var width = 600,
-    height = 300,
-    padding = 2,
-    // dataset = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13, 11, 12, 15, 20, 18, 17, 16, 18, 23, 25 ];
-    dataset = [ { key: 0, value: 5 },
-                { key: 1, value: 10 },
-                { key: 2, value: 13 },
-                { key: 3, value: 19 },
-                { key: 4, value: 21 },
-                { key: 5, value: 25 },
-                { key: 6, value: 22 },
-                { key: 7, value: 18 },
-                { key: 8, value: 15 },
-                { key: 9, value: 13 },
-                { key: 10, value: 11 },
-                { key: 11, value: 12 },
-                { key: 12, value: 15 },
-                { key: 13, value: 20 },
-                { key: 14, value: 18 },
-                { key: 15, value: 17 },
-                { key: 16, value: 16 },
-                { key: 17, value: 18 },
-                { key: 18, value: 23 },
-                { key: 19, value: 25 } ];
+// var width = 600,
+//     height = 300,
+//     padding = 2,
+//     // dataset = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13, 11, 12, 15, 20, 18, 17, 16, 18, 23, 25 ];
+//     dataset = [ { key: 0, value: 5 },
+//                 { key: 1, value: 10 },
+//                 { key: 2, value: 13 },
+//                 { key: 3, value: 19 },
+//                 { key: 4, value: 21 },
+//                 { key: 5, value: 25 },
+//                 { key: 6, value: 22 },
+//                 { key: 7, value: 18 },
+//                 { key: 8, value: 15 },
+//                 { key: 9, value: 13 },
+//                 { key: 10, value: 11 },
+//                 { key: 11, value: 12 },
+//                 { key: 12, value: 15 },
+//                 { key: 13, value: 20 },
+//                 { key: 14, value: 18 },
+//                 { key: 15, value: 17 },
+//                 { key: 16, value: 16 },
+//                 { key: 17, value: 18 },
+//                 { key: 18, value: 23 },
+//                 { key: 19, value: 25 } ];
 
-var svg = d3.select('body')
-            .append('svg')
-            .attr({
-                width: width,
-                height: height
-            });
+// var svg = d3.select('body')
+//             .append('svg')
+//             .attr({
+//                 width: width,
+//                 height: height
+//             });
 
-var key = function (d) {
-    return d.key;
-}
-
-var xscale = d3.scale.ordinal()
-                .domain(d3.range(dataset.length))
-                .rangeRoundBands([0, width], 0.05);
-var yscale = d3.scale.linear()
-                .domain([0, d3.max(dataset, function (d) {
-                    return d.value;
-                })])
-                .range([0, height]);
-
-var sortorder = true;
-// var getTitle = function () {
-//     svg.selectAll('rect')
-//         // .transition()
-//         // .duration(300)
-//         .attr({
-//             'title': function (d, i) {
-//                 return d.value;
-//             }
-//         });
-
+// var key = function (d) {
+//     return d.key;
 // }
 
-svg.selectAll('rect')
-    .data(dataset, key)
-    .enter()
-    .append('rect')
-    .attr({
-        'x': function (d, i) {
-            return xscale(i);
-        },
-        'y': function (d, i) {
-            return height - yscale(d.value);
-        },
-        'width': function (d, i) {
-            return xscale.rangeBand();
-        },
-        'height': function (d, i) {
-            return yscale(d.value);
-        },
-        'fill': function (d, i) {
-            return 'rgb(0, ' + (d.value * 10) + ', 0)';
-        }
-    })
-    // .append('title')
-    // .text(function (d) {
-    //     return "this value is " + d.value;
-    // });
+// var xscale = d3.scale.ordinal()
+//                 .domain(d3.range(dataset.length))
+//                 .rangeRoundBands([0, width], 0.05);
+// var yscale = d3.scale.linear()
+//                 .domain([0, d3.max(dataset, function (d) {
+//                     return d.value;
+//                 })])
+//                 .range([0, height]);
 
-    // .on('mouseover', function (d, i) {
-    //     svg.append('text')
-    //         .attr({
-    //             'id': 'tooltip',
-    //             'x': xscale(i) + 0.5 * xscale.rangeBand(),
-    //             'y': height - yscale(d.value) + 15,
-    //             'text-anchor': 'middle'
-    //         })
-    //         .text(d.value);
-    // })
-    // .on('mouseout', function (d, i) {
-    //     d3.select('#tooltip').remove();
-    // })
+// var sortorder = true;
+// // var getTitle = function () {
+// //     svg.selectAll('rect')
+// //         // .transition()
+// //         // .duration(300)
+// //         .attr({
+// //             'title': function (d, i) {
+// //                 return d.value;
+// //             }
+// //         });
 
-    .on('mouseover', function (d, i) {
-        var xPosition = parseFloat(d3.select(this).attr("x")) + xscale.rangeBand() / 2;
-        var yPosition = parseFloat(d3.select(this).attr("y")) / 2 + height / 2;
+// // }
+
+// svg.selectAll('rect')
+//     .data(dataset, key)
+//     .enter()
+//     .append('rect')
+//     .attr({
+//         'x': function (d, i) {
+//             return xscale(i);
+//         },
+//         'y': function (d, i) {
+//             return height - yscale(d.value);
+//         },
+//         'width': function (d, i) {
+//             return xscale.rangeBand();
+//         },
+//         'height': function (d, i) {
+//             return yscale(d.value);
+//         },
+//         'fill': function (d, i) {
+//             return 'rgb(0, ' + (d.value * 10) + ', 0)';
+//         }
+//     })
+//     // .append('title')
+//     // .text(function (d) {
+//     //     return "this value is " + d.value;
+//     // });
+
+//     // .on('mouseover', function (d, i) {
+//     //     svg.append('text')
+//     //         .attr({
+//     //             'id': 'tooltip',
+//     //             'x': xscale(i) + 0.5 * xscale.rangeBand(),
+//     //             'y': height - yscale(d.value) + 15,
+//     //             'text-anchor': 'middle'
+//     //         })
+//     //         .text(d.value);
+//     // })
+//     // .on('mouseout', function (d, i) {
+//     //     d3.select('#tooltip').remove();
+//     // })
+
+//     .on('mouseover', function (d, i) {
+//         var xPosition = parseFloat(d3.select(this).attr("x")) + xscale.rangeBand() / 2;
+//         var yPosition = height - d3.select(this).attr("height") / 2;
     
-        d3.select('#tooltip')
-            .style({
-                'left': xPosition + 'px',
-                'top': yPosition + 'px'
-            })
-            .select('#value')
-            .text(d.value);
+//         d3.select('#tooltip')
+//             .style({
+//                 'left': xPosition + 'px',
+//                 'top': yPosition + 'px'
+//             })
+//             .select('#value')
+//             .text(d.value);
 
-        d3.select('#tooltip')
-            .classed('hidden', false);
+//         d3.select('#tooltip')
+//             .classed('hidden', false);
                 
-        // svg.append('text')
-        //     .attr({
-        //         'id': 'tooltip',
-        //         'x': xscale(i) + 0.5 * xscale.rangeBand(),
-        //         'y': height - yscale(d.value) + 15,
-        //         'text-anchor': 'middle'
-        //     })
-        //     .text(d.value);
-    })
-    .on('mouseout', function (d, i) {
-        d3.select('#tooltip')
-            .classed('hidden', true)
-    })
+//         // svg.append('text')
+//         //     .attr({
+//         //         'id': 'tooltip',
+//         //         'x': xscale(i) + 0.5 * xscale.rangeBand(),
+//         //         'y': height - yscale(d.value) + 15,
+//         //         'text-anchor': 'middle'
+//         //     })
+//         //     .text(d.value);
+//     })
+//     .on('mouseout', function (d, i) {
+//         d3.select('#tooltip')
+//             .classed('hidden', true)
+//     })
+
+
+
+//-------------------layout-pie--------------------
+// var width = 400,
+//     height = 400,
+//     outr = height / 2,
+//     inr = width / 3,
+//     // dataset = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13, 11, 12, 15, 20, 18, 17, 16, 18, 23, 25 ];
+//     dataset = [ 5, 10, 20, 45, 6, 25 ];
+//     // dataset = [ { key: 0, value: 5 },
+//     //             { key: 1, value: 10 },
+//     //             { key: 2, value: 13 },
+//     //             { key: 3, value: 19 },
+//     //             { key: 4, value: 21 },
+//     //             { key: 5, value: 25 },
+//     //             { key: 6, value: 22 },
+//     //             { key: 7, value: 18 },
+//     //             { key: 8, value: 15 },
+//     //             { key: 9, value: 13 },
+//     //             { key: 10, value: 11 },
+//     //             { key: 11, value: 12 },
+//     //             { key: 12, value: 15 },
+//     //             { key: 13, value: 20 },
+//     //             { key: 14, value: 18 },
+//     //             { key: 15, value: 17 },
+//     //             { key: 16, value: 16 },
+//     //             { key: 17, value: 18 },
+//     //             { key: 18, value: 23 },
+//     //             { key: 19, value: 25 } ];
+
+// var colors = d3.scale.category10();
+// var arc = d3.svg.arc()
+//                 .innerRadius(inr)
+//                 .outerRadius(outr);
+// var pie = d3.layout.pie();
+
+// var svg = d3.select('body')
+//             .append('svg')
+//             .attr({
+//                 width: width,
+//                 height: height
+//             });
+
+// var arcs = svg.selectAll('g.arc')
+//             .data(pie(dataset))
+//             .enter()
+//             .append('g')
+//             .classed('arc', true)
+//             .attr({
+//                 'transform': 'translate(' + outr + ', ' + outr + ')'
+//             });
+
+// arcs.append('path')
+//     .attr({
+//         'fill': function (d, i) {
+//             return colors(i);
+//         },
+//         'd': arc
+//     });
+
+// arcs.append('text')
+//     .attr({
+//         'transform': function (d) {
+//             return 'translate(' + arc.centroid(d) + ')';
+//         },
+//         'text-anchor': 'middle',
+//         'fill': 'white'
+//     })
+//     .style({
+//         'font-size': '14px',
+//         'font-weight': 900
+//     })
+//     .text(function (d, i) {
+//         return d.value;
+//     });
+
+
+
+
+
+
+//-------------------layout-stack--------------------
+// var width = 500,
+//     height = 300,
+//     dataset = [
+//         [
+//                 { x: 0, y: 5 },
+//                 { x: 1, y: 4 },
+//                 { x: 2, y: 2 },
+//                 { x: 3, y: 7 },
+//                 { x: 4, y: 23 }
+//         ],
+//         [
+//                 { x: 0, y: 10 },
+//                 { x: 1, y: 12 },
+//                 { x: 2, y: 19 },
+//                 { x: 3, y: 23 },
+//                 { x: 4, y: 17 }
+//         ],
+//         [
+//                 { x: 0, y: 22 },
+//                 { x: 1, y: 28 },
+//                 { x: 2, y: 32 },
+//                 { x: 3, y: 35 },
+//                 { x: 4, y: 43 }
+//         ]
+// ];
+
+// var svg = d3.select('body')
+//             .append('svg')
+//             .attr({
+//                 'width': width,
+//                 'height': height
+//    
+
+
+
+
+//-------------------layout-force--------------------
+// var width = 500,
+//     height = 300,
+//     dataset = {
+//         nodes: [
+//                 { name: "Adam" },
+//                 { name: "Bob" },
+//                 { name: "Carrie" },
+//                 { name: "Donovan" },
+//                 { name: "Edward" },
+//                 { name: "Felicity" },
+//                 { name: "George" },
+//                 { name: "Hannah" },
+//                 { name: "Iris" },
+//                 { name: "Jerry" }
+//         ],
+//         edges: [
+//                 { source: 0, target: 1 },
+//                 { source: 0, target: 2 },
+//                 { source: 0, target: 3 },
+//                 { source: 0, target: 4 },
+//                 { source: 1, target: 5 },
+//                 { source: 2, target: 5 },
+//                 { source: 2, target: 5 },
+//                 { source: 3, target: 4 },
+//                 { source: 5, target: 8 },
+//                 { source: 5, target: 9 },
+//                 { source: 6, target: 7 },
+//                 { source: 7, target: 8 },
+//                 { source: 8, target: 9 }
+//         ]
+// };
+
+// var svg = d3.select('body')
+//             .append('svg')
+//             .attr({
+//                 'width': width,
+//                 'height': height
+//             });
+// var colors = d3.scale.category10();
+
+// var force = d3.layout.force()
+//                     .nodes(dataset.nodes)
+//                     .links(dataset.edges)
+//                     .size([width, height])
+//                     .linkDistance([50])
+//                     .charge([-100])
+//                     .start();
+
+// var edges = svg.selectAll('line')
+//                 .data(dataset.edges)
+//                 .enter()
+//                 .append('line')
+//                 .style({
+//                     'stroke': '#ccc',
+//                     'stroke-width': 1
+//                 });
+
+// var nodes = svg.selectAll('circle')
+//                 .data(dataset.nodes)
+//                 .enter()
+//                 .append('circle')
+//                 .attr({
+//                     'r': 10
+//                 })
+//                 .style({
+//                     'fill': function (d, i) {
+//                         return colors(i);
+//                     }
+//                 })
+//                 .call(force.drag);
+
+// force.on("tick", function() {
+
+// edges.attr("x1", function(d) { return d.source.x; })
+//      .attr("y1", function(d) { return d.source.y; })
+//      .attr("x2", function(d) { return d.target.x; })
+//      .attr("y2", function(d) { return d.target.y; });
+
+// nodes.attr("cx", function(d) { return d.x; })
+//      .attr("cy", function(d) { return d.y; });
+
+// });
+
+
+
+
+
+
+
+
 
 
 
