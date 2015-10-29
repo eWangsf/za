@@ -5,10 +5,10 @@ svg line {
 
 circle,
 line {
-    -moz-transition: all 0.02s;
-    -o-transition: all 0.02s;
-    -webkit-transition: all 0.02s;
-    transition: all 0.02s;
+    -moz-transition: all 0.0001s;
+    -o-transition: all 0.0001s;
+    -webkit-transition: all 0.0001s;
+    transition: all 0.0001s;
 }
 /*
 circle {

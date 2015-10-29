@@ -1,38 +1,27 @@
-//svg
+// svg
 var svg = document.getElementsByTagName('svg')[0];
 var width = svg.getAttribute('width'),
     height = svg.getAttribute('height'),
     padding = 20;
 
-//circle样式
+// circle styles
 var radium = 5,
     linkcolor = '#999',
-    circlecolor = [
-    "rgb(9, 95, 76)", 
-    "rgb(12, 41, 118)", 
-    "rgb(123, 12, 113)", 
-    "rgb(53, 179, 240)", 
-    "rgb(12, 182, 61)", 
-    "rgb(19, 192, 156)", 
-    "rgb(82, 124, 12)", 
-    "rgb(192, 183, 231)", 
-    "rgb(76, 252, 201)", 
-    "rgb(40, 182, 161)", 
-    "rgb(116, 88, 48)"
-    ],
+    circlecolor = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5"],
     colors = [],
-//link样式
+// link styles
     linkwidth = 1,
     linkopacity = .9;
 
 
 var maxOffset = 50,
+    offset = maxOffset + 1,
     zero = 0.001,
     charge = 3,
     linkDistance = 15,
-    linkStrength = .0001;
+    linkStrength = .0004;
 
-//dom变量
+// dom
 var circles,
     links,
     circleNumber,
@@ -47,13 +36,13 @@ window.onload = function () {
     circleNumber = circles.length;
     linkNumber = links.length;
 
-    for (var i = 0; i < circleNumber; i++) {
-        var g = parseInt(circles[i].group);
-        if(colors[g]) {continue;}
-        colors[g] = 'rgb(' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ')';
-    }
+    // for (var i = 0; i < circleNumber; i++) {
+    //     var g = parseInt(circles[i].group);
+    //     if(colors[g]) {continue;}
+    //     colors[g] = 'rgb(' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ')';
+    // }
 
-    //bind
+    // bind
     // for (var i = 0; i < circleNumber; i++) {
     //     circles[i].asSrc = [];
     //     circles[i].asTar = [];
@@ -66,11 +55,11 @@ window.onload = function () {
     // }
 
 
-    //初始化元素位置
+    //init
     var circlePos = [];
     for (var i = 0; i < circleNumber; i++) { 
-        var x = Math.random() * (width - 2 * padding) + padding;
-        var y = Math.random() * (height - 2 * padding) + padding;
+        var x = (Math.random() - 0.5) * 10 * linkDistance + width / 2;
+        var y = (Math.random() - 0.5) * 10 * linkDistance  + height /2;
         circlePos.push([x, y]);
     }
 
@@ -78,28 +67,31 @@ window.onload = function () {
     for (var i = 0; i < linkNumber; i++) {
         var source = links[i].source;
         var target = links[i].target;
-        linkStr += '<line x1="' + circlePos[source][0] + '" y1="' + circlePos[source][1] + '" x2="' + circlePos[target][0] + '" y2="' + circlePos[target][1] + '" style="stroke:' + linkcolor + ';stroke-width: ' + linkwidth + '"/>'
+        linkStr += '<line x1="' + circlePos[source][0] + '" y1="' + circlePos[source][1] + '" x2="' 
+                + circlePos[target][0] + '" y2="' + circlePos[target][1] 
+                + '" style="stroke:' + linkcolor + ';stroke-width: ' 
+                + Math.sqrt(links[i].value) + '"/>'
     }
     svg.innerHTML += linkStr;
     linkdoms = document.getElementsByTagName('line');
 
     var circleStr = '';
     for (var i = 0; i < circleNumber; i++) {
-        // console.log(circles[i].group);
-        // circleStr += '<circle cx="' + circlePos[i][0] + '" cy="' + circlePos[i][1] + '" r="' + radium + '" fill="rgb(' + colors[circles[i].group][0] + ', ' + colors[circles[i].group][1] + ', ' + colors[circles[i].group][2] + ')" />'
-        // circleStr += '<circle cx="' + circlePos[i][0] + '" cy="' + circlePos[i][1] + '" r="' + radium + '" fill="' + circlecolor[parseInt(circles[i].group)] + '" />'
-        circleStr += '<circle cx="' + circlePos[i][0] + '" cy="' + circlePos[i][1] + '" r="' + radium + '" fill="' + colors[circles[i].group] + '" />'
+        circleStr += '<circle cx="' + circlePos[i][0] + '" cy="' + circlePos[i][1] + '" r="' + radium + '" fill="' + circlecolor[circles[i].group] + '" />'
+        // circleStr += '<circle cx="' + circlePos[i][0] + '" cy="' + circlePos[i][1] + '" r="' + radium + '" fill="' + colors[circles[i].group] + '" />'
     }
     svg.innerHTML += circleStr;
     circledoms = document.getElementsByTagName('circle');
-
-    // //layout algorithm
-    toBeBalance();
+    
+    // while (offset >= maxOffset) {
+    //     offset = 0;
+        toBeBalance();
+    // }
 
 }
 
 function toBeBalance() {
-    //斥力更新
+    // repulse
     var i = -1;
     while (++i < circleNumber) {
         var j = i;
@@ -108,13 +100,13 @@ function toBeBalance() {
         }
     }
 
-    // 弹力更新
+    // attract
     var j = -1;
     while (++j < linkNumber) {
         attract(j);
     }
 
-    //line 
+    // line 
     for (var i = 0; i < linkNumber; i++) {
         var thislink = linkdoms[i];
         var linkjson = links[i];
@@ -128,7 +120,9 @@ function toBeBalance() {
         thislink.setAttribute('y2', y2);
     }
 
-    setTimeout(toBeBalance, 20);
+    setTimeout(toBeBalance, 8);
+
+    
 }
 
 function repulse(node1, node2) {
@@ -141,6 +135,9 @@ function repulse(node1, node2) {
     var repweight = charge / dn;
     var x = repweight * dx;
     var y = repweight * dy;
+    // offset += Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+    // console.log(offset);
+    // console.log(x);
     if((Math.abs(x) < zero) || (Math.abs(y) < zero)) {
         return;
     }
