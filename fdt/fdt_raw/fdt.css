@@ -5,12 +5,12 @@ svg line {
 
 circle,
 line {
-    -moz-transition: all 0.015s;
-    -o-transition: all 0.015s;
-    -webkit-transition: all 0.015s;
-    transition: all 0.015s;
+    -moz-transition: all 0.02s;
+    -o-transition: all 0.02s;
+    -webkit-transition: all 0.02s;
+    transition: all 0.02s;
 }
-
+/*
 circle {
     z-index: 100;
-}
+}*/

@@ -7,7 +7,20 @@ var width = svg.getAttribute('width'),
 //circle样式
 var radium = 8,
     linkcolor = '#999',
-    circlecolor = 'black',
+    circlecolor = [
+    "rgb(9, 95, 76)", 
+    "rgb(12, 41, 118)", 
+    "rgb(123, 12, 113)", 
+    "rgb(53, 179, 240)", 
+    "rgb(12, 182, 61)", 
+    "rgb(19, 192, 156)", 
+    "rgb(82, 124, 12)", 
+    "rgb(192, 183, 231)", 
+    "rgb(76, 252, 201)", 
+    "rgb(40, 182, 161)", 
+    "rgb(116, 88, 48)"
+    ],
+    colors = [],
 //link样式
     linkwidth = 1,
     linkopacity = .9;
@@ -17,8 +30,7 @@ var maxOffset = 50,
     zero = 0.001,
     charge = 3,
     linkDistance = 15,
-    linkStrength = .0001,
-    gravity = 0.1;
+    linkStrength = .0001;
 
 //dom变量
 var circles,
@@ -35,6 +47,12 @@ window.onload = function () {
     circleNumber = circles.length;
     linkNumber = links.length;
 
+    for (var i = 0; i < circleNumber; i++) {
+        var g = parseInt(circles[i].group);
+        if(colors[g]) {continue;}
+        colors[g] = 'rgb(' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ', ' + Math.floor(Math.random() * 255) + ')';
+    }
+
     //bind
     // for (var i = 0; i < circleNumber; i++) {
     //     circles[i].asSrc = [];
@@ -46,10 +64,10 @@ window.onload = function () {
     //     circles[obj.source].asSrc.push(i);
     //     circles[obj.target].asTar.push(i);
     // }
-    
+
+
     //初始化元素位置
     var circlePos = [];
-    var circleStr = '';
     for (var i = 0; i < circleNumber; i++) { 
         var x = Math.random() * (width - 2 * padding) + padding;
         var y = Math.random() * (height - 2 * padding) + padding;
@@ -67,7 +85,10 @@ window.onload = function () {
 
     var circleStr = '';
     for (var i = 0; i < circleNumber; i++) {
-        circleStr += '<circle cx="' + circlePos[i][0] + '" cy="' + circlePos[i][1] + '" r="' + radium + '" fill="' + circlecolor + '" />'
+        // console.log(circles[i].group);
+        // circleStr += '<circle cx="' + circlePos[i][0] + '" cy="' + circlePos[i][1] + '" r="' + radium + '" fill="rgb(' + colors[circles[i].group][0] + ', ' + colors[circles[i].group][1] + ', ' + colors[circles[i].group][2] + ')" />'
+        // circleStr += '<circle cx="' + circlePos[i][0] + '" cy="' + circlePos[i][1] + '" r="' + radium + '" fill="' + circlecolor[parseInt(circles[i].group)] + '" />'
+        circleStr += '<circle cx="' + circlePos[i][0] + '" cy="' + circlePos[i][1] + '" r="' + radium + '" fill="' + colors[circles[i].group] + '" />'
     }
     svg.innerHTML += circleStr;
     circledoms = document.getElementsByTagName('circle');
@@ -107,7 +128,7 @@ function toBeBalance() {
         thislink.setAttribute('y2', y2);
     }
 
-    setTimeout(toBeBalance, 15);
+    setTimeout(toBeBalance, 20);
 }
 
 function repulse(node1, node2) {
@@ -130,7 +151,6 @@ function repulse(node1, node2) {
     circledoms[node2].setAttribute('cx', parseFloat(circledoms[node2].getAttribute('cx')) + x);
     circledoms[node2].setAttribute('cy', parseFloat(circledoms[node2].getAttribute('cy')) + y);
 
-    return true;
 }
 
 function attract(link) {
