@@ -5,7 +5,7 @@ var width = svg.getAttribute('width'),
     padding = 20;
 
 //circle样式
-var radium = 8,
+var radium = 5,
     linkcolor = '#999',
     circlecolor = [
     "rgb(9, 95, 76)", 
