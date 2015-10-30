@@ -1,0 +1,9 @@
+#test {
+    width:  100px;
+    height: 20px;
+    background: yellow;
+}
+
+#test span {
+    font-size: 20px;
+}
