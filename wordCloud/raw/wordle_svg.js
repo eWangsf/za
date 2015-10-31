@@ -230,10 +230,8 @@ function ifOverlap(word1, word2) {
         } else if (lineAcross(A4, A1, B4, B1)) {
             console.log('A4, A1, B4, B1');
             return true;
-        } else {
-            return false;
-        }
-
+        } 
+        return false;
 }
 
 // line across: false-not across
