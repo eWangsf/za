@@ -11,64 +11,64 @@ var paras = [];
 var listdata = [
         {
             key: "Helloooo", 
-            weight: 180
+            weight: 900
         },
         {
             key: "Java", 
-            weight: 100
+            weight: 800
         },
         {
             key: "intersection", 
-            weight: 80
+            weight: 800
         },
-        // {
-        //     key: "expensive", 
-        //     weight: 70
-        // },
-        // {
-        //     key: "particular", 
-        //     weight: 65
-        // },
-        // {
-        //     key: "word", 
-        //     weight: 60
-        // },
-        // {
-        //     key: "shape", 
-        //     weight: 60
-        // },
-        // {
-        //     key: "bottleneck", 
-        //     weight: 55
-        // },
-        // {
-        //     key: "index", 
-        //     weight: 50
-        // },
-        // {
-        //     key: "box", 
-        //     weight: 40
-        // },
-        // {
-        //     key: "position", 
-        //     weight: 30
-        // },
-        // {
-        //     key: "structure", 
-        //     weight: 30
-        // },
-        // {
-        //     key: "create", 
-        //     weight: 30
-        // },
-        // {
-        //     key: "recently", 
-        //     weight: 25
-        // },
-        // {
-        //     key: "C++", 
-        //     weight: 25
-        // },
+        {
+            key: "expensive", 
+            weight: 625
+        },
+        {
+            key: "particular", 
+            weight: 625
+        },
+        {
+            key: "word", 
+            weight: 625
+        },
+        {
+            key: "shape", 
+            weight: 625
+        },
+        {
+            key: "bottleneck", 
+            weight: 625
+        },
+        {
+            key: "index", 
+            weight: 400
+        },
+        {
+            key: "box", 
+            weight: 400
+        },
+        {
+            key: "position", 
+            weight: 400
+        },
+        {
+            key: "structure", 
+            weight: 225
+        },
+        {
+            key: "create", 
+            weight: 225
+        },
+        {
+            key: "recently", 
+            weight: 100
+        },
+        {
+            key: "C++", 
+            weight: 49
+        },
     ];
 
 
@@ -96,7 +96,7 @@ window.onload = function () {
         });
     };
 
-    console.log(paras);
+    // console.log(paras);
 
     // update
     var i = -1;
@@ -112,16 +112,19 @@ window.onload = function () {
 function putWord(item) {
     var paraitem = paras[item];
     for (var i = 0; i < item; i++) {
-        // console.log('-------------' + paras[item].key + "  " + paras[item].width + "      " + paras[i].key + "  " + paras[i].width);
-        console.log('-------------' + item + "   " + i);
+        console.log('-------------' + paras[item].key + "  " + paras[item].width + "      " + paras[i].key + "  " + paras[i].width);
+        // console.log('-------------' + item + "   " + i);
         var det = ifOverlap(item, i);
         console.log(det);
+        // if(det) {
+        //     draw();
+        // }
         while (det) {
             console.log('      pos change');
-            console.log(paras[item].pos);
+            // console.log(paras[item].pos);
             paras[item].pos[0] = parseInt(Math.random() * width * 0.5);
             paras[item].pos[1] = parseInt(Math.random() * height * 0.5) + 200;
-            console.log(paras[item].pos);
+            // console.log(paras[item].pos);
             det = ifOverlap(item, i);
             console.log(det);
         }
@@ -140,21 +143,20 @@ function ifOverlap(word1, word2) {
         B_height = B.height,
         B_degree = B.degree;
 
-        console.log(A);
-        console.log(B);
-
     var A1 = A.pos,
         A2 = [A1[0] + A_width * Math.cos(A_degree), A1[1] + A_width * Math.sin(A_degree)],
         A3 = [A2[0] - A_height * Math.sin(A_degree), A2[1] + A_height * Math.cos(A_degree)],
         A4 = [A1[0] - A_height * Math.sin(A_degree), A1[1] + A_height * Math.cos(A_degree)],
         AC = [0.5 * (A1[0] + A3[0]), 0.5 * (A1[1] + A3[1])],
+
         B1 = B.pos,
         B2 = [B1[0] + B_width * Math.cos(B_degree), B1[1] + B_width * Math.sin(B_degree)],
         B3 = [B2[0] - B_height * Math.sin(B_degree), B2[1] + B_height * Math.cos(B_degree)],
         B4 = [B1[0] - B_height * Math.sin(B_degree), B1[1] + B_height * Math.cos(B_degree)],
         BC = [0.5 * (B1[0] + B3[0]), 0.5 * (B1[1] + B3[1])];
 
-        if(distance(AC, BC) > 0.5 * (Math.sqrt(Math.pow(A_width, 2) + Math.pow(A_height, 2)) + Math.sqrt(Math.pow(B_width, 2) + Math.pow(B_height, 2)))) {
+        if (distance(AC, BC) > 0.5 * Math.sqrt(Math.pow(A_width, 2) + Math.pow(A_height, 2)) + 0.5 * Math.sqrt(Math.pow(B_width, 2) + Math.pow(B_height, 2))) {
+            console.log('ok');
             return false;
         } else if (pointInRec(A1, A2, A3, A4, B1, 'A1, A2, A3, A4, B1')) {
             console.log('B1');
@@ -168,8 +170,7 @@ function ifOverlap(word1, word2) {
         } else if (pointInRec(A1, A2, A3, A4, B4, 'A1, A2, A3, A4, B4')) {
             console.log('B4');
             return true;
-        } else 
-        if (pointInRec(B1, B2, B3, B4, A1, 'B1, B2, B3, B4, A1')) {
+        } else if (pointInRec(B1, B2, B3, B4, A1, 'B1, B2, B3, B4, A1')) {
             console.log('A1');
             return true;
         } else if (pointInRec(B1, B2, B3, B4, A2, 'B1, B2, B3, B4, A2')) {
@@ -181,11 +182,124 @@ function ifOverlap(word1, word2) {
         } else if (pointInRec(B1, B2, B3, B4, A4, 'B1, B2, B3, B4, A4')) {
             console.log('A4');
             return true;
+        } else if (lineAcross(A1, A2, B1, B2)) {
+            console.log('A1, A2, B1, B2');
+            return true;
+        } else if (lineAcross(A1, A2, B2, B3)) {
+            console.log('A1, A2, B2, B3');
+            return true;
+        } else if (lineAcross(A1, A2, B3, B4)) {
+            console.log('A1, A2, B3, B4');
+            return true;
+        } else if (lineAcross(A1, A2, B4, B1)) {
+            console.log('A1, A2, B4, B1');
+            return true;
+        } else if (lineAcross(A2, A3, B1, B2)) {
+            console.log('A2, A3, B1, B2');
+            return true;
+        } else if (lineAcross(A2, A3, B2, B3)) {
+            console.log('A2, A3, B2, B3');
+            return true;
+        } else if (lineAcross(A2, A3, B3, B4)) {
+            console.log('A2, A3, B3, B4');
+            return true;
+        } else if (lineAcross(A2, A3, B4, B1)) {
+            console.log('A2, A3, B4, B1');
+            return true;
+        } else if (lineAcross(A3, A4, B1, B2)) {
+            console.log('A3, A4, B1, B2');
+            return true;
+        } else if (lineAcross(A3, A4, B2, B3)) {
+            console.log('A3, A4, B2, B3');
+            return true;
+        } else if (lineAcross(A3, A4, B3, B4)) {
+            console.log('A3, A4, B3, B4');
+            return true;
+        } else if (lineAcross(A3, A4, B4, B1)) {
+            console.log('A3, A4, B4, B1');
+            return true;
+        } else if (lineAcross(A4, A1, B1, B2)) {
+            console.log('A4, A1, B1, B2');
+            return true;
+        } else if (lineAcross(A4, A1, B2, B3)) {
+            console.log('A4, A1, B2, B3');
+            return true;
+        } else if (lineAcross(A4, A1, B3, B4)) {
+            console.log('A4, A1, B3, B4');
+            return true;
+        } else if (lineAcross(A4, A1, B4, B1)) {
+            console.log('A4, A1, B4, B1');
+            return true;
         } else {
-            console.log('haha');
             return false;
         }
 
+}
+
+// line across: false-not across
+function lineAcross(a, b, c, d) {
+    var k1,
+        b1,
+        k2,
+        b2,
+        acrossPoint = [];
+
+    if ((a[0] === b[0]) && (c[0] === d[0])) {
+        console.log('都平行y轴！');
+        if(a[0] !== c[0]) {return false;}
+        if(((a[1] - c[1]) * (a[1] - d[1]) < 0) || ((b[1] - c[1]) * (b[1] - d[1]) < 0) 
+            || ((c[1] - a[1]) * (c[1] - b[1]) < 0) || ((d[1] - a[1]) * (d[1] - b[1]) < 0)) {
+            console.log('相交！');
+            return true;
+        }
+        return false;
+    } else if (c[0] === d[0]) {
+        console.log('cd平行y轴！');
+        if((a[0] - c[0]) * (b[0] - c[0]) > 0) {return false;}
+
+        k1 = (b[1] - a[1]) / (b[0] - a[0]);
+        b1 = a[1] - k1 * a[0];
+        var y = k1 * c[0] + b1; // across point: (c[0],y)
+        if((y - c[1]) * (y - d[1]) > 0) {
+            return false;
+        } else {
+            return true;
+        }
+        
+    } else if (a[0] === b[0]) {
+        console.log('ab平行y轴！');
+        if((c[0] - a[0]) * (d[0] - a[0]) > 0) {return false;}
+
+        k2 = (d[1] - c[1]) / (d[0] - c[0]);
+        b2 = c[1] - k2 * c[0];
+        var y = k2 * a[0] + b2;
+        if((y - a[1]) * (y - b[1]) > 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    k1 = (b[1] - a[1]) / (b[0] - a[0]);
+    k2 = (d[1] - c[1]) / (d[0] - c[0]);
+    b1 = a[1] - k1 * a[0];
+    b2 = c[1] - k2 * c[0];
+    if (k1 === k2) {
+        if (b1 === b2) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    acrossPoint[0] = (b2 - b1) / (k2 - k1);
+    acrossPoint[1] = k1 * acrossPoint[0] + b1;
+    if (((acrossPoint[0] - a[0]) * (acrossPoint[0] - b[0]) > 0) || ((acrossPoint[1] - a[1]) * (acrossPoint[1] - b[1]) > 0)
+        || ((acrossPoint[0] - c[0]) * (acrossPoint[0] - d[0]) > 0) || ((acrossPoint[1] - c[1]) * (acrossPoint[1] - d[1]) > 0)) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 
@@ -214,13 +328,13 @@ function pointInRec(a, b, c, d, p, str) {
     var w2 = Math.acos(d2);
     var w3 = Math.acos(d3);
     var w4 = Math.acos(d4);
-    console.log('  ' + w1);
-    console.log('  ' + w2);
-    console.log('  ' + w3);
-    console.log('  ' + w4);
+    // console.log('  ' + w1);
+    // console.log('  ' + w2);
+    // console.log('  ' + w3);
+    // console.log('  ' + w4);
 
     var totaldegree = w1 + w2 + w3 + w4;
-    console.log(totaldegree);
+    // console.log(totaldegree);
     if (totaldegree == 2 * Math.PI) {
         return true;
     }
@@ -267,7 +381,8 @@ var option = {
     rotateRatio: 0.3,
 
     weightFactor: function (size) {
-      return size;
+        // return size / 2;
+        return Math.sqrt(size);
     },
     color: function () {
         var color = 'rgb(' + (parseInt(Math.random() * 205) + 50) + ', ' + (parseInt(Math.random() * 205) + 50) + ', ' + (parseInt(Math.random() * 205) + 50) + ')';
