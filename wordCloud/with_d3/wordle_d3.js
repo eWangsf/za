@@ -1,71 +1,89 @@
 var listdata = [
-        {
-            key: "Helloooo", 
-            weight: 900
-        },
-        {
-            key: "Java", 
-            weight: 800
-        },
-        {
-            key: "intersection", 
-            weight: 800
-        },
-        {
-            key: "expensive", 
-            weight: 625
-        },
-        {
-            key: "particular", 
-            weight: 625
-        },
-        {
-            key: "word", 
-            weight: 625
-        },
-        {
-            key: "shape", 
-            weight: 625
-        },
-        {
-            key: "bottleneck", 
-            weight: 625
-        },
-        {
-            key: "index", 
-            weight: 400
-        },
-        {
-            key: "box", 
-            weight: 400
-        },
-        {
-            key: "position", 
-            weight: 400
-        },
-        {
-            key: "structure", 
-            weight: 225
-        },
-        {
-            key: "create", 
-            weight: 225
-        },
-        {
-            key: "recently", 
-            weight: 100
-        },
-        {
-            key: "C++", 
-            weight: 49
-        }
+        {text: "Helloooo", w: 900},
+        {text: "Java", w: 800},
+        {text: "intersection", w: 800},
+        {text: "expensive", w: 625},
+        {text: "particular", w: 625},
+        {text: "word", w: 625},
+        {text: "shape", w: 625},
+        {text: "bottleneck", w: 625},
+        {text: "index", w: 529},
+        {text: "box", w: 400},
+        {text: "position", w: 400},
+        {text: "structure", w: 289},
+        {text: "create", w: 289},
+        {text: "recently", w: 225},
+        {text: "C++", w: 121}
     ];
+
+// var listdata = [
+//         {
+//             text: "Helloooo", 
+//             size: 900
+//         },
+//         {
+//             text: "Java", 
+//             size: 800
+//         },
+//         {
+//             text: "intersection", 
+//             size: 800
+//         },
+//         {
+//             text: "expensive", 
+//             size: 625
+//         },
+//         {
+//             text: "particular", 
+//             size: 625
+//         },
+//         {
+//             text: "word", 
+//             size: 625
+//         },
+//         {
+//             text: "shape", 
+//             size: 625
+//         },
+//         {
+//             text: "bottleneck", 
+//             size: 625
+//         },
+//         {
+//             text: "index", 
+//             size: 400
+//         },
+//         {
+//             text: "box", 
+//             size: 400
+//         },
+//         {
+//             text: "position", 
+//             size: 400
+//         },
+//         {
+//             text: "structure", 
+//             size: 225
+//         },
+//         {
+//             text: "create", 
+//             size: 225
+//         },
+//         {
+//             text: "recently", 
+//             size: 100
+//         },
+//         {
+//             text: "C++", 
+//             size: 49
+//         }
+//     ];
 
 var option = {
     backgroundColor: '#000',
     align: 'left',
     baseline: 'top',
-    fontFamily: '微软雅黑',
+    fontFamily: 'Impact',
     minRotation: 1.58,
     maxRotation: 1.58,
     rotateRatio: 0.3,
@@ -77,96 +95,99 @@ var option = {
 }
 
 
-// var colors = d3.scale.category20();
+var colors = d3.scale.category20();
 
-// var width = 1200,
-//     height = 800;
+var width = 1200,
+    height = 800;
 
-// var svg = d3.select("body")
-//         .append("svg")
-//         .attr({
-//             'width': width,
-//             'height': height
-//         });
+var svg = d3.select("body")
+        .append("svg")
+        .attr({
+            'width': width,
+            'height': height
+        });
 
-// var cloud = d3.layout.cloud()
-//                 .size([width, height])
-//                 .words(listdata)
-//                 .padding(2)
-//                 .rotate(function () {
-//                     return (Math.random() - 0.5) * 180;
-//                 })
-//                 .font(option.fontFamily)
-//                 .fontSize(function (d) {
-//                     return option.weightFactor(d.weight);
-//                 })
-//                 .on('end', draw);
+var cloud = d3.layout.cloud()
+                .size([width, height])
+                .words(listdata)
+                .padding(2)
+                .rotate(function () {
+                    return Math.floor(Math.random() * 180 / 90) * 90;
+                })
+                .font(option.fontFamily)
+                .fontSize(function (d) {
+                    return option.weightFactor(d.w);
+                })
+                .on('end', draw);
 
-// cloud.start();
-
-// function draw(listdata) {
-//     svg.append('g')
-//         .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
-//         .selectAll('text')
-//         .data(listdata)
-//         .enter()
-//         .append('text')
-//         .attr({
-//             'text-anchor': 'middle',
-//             'transform': function (d) {
-//                 return 'translate(' + [d.x, d.y] + ') rotate(' + d.rotate + ')';
-//             }
-//         })
-//         .style({
-//             'font-size': function (d) {
-//                 return d.weight + 'px';
-//             },
-//             'fill': function (d, i) {
-//                 return colors(i);
-//             }
-//         })
-//         .text(function (d) {
-//             return d.key;
-//         });
-
-// }
-
-
-var colors = d3.scale.category20(),
-    width = 1000,
-    height = 400;
-
-var layout = d3.layout.cloud()
-    .size([width, height])
-    // .words([
-    //   "Hello", "world", "normally", "you", "want", "more", "words",
-    //   "than", "this"].map(function(d) {
-    //   return {text: d, size: 10 + Math.random() * 90, test: "haha"};
-    // }))
-.words(listdata)
-    .padding(5)
-    .rotate(function() { return ~~(Math.random() * 2) * 90; })
-    .font("Impact")
-    .fontSize(function(d) { return option.weightFactor(d.weight); })
-    .on("end", draw);
-
-layout.start();
+cloud.start();
 
 function draw(listdata) {
-    d3.select("body").append("svg")
-      .attr("width", width)
-      .attr("height", height)
-    .append("g")
-      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
-    .selectAll("text")
-      .data(listdata)
-    .enter().append("text")
-      .style("font-size", function(d) { return option.weightFactor(d.weight) + "px"; })
-      .style("font-family", "Impact")
-      .style("fill", function(d, i) { return colors(i); })
-      .attr("text-anchor", "middle")
-      .attr("transform", function(d) {
-        return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
-      })
-      .text(function(d) { return d.key; });
+    svg.append('g')
+        .attr("transform", "translate(" + cloud.size()[0] / 2 + "," + cloud.size()[1] / 2 + ")")
+        .selectAll('text')
+        .data(listdata)
+        .enter()
+        .append('text')
+        .attr({
+            'text-anchor': 'middle',
+            'transform': function (d) {
+                console.log(d);
+                return 'translate(' + [d.x, d.y] + ') rotate(' + d.rotate + ')';
+            }
+        })
+        .style({
+            'font-size': function (d) {
+                return d.size + 'px';
+            },
+            'font-family': option.fontFamily,
+            'fill': function (d, i) {
+                return colors(i);
+            }
+        })
+        // .style('font-size', function (d) {
+        //         return d.size + 'px';
+        // })
+        // .style('font-family', option.fontFamily)
+        // .style('fill', function (d, i) {
+        //         return colors(i);
+        // })
+        .text(function (d) {
+            return d.text;
+        });
+
 }
+
+
+
+// var fill = d3.scale.category20();
+
+// var layout = d3.layout.cloud()
+//     .size([500, 500])
+//     .words(listdata)
+//     .padding(5)
+//     .rotate(function() { return ~~(Math.random() * 2) * 90; })
+//     .font(option.fontFamily)
+//     .fontSize(function(d) { return Math.sqrt(d.w); })
+//     .on("end", draw);
+
+// layout.start();
+
+// function draw(words) {
+//   d3.select("body").append("svg")
+//       .attr("width", layout.size()[0])
+//       .attr("height", layout.size()[1])
+//     .append("g")
+//       .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
+//     .selectAll("text")
+//       .data(words)
+//     .enter().append("text")
+//       .style("font-size", function(d) { return d.size + "px"; })
+//       .style("font-family", option.fontFamily)
+//       .style("fill", function(d, i) { return fill(i); })
+//       .attr("text-anchor", "middle")
+//       .attr("transform", function(d) {
+//         return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+//       })
+//       .text(function(d) { return d.text; });
+// }

@@ -9,66 +9,21 @@ var paras = [];
 
 // about data
 var listdata = [
-        {
-            key: "Helloooo", 
-            weight: 900
-        },
-        {
-            key: "Java", 
-            weight: 800
-        },
-        {
-            key: "intersection", 
-            weight: 800
-        },
-        {
-            key: "expensive", 
-            weight: 625
-        },
-        {
-            key: "particular", 
-            weight: 625
-        },
-        {
-            key: "word", 
-            weight: 625
-        },
-        {
-            key: "shape", 
-            weight: 625
-        },
-        {
-            key: "bottleneck", 
-            weight: 625
-        },
-        // {
-        //     key: "index", 
-        //     weight: 400
-        // },
-        // {
-        //     key: "box", 
-        //     weight: 400
-        // },
-        // {
-        //     key: "position", 
-        //     weight: 400
-        // },
-        // {
-        //     key: "structure", 
-        //     weight: 225
-        // },
-        // {
-        //     key: "create", 
-        //     weight: 225
-        // },
-        // {
-        //     key: "recently", 
-        //     weight: 100
-        // },
-        // {
-        //     key: "C++", 
-        //     weight: 49
-        // }
+        {key: "Helloooo", weight: 900},
+        {key: "Java", weight: 800},
+        {key: "intersection", weight: 800},
+        {key: "expensive", weight: 625},
+        {key: "particular", weight: 625},
+        {key: "word", weight: 625},
+        {key: "shape", weight: 625},
+        {key: "bottleneck", weight: 625},
+        {key: "index", weight: 400},
+        {key: "box", weight: 400},
+        {key: "position", weight: 400},
+        {key: "structure", weight: 225},
+        {key: "create", weight: 225},
+        {key: "recently", weight: 100},
+        {key: "C++", weight: 49 }
     ];
 
 
@@ -82,11 +37,15 @@ window.onload = function () {
     for (var i = 0; i < listdata.length; i++) {
         var key = listdata[i].key,
             weight = listdata[i].weight,
-            keywidth = ctx.measureText(key).width * 2,
+            keywidth = ctx.measureText(key).width * 3,
             keyheight = option.weightFactor(weight),
             // degree = (parseInt((Math.random() - 0.5) * 180 / 30) * 30) / 180 * Math.PI,
-            degree = (parseInt(Math.random() * 90 / 30) * 30) / 180 * Math.PI,
-            position = [parseInt(Math.random() * width * 0.5), parseInt(Math.random() * height * 0.5) + 200];
+            // degree = (parseInt(Math.random() * 90 / 30) * 30) / 180 * Math.PI,
+            degree = Math.floor(Math.random() * 180 / 90) * 90 / 180 * Math.PI;
+            position = [parseInt(Math.random() * width * 0.8), parseInt(Math.random() * height * 0.8)];
+            // degree = 0;
+            // position = [0, 0];
+        
         paras.push({
             key: key,
             weight: weight,
@@ -95,9 +54,10 @@ window.onload = function () {
             degree: degree,
             pos: position
         });
+
     };
 
-    // console.log(paras);
+    console.log(paras);
 
     // update
     var i = -1;
@@ -113,32 +73,16 @@ window.onload = function () {
 function putWord(item) {
     var det = false;
     for (var i = 0; i < item; i++) {
-        det = ifOverlap(item, i) || det;
+        det = ifOverlap(item, i);
         if (det) {
-            paras[item].pos[0] = parseInt(Math.random() * width * 0.5);
-            paras[item].pos[1] = parseInt(Math.random() * height * 0.5) + 200;
-            i = 0;
+            console.log(paras[item].key + " pos change!!!!!!");
+            paras[item].pos[0] = parseInt(Math.random() * width * 0.8);
+            paras[item].pos[1] = parseInt(Math.random() * height * 0.8);
+            i = -1;
             det = false;
         }
 
     }
-
-
-    // for (var i = 0; i < item; i++) {
-    //     // console.log('-------------' + paras[item].key + "  " + paras[item].width + "      " + paras[i].key + "  " + paras[i].width);
-    //     // console.log('-------------' + item + "   " + i);
-    //     var det = ifOverlap(item, i);
-    //     while (det) {
-    //         // console.log('      pos change');
-    //         // console.log(paras[item].pos);
-    //         paras[item].pos[0] = parseInt(Math.random() * width * 0.5);
-    //         paras[item].pos[1] = parseInt(Math.random() * height * 0.5) + 200;
-    //         // console.log(paras[item].pos);
-    //         det = ifOverlap(item, i);
-    //         // console.log(det);
-    //     }
-
-    // }
 }
 
 // true - overlay; false - no overlay
@@ -165,123 +109,58 @@ function ifOverlap(word1, word2) {
         BC = [(B1[0] + B3[0]) / 2, (B1[1] + B3[1]) / 2];
 
         if (distance(AC, BC) > 0.5 * Math.sqrt(Math.pow(A_width, 2) + Math.pow(A_height, 2)) + 0.5 * Math.sqrt(Math.pow(B_width, 2) + Math.pow(B_height, 2))) {
-            console.log('ok');
             return false;
-        } else if (pointInRec(A1, A2, A3, A4, B1, 'A1, A2, A3, A4, B1')) {
-            console.log('B1');
-            // console.log(A1);
-            // console.log(A2);
-            // console.log(A3);
-            // console.log(A4);
-            // console.log(B1);
+        } else if (pointInRec(A1, A2, A3, A4, B1)) {
             return true;
-        } else if (pointInRec(A1, A2, A3, A4, B2, 'A1, A2, A3, A4, B2')) {
-            console.log('B2');
-            // console.log(A1);
-            // console.log(A2);
-            // console.log(A3);
-            // console.log(A4);
-            // console.log(B2);
+        } else if (pointInRec(A1, A2, A3, A4, B2)) {
             return true;
-        } else if (pointInRec(A1, A2, A3, A4, B3, 'A1, A2, A3, A4, B3')) {
-            console.log('B3');
-            // console.log(A1);
-            // console.log(A2);
-            // console.log(A3);
-            // console.log(A4);
-            // console.log(B3);
+        } else if (pointInRec(A1, A2, A3, A4, B3)) {
             return true;
-        } else if (pointInRec(A1, A2, A3, A4, B4, 'A1, A2, A3, A4, B4')) {
-            console.log('B4');
-            // console.log(A1);
-            // console.log(A2);
-            // console.log(A3);
-            // console.log(A4);
-            // console.log(B4);
+        } else if (pointInRec(A1, A2, A3, A4, B4)) {
             return true;
-        } else if (pointInRec(B1, B2, B3, B4, A1, 'B1, B2, B3, B4, A1')) {
-            console.log('A1');
-            // console.log(B1);
-            // console.log(B2);
-            // console.log(B3);
-            // console.log(B4);
-            // console.log(A1);
+        } else if (pointInRec(B1, B2, B3, B4, A1)) {
             return true;
-        } else if (pointInRec(B1, B2, B3, B4, A2, 'B1, B2, B3, B4, A2')) {
-            console.log('A2');
-            // console.log(B1);
-            // console.log(B2);
-            // console.log(B3);
-            // console.log(B4);
-            // console.log(A2);
+        } else if (pointInRec(B1, B2, B3, B4, A2)) {
             return true;
-        } else if (pointInRec(B1, B2, B3, B4, A3, 'B1, B2, B3, B4, A3')) {
-            console.log('A3');
-            // console.log(B1);
-            // console.log(B2);
-            // console.log(B3);
-            // console.log(B4);
-            // console.log(A3);
+        } else if (pointInRec(B1, B2, B3, B4, A3)) {
             return true;
-        } else if (pointInRec(B1, B2, B3, B4, A4, 'B1, B2, B3, B4, A4')) {
-            console.log('A4');
-            // console.log(B1);
-            // console.log(B2);
-            // console.log(B3);
-            // console.log(B4);
-            // console.log(A4);
+        } else if (pointInRec(B1, B2, B3, B4, A4)) {
             return true;
-        } 
-        else if (lineAcross(A1, A2, B1, B2)) {
-            console.log('A1, A2, B1, B2');
+        } else if (lineAcross(A1, A2, B1, B2)) {
             return true;
         } else if (lineAcross(A1, A2, B2, B3)) {
-            console.log('A1, A2, B2, B3');
             return true;
         } else if (lineAcross(A1, A2, B3, B4)) {
-            console.log('A1, A2, B3, B4');
             return true;
         } else if (lineAcross(A1, A2, B4, B1)) {
-            console.log('A1, A2, B4, B1');
             return true;
         } else if (lineAcross(A2, A3, B1, B2)) {
-            console.log('A2, A3, B1, B2');
             return true;
         } else if (lineAcross(A2, A3, B2, B3)) {
-            console.log('A2, A3, B2, B3');
             return true;
         } else if (lineAcross(A2, A3, B3, B4)) {
-            console.log('A2, A3, B3, B4');
             return true;
         } else if (lineAcross(A2, A3, B4, B1)) {
-            console.log('A2, A3, B4, B1');
             return true;
         } else if (lineAcross(A3, A4, B1, B2)) {
-            console.log('A3, A4, B1, B2');
             return true;
         } else if (lineAcross(A3, A4, B2, B3)) {
-            console.log('A3, A4, B2, B3');
             return true;
         } else if (lineAcross(A3, A4, B3, B4)) {
-            console.log('A3, A4, B3, B4');
             return true;
         } else if (lineAcross(A3, A4, B4, B1)) {
-            console.log('A3, A4, B4, B1');
             return true;
         } else if (lineAcross(A4, A1, B1, B2)) {
-            console.log('A4, A1, B1, B2');
             return true;
         } else if (lineAcross(A4, A1, B2, B3)) {
-            console.log('A4, A1, B2, B3');
             return true;
         } else if (lineAcross(A4, A1, B3, B4)) {
-            console.log('A4, A1, B3, B4');
             return true;
         } else if (lineAcross(A4, A1, B4, B1)) {
-            console.log('A4, A1, B4, B1');
             return true;
-        } 
-        return false;
+        } else {
+            return false;
+        }
 }
 
 // line across: false-not across
@@ -293,16 +172,13 @@ function lineAcross(a, b, c, d) {
         acrossPoint = [];
 
     if ((a[0] === b[0]) && (c[0] === d[0])) {
-        // console.log('都平行y轴！');
         if(a[0] !== c[0]) {return false;}
         if(((a[1] - c[1]) * (a[1] - d[1]) < 0) || ((b[1] - c[1]) * (b[1] - d[1]) < 0) 
             || ((c[1] - a[1]) * (c[1] - b[1]) < 0) || ((d[1] - a[1]) * (d[1] - b[1]) < 0)) {
-            // console.log('相交！');
             return true;
         }
         return false;
     } else if (c[0] === d[0]) {
-        // console.log('cd平行y轴！');
         if((a[0] - c[0]) * (b[0] - c[0]) > 0) {return false;}
 
         k1 = (b[1] - a[1]) / (b[0] - a[0]);
@@ -315,7 +191,6 @@ function lineAcross(a, b, c, d) {
         }
         
     } else if (a[0] === b[0]) {
-        // console.log('ab平行y轴！');
         if((c[0] - a[0]) * (d[0] - a[0]) > 0) {return false;}
 
         k2 = (d[1] - c[1]) / (d[0] - c[0]);
@@ -353,7 +228,8 @@ function lineAcross(a, b, c, d) {
 
 
 
-function pointInRec(a, b, c, d, p, str) {
+function pointInRec(a, b, c, d, p) {
+
     // console.log(str);
     if(distance(a, p) * distance(b, p) * distance(c, p) * distance(d, p) === 0) 
     {
@@ -405,19 +281,20 @@ function pointInRec(a, b, c, d, p, str) {
     }
 
     if((p[0] >= left) && (p[0] <= right) && (p[1] >= top) && (p[1] <= bottom)) {
-        console.log(a);
-        console.log(b);
-        console.log(c);
-        console.log(d);
-        console.log(left);
-        console.log(right);
-        console.log(top);
-        console.log(bottom);
-        console.log(p);
+        // console.log(a);
+        // console.log(b);
+        // console.log(c);
+        // console.log(d);
+        // console.log(left);
+        // console.log(right);
+        // console.log(top);
+        // console.log(bottom);
+        // console.log(p);
         return true;
     } else {
         return false;
     }
+
 
     // var d1 = ((a[0] - p[0]) * (b[0] - p[0]) + (a[1] - p[1]) * (b[1] - p[1])) / (distance(a, p) * distance(b, p));
     // var d2 = ((b[0] - p[0]) * (c[0] - p[0]) + (b[1] - p[1]) * (c[1] - p[1])) / (distance(b, p) * distance(c, p));
@@ -430,11 +307,11 @@ function pointInRec(a, b, c, d, p, str) {
 
     // var totaldegree = w1 + w2 + w3 + w4;
     // if (totaldegree === 2 * Math.PI) {
-    //     console.log(a);
-    //     console.log(b);
-    //     console.log(c);
-    //     console.log(d);
-    //     console.log(p);
+    //     // console.log(a);
+    //     // console.log(b);
+    //     // console.log(c);
+    //     // console.log(d);
+    //     // console.log(p);
     //     return true;
     // }
     // return false;
@@ -449,25 +326,20 @@ function draw() {
     var i = -1;
     while (++i < paras.length) {
         var key = paras[i].key,
-            weight = paras[i].weight,
             position = paras[i].pos,
             degree = paras[i].degree,
             keywidth = paras[i].width;
-
-
-        
+            keyheight = paras[i].height;
  
         ctx.save();
         ctx.translate(position[0], position[1]);
-        // ctx.translate(0, 0);
         ctx.rotate(degree);
 
         ctx.fillStyle = option.color();
         ctx.textBaseline = option.baseline;
-        ctx.font = option.weightFactor(weight) + "px " + option.fontFamily;
+        ctx.font = keyheight + "px " + option.fontFamily;
         ctx.textAlign = option.align;
 
-        // ctx.rotate(0);
         ctx.fillText(key, 0, 0, keywidth);
         ctx.restore();
     }
@@ -477,14 +349,14 @@ var option = {
     backgroundColor: '#000',
     align: 'left',
     baseline: 'top',
-    fontFamily: '微软雅黑',
+    fontFamily: 'Impact',
     minRotation: 1.58,
     maxRotation: 1.58,
     rotateRatio: 0.3,
 
     weightFactor: function (size) {
         // return size / 2;
-        return Math.sqrt(size);
+        return Math.sqrt(size) + 30;
     },
     color: function () {
         var color = 'rgb(' + (parseInt(Math.random() * 205) + 50) + ', ' + (parseInt(Math.random() * 205) + 50) + ', ' + (parseInt(Math.random() * 205) + 50) + ')';
