@@ -7,26 +7,13 @@ var n = 20,
     m = 200;
 
 var data = [],
-    // colors = [
-    //     "rgb(92, 190, 0)", "rgb(200, 44, 0)", 
-    //     "rgb(9, 68, 0)", "rgb(101, 137, 0)", 
-    //     "rgb(86, 4, 0)", "rgb(227, 54, 0)", 
-    //     "rgb(60, 51, 0)", "rgb(83, 43, 0)", 
-    //     "rgb(143, 47, 0)", "rgb(49, 213, 0)", 
-    //     "rgb(145, 117, 0)", "rgb(203, 0, 0)", 
-    //     "rgb(108, 9, 0)", "rgb(177, 190, 0)", 
-    //     "rgb(55, 15, 0)", "rgb(206, 245, 0)", 
-    //     "rgb(106, 48, 0)", "rgb(254, 240, 0)", 
-    //     "rgb(226, 77, 0)", "rgb(78, 115, 0)"
-    // ];
     colors = [
         "rgb(74, 73, 93)", "rgb(90, 88, 118)", 
         "rgb(121, 119, 165)", "rgb(99, 98, 132)",
         "rgb(97, 95, 129)", "rgb(88, 86, 115)"
     ];
-
-var baseline = [];
-
+var yscale,
+    xscale;
 window.onload = function () {
     svg = document.getElementsByTagName('svg')[0];
     width = svg.getAttribute('width');
@@ -34,44 +21,94 @@ window.onload = function () {
     for(var i = 0; i < n; i++) {
         data.push(bumpLayer(m));
     }
-    for(var i = 0; i < m; i++) {
-        baseline.push(height);
-    }
-    console.log(baseline);
+
+    stack();
+
+    yscale = new yScale(data);
+    yscale.init();
+    xscale = new xScale();
+    xscale.setdomain([0, m]);
+    xscale.setrange([0, width]);
 
     draw();
 }
 
+function stack() {
+    for(var j = 0; j < data[0].length; j++) {
+        data[0][j].y0 = 0;
+        data[0][j].y1 = data[0][j].y;
+    }
+    for(var i = 1; i < data.length; i++) {
+        for(var j = 0; j < data[0].length; j++) {
+            data[i][j].y0 = data[i - 1][j].y0 + data[i - 1][j].y;
+            data[i][j].y1 = data[i][j].y0 + data[i][j].y;
+        }
+    }
+}
+
 function draw() {
-    var paths = [];
+    var length = data[0].length;
     for(var i = 0; i < data.length; i++) {
+
         var pathStr = '<path d="';
-        for(var j = 0; j < data[i].length; j++) {
-            baseline[j] -= data[i][j].y * 20;
+        for(var j = 0; j < length; j++) {
             if (j === 0) {
-                pathStr += 'M' + xscale(data[i][j].x) + ', ' + baseline[j];
+                pathStr += 'M' + xscale.xscale(data[i][j].x) + ', ' + yscale.yscale(data[i][j].y1);
                 continue;
             }
-            pathStr += 'L' + xscale(data[i][j].x) + ', ' + baseline[j];
+            pathStr += 'L' + xscale.xscale(data[i][j].x) + ', ' + yscale.yscale(data[i][j].y1);
         }
-        // var color = 'rgb(' + (parseInt(Math.random() * 30) + 150) + ', ' + (parseInt(Math.random() * 30) + 150) + ', ' + (parseInt(Math.random() * 30) + 180) + ')';
-        
-        var color = parseInt(Math.random() * 6);
-        // console.log(color);
-        pathStr += ' L1000 500 L0 500" fill="' + colors[color] + '"/>';
-        paths.push(pathStr);
-    }
+        for(var j = length - 1; j >= 0; j--) {
+            pathStr += 'L' + xscale.xscale(data[i][j].x) + ', ' + yscale.yscale(data[i][j].y0);
+        }
 
-    for(var i = data.length; i >= 0; i--) {
-        svg.innerHTML = svg.innerHTML + paths[i];
+        var color = parseInt(Math.random() * 6);
+        pathStr += '" fill="' + colors[color] + '"/>';
+        svg.innerHTML = svg.innerHTML + pathStr;
     }
     
 }
 
 
-function xscale(d) {
-    this.widthstep = width / m;
-    return d * this.widthstep;
+function xScale() {
+    this.domain = [0, 1];
+    this.range = [0, 1];
+    this.widthstep = 1;
+}
+
+xScale.prototype = {
+    setdomain: function (arr) {
+        this.domain = arr;
+    },
+    setrange: function (arr) {
+        this.range = arr;
+    },
+    xscale: function (d) {
+        this.widthstep = (d - this.domain[0]) / this.domain[1];
+        return (this.range[1] - this.range[0]) * this.widthstep;
+    }
+}
+
+function yScale(dataset) {
+    this.max = 0;
+    this.data = dataset;
+}
+
+yScale.prototype = {
+    init: function () {
+        var dataset = this.data;
+        for(var i = 0; i < dataset.length; i++) {
+            for(var j = 0; j < dataset[i].length; j++) {
+                if(dataset[i][j].y1 > this.max) {
+
+                    this.max = dataset[i][j].y1;
+                }
+            }
+        }
+    },
+    yscale: function (d) {
+        return height - (d / this.max) * height * 0.8;
+    }
 }
 
 function bumpLayer(n) {
