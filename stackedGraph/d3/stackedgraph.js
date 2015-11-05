@@ -14,8 +14,13 @@ var n = 20,
 var arr = [];
 
 var stack = d3.layout.stack().offset('wiggle'),
-    layers0 = stack(d3.range(n).map(function() { return bumpLayer(m); })),
-    layers1 = stack(d3.range(n).map(function() { return bumpLayer(m); }));
+    data1 = d3.range(n).map(function() { return bumpLayer(m); });
+
+console.log(data1);
+    
+var layers0 = stack(data1);
+    
+var layers1 = stack(d3.range(n).map(function() { return bumpLayer(m); }));
 
 var xscale = d3.scale.linear()
                     .domain([0, m - 1])
@@ -74,8 +79,10 @@ function bumpLayer(n) {
     for (i = 0; i < n; ++i) a[i] = 0;
     for (i = 0; i < 5; ++i) bump(a);
 
-    // arr.push(a);
-
-    return a.map(function(d, i) { return {x: i, y: Math.max(0, d)}; });
+    // console.log(a);
+    var res = a.map(function(d, i) { return {x: i, y: Math.max(0, d)}; });
+    // console.log(res);
+    return res;
+    // return a.map(function(d, i) { return {x: i, y: Math.max(0, d)}; });
 }
 
