@@ -18,10 +18,7 @@ window.onload = function () {
 
     treemap = new treeMap(data, parent, width, height);
     treemap.start();
-    console.log(treemap.data);
-    treemap.render(treemap.data);
-
-
+    // console.log(treemap.data);
 }
 
 function treeMap(d, div, width, height) {
@@ -35,10 +32,9 @@ function treeMap(d, div, width, height) {
 }
 
 treeMap.prototype.start = function() {
-    // console.log('treemap start...');
     this.totalSize += this.compute(this.data);
     this.resize(this.data);
-    this.pos(this.data);
+    this.render();
 }
 
 treeMap.prototype.compute = function (o) {
@@ -70,48 +66,79 @@ treeMap.prototype.resize = function (o) {
     return;
 }
 
-treeMap.prototype.pos = function (o) {
-    // console.log('treemap pos...');
-    // console.log(o);
-    if(o.name === "flare") {
-        o.x = 0;
-        o.y = 0;
-        o.dx = this.width;
-        o.dy = o.height;
+treeMap.prototype.pos = function (obj, rect) {
+    var json = obj,
+        children = json.children,
+        width = json.dx,
+        height = json.dy;
+
+    console.log(json);
+    console.log(width);
+    console.log(height);
+    var small = width < height ? width : height;
+    
+
+    
+    for (var i = 0; i < children.length - 1; i++) {
+        var total = 0,
+            anotherside = 0,
+            side = 0,
+            oldratio = 1,
+            newratio = 0;
+
+        if(i === 0) {
+            total += children[0].sum;
+            anotherside = total / small;
+            side = children[0].sum / anotherside;
+            oldratio = anotherside > side ? (anotherside / side) : (side / anotherside);
+            children[0].x = 0;
+            children[0].y = 0;
+            children[0].dx = json.x + anotherside;
+            children[0].dy = json.y + side;
+        }
+        //  newratio <= oldratio 一直靠着短边压缩
+        var all = false;
+        while((i < children.length - 1)) {
+            total += children[i + 1].sum;
+            anotherside = total / small;
+            side = children[i + 1].sum / anotherside;
+            newratio = anotherside > side ? (anotherside / side) : (side / anotherside);
+            if (i === children.length - 2) {
+                all = true;
+                break;
+            } else if (newratio > oldratio) {
+                break;
+            } 
+        }
+
+        // 全部矩形计算完成
+        if(all) {
+
+        } else {
+
+        }
+
+
+
+
     }
 
-    if (!o.children) {
-        return;
-    }
 
-    for (var i = 0; i < o.children.length; i++) {
-        this.pos(o.children[i]);
-    }
-    // o.sum = o.sum / this.totalSize * this.area;
-    // return;
+    
 }
 
-treeMap.prototype.render = function (o) {
-    // console.log('treemap render...');
+treeMap.prototype.render = function () {
+    this.data.x = 0;
+    this.data.y = 0;
+    this.data.dx = this.width;
+    this.data.dy = this.height;
 
-    // if (!o.children) {
-        // o.dx = 300;
-        // o.dy = 100;
-        // o.x = 200;
-        // o.y = 300;
-        var htmlstr = '<div class="node" style="width: ' + (o.dx - 2) + 'px; height: ' + (o.dy - 2) + 'px; left: ' + (o.x + 1) + 'px; top: ' + (o.y + 1) + 'px; background: green;"></div>';
-        this.dom.innerHTML += htmlstr;
-        // return;
-    // }
-    o.children.sort(function (a, b) {
+    this.data.children.sort(function (a, b) {
         return a.sum <= b.sum ? 1 : -1;
     });
 
-    this.pos(o);
+    this.pos(this.data);
 
-    // for(var i = 0; i < o.children.length; i++) {
-    //     this.render(o.children[i]);
-    // }
     return;
 }
 
