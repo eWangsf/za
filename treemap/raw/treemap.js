@@ -16,16 +16,21 @@ window.onload = function () {
     var style = 'width: ' + width + 'px;height: ' + height + 'px;background: #e5e5e5; ';
     parent.setAttribute('style', style);
 
-    treemap = new treeMap(data, parent, width, height);
+    treemap = new treeMap(data, width, height);
     treemap.start();
     // console.log(treemap.data);
 }
 
-function treeMap(d, div, width, height) {
+function treeMap(d, width, height) {
     this.data = d;
     this.totalSize = 0;
 
-    this.dom = div;
+    this.rect = {
+        'x': 0,
+        'y': 0,
+        'dx': width,
+        'dy': height
+    };
     this.width = width;
     this.height = height;
     this.area = this.width * this.height;
@@ -69,56 +74,51 @@ treeMap.prototype.resize = function (o) {
 treeMap.prototype.pos = function (obj, rect) {
     var json = obj,
         children = json.children,
-        width = json.dx,
-        height = json.dy;
-
-    console.log(json);
-    console.log(width);
-    console.log(height);
-    var small = width < height ? width : height;
-    
+        rect = rect,
+        color = 'rgb(' + parseInt(Math.random() * 255) + ', ' + parseInt(Math.random() * 255) + ', ' + parseInt(Math.random() * 255) + ')';
 
     
-    for (var i = 0; i < children.length - 1; i++) {
-        var total = 0,
-            anotherside = 0,
-            side = 0,
-            oldratio = 1,
-            newratio = 0;
+    var total = 0,
+        anotherside = width,
+        side = 0,
+        oldratio = Number.MAX_VALUE,
+        newratio = 0,
 
-        if(i === 0) {
-            total += children[0].sum;
-            anotherside = total / small;
-            side = children[0].sum / anotherside;
-            oldratio = anotherside > side ? (anotherside / side) : (side / anotherside);
-            children[0].x = 0;
-            children[0].y = 0;
-            children[0].dx = json.x + anotherside;
-            children[0].dy = json.y + side;
-        }
-        //  newratio <= oldratio 一直靠着短边压缩
-        var all = false;
+
+    
+    for (var i = -1; i < children.length - 1; i++) {
+        // update vars
+        width = rect.dx,
+        height = rect.dy,
+        small = width < height ? width : height,
+
+        // newratio < oldration 循环
         while((i < children.length - 1)) {
-            total += children[i + 1].sum;
+            total += children[i+1].sum;
             anotherside = total / small;
             side = children[i + 1].sum / anotherside;
             newratio = anotherside > side ? (anotherside / side) : (side / anotherside);
-            if (i === children.length - 2) {
-                all = true;
+            // if (i === children.length - 2) {
+            //     all = true;
+            //     break;
+            // } else if (newratio > oldratio) {
+            //     break;
+            // } 
+            if (newratio < oldration) {
+                i++;
+            } else {
                 break;
-            } else if (newratio > oldratio) {
-                break;
-            } 
+            }
+        }
+        var all = false;
+        if (i >= children.length - 1) {
+            all = true;
         }
 
-        // 全部矩形计算完成
-        if(all) {
+        // compute new computed rects
+        
 
-        } else {
-
-        }
-
-
+        // compute new rect and continue
 
 
     }
@@ -128,16 +128,17 @@ treeMap.prototype.pos = function (obj, rect) {
 }
 
 treeMap.prototype.render = function () {
-    this.data.x = 0;
-    this.data.y = 0;
-    this.data.dx = this.width;
-    this.data.dy = this.height;
+    this.data.x = this.rect.x;
+    this.data.y = this.rect.y;
+    this.data.dx = this.rect.dx;
+    this.data.dy = this.rect.dy;
+
 
     this.data.children.sort(function (a, b) {
         return a.sum <= b.sum ? 1 : -1;
     });
 
-    this.pos(this.data);
+    this.pos(this.data, this.rect);
 
     return;
 }
