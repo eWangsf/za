@@ -43,7 +43,6 @@ treeMap.prototype.start = function() {
 }
 
 treeMap.prototype.compute = function (o) {
-    // console.log('treemap compute...');
     if(!o.children) {
         o.sum = o.size;
         return o.size;
@@ -58,7 +57,6 @@ treeMap.prototype.compute = function (o) {
 }
 
 treeMap.prototype.resize = function (o) {
-    // console.log('treemap resize...');
     if (!o.children) {
         o.sum = o.sum / this.totalSize * this.area;
         return;
@@ -72,54 +70,78 @@ treeMap.prototype.resize = function (o) {
 }
 
 treeMap.prototype.pos = function (obj, rect) {
+    console.log(obj);
     var json = obj,
         children = json.children,
         rect = rect,
         color = 'rgb(' + parseInt(Math.random() * 255) + ', ' + parseInt(Math.random() * 255) + ', ' + parseInt(Math.random() * 255) + ')';
-
     
-    var total = 0,
-        anotherside = width,
-        side = 0,
-        oldratio = Number.MAX_VALUE,
-        newratio = 0,
-
-
-    
-    for (var i = -1; i < children.length - 1; i++) {
+    children.sort(function (a, b) {
+        return a.sum <= b.sum ? 1 : -1;
+    });
+    // console.log(children);
+    for (var i = -1; i < children.length - 1;) {
+        console.log('');
+        console.log('start: ' + i);
+        console.log(rect);
         // update vars
-        width = rect.dx,
-        height = rect.dy,
-        small = width < height ? width : height,
+        var small = rect.dx < rect.dy ? rect.dx : rect.dy,
+            total = 0,
+            anotherside = 0,
+            side = 0,
+            oldratio = Number.MAX_VALUE,
+            newratio = 0;
 
-        // newratio < oldration 循环
+        // newratio < oldratio 循环
+        var k = i + 1;
         while((i < children.length - 1)) {
-            total += children[i+1].sum;
+            total += children[i + 1].sum;
             anotherside = total / small;
             side = children[i + 1].sum / anotherside;
             newratio = anotherside > side ? (anotherside / side) : (side / anotherside);
-            // if (i === children.length - 2) {
-            //     all = true;
-            //     break;
-            // } else if (newratio > oldratio) {
-            //     break;
-            // } 
-            if (newratio < oldration) {
+            // console.log(i + '  oldratio: ' + oldratio + '  newratio: ' + newratio);
+            // console.log(total + 'anotherside: ' + anotherside + '  side: ' + (total / anotherside));
+            if (newratio < oldratio) {
+                oldratio = newratio;
                 i++;
             } else {
+                total -= children[i + 1].sum;
+                anotherside = total / small;
                 break;
             }
         }
+        console.log(i);
+
         var all = false;
-        if (i >= children.length - 1) {
+        if (i == children.length - 1) {
             all = true;
         }
-
         // compute new computed rects
+        if(small === rect.dy) {
+            var tempy = rect.y;
+            for(var j = i; j >= k; j--) {
+                var divstr = '<div class="node" style="width: ' + anotherside + 'px; height: ' + (children[j].sum / anotherside) + 'px; left: ' + rect.x + 'px; top: ' + tempy + 'px; background: ' + color + ';"></div>';
+                parent.innerHTML += divstr;
+                tempy += (children[j].sum / anotherside);
+            }
+            rect.x += anotherside;
+            rect.dx -= anotherside;
+        } else {
+            var tempx = rect.x;
+            for(var j = k; j <= i; j++) {
+                var divstr = '<div class="node" style="width: ' + (children[j].sum / anotherside) + 'px; height: ' + anotherside + 'px; left: ' + tempx + 'px; top: ' + rect.y + 'px; background: ' + color + ';"></div>';
+                parent.innerHTML += divstr;
+                tempx += (children[j].sum / anotherside);
+            }
+            rect.y += anotherside;
+            rect.dy -= anotherside;
+        }
         
+        // setTimeout(function () {
+        // }, 5000);
 
         // compute new rect and continue
-
+        
 
     }
 
@@ -134,9 +156,7 @@ treeMap.prototype.render = function () {
     this.data.dy = this.rect.dy;
 
 
-    this.data.children.sort(function (a, b) {
-        return a.sum <= b.sum ? 1 : -1;
-    });
+    
 
     this.pos(this.data, this.rect);
 
