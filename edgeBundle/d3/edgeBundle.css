@@ -3,9 +3,9 @@
   fill: #bbb;
 }
 
-.node:hover {
+/*.node:hover {
   fill: #000;
-}
+}*/
 
 .link {
   stroke: steelblue;
@@ -14,7 +14,7 @@
   pointer-events: none;
 }
 
-.node:hover,
+/*.node:hover,
 .node--source,
 .node--target {
   font-weight: 700;
@@ -40,4 +40,4 @@
 
 .link--target {
   stroke: #2ca02c;
-}
+}*/
