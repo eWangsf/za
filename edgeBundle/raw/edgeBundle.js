@@ -32,20 +32,21 @@ function edgeBundle(data, beta) {
 
 
 edgeBundle.prototype.start = function () {
-    console.log('function start...');
+    console.log('start...');
     this.init();
 
-    // for (var i = 0; i < this.data.length; i++) {
-    //     console.log(this.data[i]);
-
-    // }
     // console.log(this.perDegree);
     this.renderNodes();
+    this.getPaths();
+    // this.renderPaths();
+    // for (var i = 0; i < this.data.length; i++) {
+    //     console.log(this.data[i]);
+    // }
 
 }
 
 edgeBundle.prototype.init = function () {
-    // console.log('function init...');
+    console.log('init...');
     var thisobj;
     var maxdepth = 1;
     var id = 0;
@@ -61,24 +62,52 @@ edgeBundle.prototype.init = function () {
         maxdepth = maxdepth > thisobj.depth ? maxdepth : thisobj.depth;
         this.data[i] = thisobj;
     }
-    // console.log(id);
+    id += 2;
     this.perDegree = 360 / id;
 }
 
 edgeBundle.prototype.renderNodes = function () {
+    console.log('renderNodes...');
     var thisobj;
     var txtstr = '';
     for (var i = 0; i < this.data.length; i++) {
-        console.log(i);
         thisobj = this.data[i];
-        txtstr += '<text class="node" transform="rotate(' + ((thisobj.id - 1) * this.perDegree) + ')translate(' + (width / 2 - 120) + ',0)" style="text-anchor: start;">' + thisobj.layers[thisobj.depth] + '</text>';
-        // console.log('<text class="node" transform="rotate(' + ((thisobj.id - 1) * this.perDegree) + ')translate(' + (width / 2 - 120) + ',0)" style="text-anchor: start;">AgglomerativeCluster</text>');
+        thisobj.degree = (thisobj.id) * this.perDegree - 90;
+        thisobj.x = width / 2 - 128;
+        thisobj.y = 0;
+        thisobj.txt = thisobj.layers[thisobj.depth];
+        this.data[i] = thisobj;
+        txtstr += '<text class="node" transform="rotate(' + thisobj.degree + ')translate(' + thisobj.x + ',' + thisobj.y + ')' + (thisobj.degree < 90 ? '' : 'rotate(180)') + '" style="text-anchor: ' + (thisobj.degree < 90 ? 'start' : 'end') + ';">' + thisobj.txt + '</text>';
     }
     node.innerHTML += txtstr;
-}   
+}
+
+edgeBundle.prototype.getPaths = function () {
+    console.log('getPaths...')
+    var paths = [];
+    var data = this.data;
+    for (var i = 0; i < data.length; i++) {
+        for (var j = 0; j < data[i].imports.length; j++) {
+            paths.push(this.getPath(data[i].name, data[i].imports[j]));
+        }
+    }
+
+    console.log(paths);
+
+
+
+    this.paths = paths;
+}
+
+edgeBundle.prototype.getPath = function (name1, name2) {
+    console.log('getPath...');
+    var path = [];
+    console.log(name1 + '  ' + name2);
+    return path;
+}
 
 edgeBundle.prototype.getHier = function (o) {
-    console.log('function getHier...');
+    console.log('getHier...');
     console.log(o);
 
 
