@@ -1,4 +1,4 @@
-
+console.log(data);
 var width = 960,
     radius = width / 2,
     innerRadius = radius - 120;
