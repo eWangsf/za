@@ -7,7 +7,8 @@ var svg,
     nodes;
 
 var bundle,
-    beta = .85;
+    beta = .85,
+    dt = 0.008;
 
 
 window.onload = function () {
@@ -17,11 +18,11 @@ window.onload = function () {
     node = svg.getElementsByTagName('g')[0].getElementsByTagName('g')[0];
     link = svg.getElementsByTagName('g')[0].getElementsByTagName('g')[1];
 
-    bundle = new edgeBundle(data, beta);
+    bundle = new edgeBundle(data, beta, dt);
     bundle.start();
 }
 
-function edgeBundle(data, beta) {
+function edgeBundle(data, beta, dt) {
     this.data = data;
     this.beta = beta;
     this.nodes = [];
@@ -31,6 +32,7 @@ function edgeBundle(data, beta) {
     this.layerwidth = 100;
     this.hier = {};
     this.indexedData = {};
+    this.dt = dt;
 }
 
 edgeBundle.prototype.start = function () {
@@ -175,61 +177,83 @@ edgeBundle.prototype.renderPaths = function () {
     var paths = [];
     var data = this.data;
 
-            var x = this.getPath("flare.analytics.cluster.AgglomerativeCluster", "flare.animate.Transitioner");
-            paths.push(x);
-
-    for(var i = 0; i < paths.length; i++) {
-
-        this.renderSpline(paths[i]);
+    // var x = this.getPath("flare.analytics.cluster.AgglomerativeCluster", "flare.animate.Transitioner");
+    // paths.push(x);
+    for(var i = 0; i < data.length; i++) {
+        for(var j = 0; j < data[i].imports.length; j++) {
+            paths.push(this.getPath(data[i].name, data[i].imports[j]));
+        }
     }
 
-    // render
-    // {
-    //     var path = paths[0];
-    //     var n = path.length - 1;
-    //     var k = 2;
-    //     var u = [];
-    //     for(var j = 0; j <= k; j++)
-    //         u[j] = 0;
-    //     for( ; j <= n; j++ )
-    //         u[j] = (j - k) * 1.0 / (n - k + 1);
-    //     for( ; j <= n + k + 1; j++ )
-    //         u[j] = 1.0;
-    //     var str = '<polyline fill="none" stroke="#2a5caa" stroke-width="0.5" points="';
-    //     for(var t = 0; t <= 1; t += 0.08) {
-    //         var x = 0,
-    //             y = 0;
-    //         for(var i = 0; i <= n; i++ )
-    //         {
-    //             x += path[i].x * N(i, k, t, u);
-    //             y += path[i].y * N(i, k, t, u);
-    //         }
-    //         str += x + "," + y + " ";
-    //     }
-    //     str += '"></polyline>';
-    //     link.innerHTML += str;
-    // }
+    for(var i = 0; i < paths.length; i++) {
+        this.renderSpline(paths[i]);
+    }
 }
 
 edgeBundle.prototype.renderSpline = function (path) {
     // beta update
-    var length = path.length;
+    var n = path.length - 1;
+    var k = 2;
     var beta = this.beta;
-    for(var i = 0; i < length; i++) {
-        path[i].x = beta * path[i].x + (1 - beta) * (path[0].x + i / (length - 1) * (path[length - 1].x - path[0].x));
-        path[i].y = beta * path[i].y + (1 - beta) * (path[0].y + i / (length - 1) * (path[length - 1].y - path[0].y));
+    var dt = this.dt;
+    for(var i = 0; i <= n; i++) {
+        path[i].x = beta * path[i].x + (1 - beta) * (path[0].x + i / n * (path[n].x - path[0].x));
+        path[i].y = beta * path[i].y + (1 - beta) * (path[0].y + i / n * (path[n].y - path[0].y));
     }
 
-    // computate points according to poline
-
-
-    // render
-    var str = '<polyline class="link" points="';
-    for(var i = 0; i < path.length; i++) {
-        str += path[i].x + ' ' + path[i].y + ' ';
+    var N = function(i, k, t, u) {     
+        if( k == 0 )
+        {
+            if( ( u[i] <= t ) && ( t <= u[i+1] ) ) {
+                return 1.0;
+            } else {
+                return 0.0;
+            }
+        } else {
+            var len1 = (u[i+k]-u[i]);
+            var len2 = (u[i+k+1]-u[i+1]);
+            if( len1 == 0 ) len1 = 1;
+            if( len2 == 0 ) len2 = 1;
+            var c1 = 1.0*(t-u[i])/len1;
+            var c2 = 1.0*(u[i+k+1]-t)/len2;
+            return c1*N(i,k-1,t,u) + c2*N(i+1,k-1,t,u); 
+        }
     }
-    str += '" />';
-    link.innerHTML += str;
+
+    // generate node vector 
+    var u = [];
+    for(var j = 0; j <= k; j++) {
+        u[j] = 0;
+    }
+    for(; j <= n; j++) {
+        u[j] = (j - k) * 1.0 / (n - k + 1);
+    }
+    for(; j <= (n + k + 1); j++) {
+        u[j] = 1.0;
+    }
+      
+    var stringPoints = '<polyline class="link" points="';
+    for(var t = 0; t <= 1; t += dt) {
+        var x = 0,
+            y = 0;
+        for(var i = 0; i <= n; i++) {
+            x += path[i].x * N(i, k, t, u);
+            y += path[i].y * N(i, k, t, u);
+        }
+        stringPoints = stringPoints + x + "," + y + " ";
+    }
+    stringPoints += '"></polyline>';
+    link.innerHTML += stringPoints;
+    
+}
+
+edgeBundle.prototype.compute = function (x, i, k) {
+    // if(i)
+}
+
+
+edgeBundle.prototype.getPoint = function () {
+
 }
 
 edgeBundle.prototype.getPath = function (name1, name2) {
@@ -257,8 +281,8 @@ edgeBundle.prototype.getPath = function (name1, name2) {
         y: r * Math.sin((this.perDegree * obj1.id - 90) / 180 * Math.PI)
     };
     path.push(pos);
-    console.log(obj1.name);
-    console.log(r);
+    // console.log(obj1.name);
+    // console.log(r);
     var pre = '';
     for(var i = obj1.depth - 1; i > parentdepth; i--) {
         pre = obj1.pre[i];
@@ -274,8 +298,23 @@ edgeBundle.prototype.getPath = function (name1, name2) {
             y: r * Math.sin((this.perDegree * id - 90) / 180 * Math.PI)
         };
         path.push(pos);
-        console.log(pre);
-        console.log(r);
+        // console.log(pre);
+        // console.log(r);
+    }
+    if(Math.abs(obj1.depth - obj2.depth) <= 2) {
+        var l = lca.split('.').length;
+        var r = this.layerwidth * (l - 1);
+        var id = 0;
+        for(var j = 0; j < hier[i].length; j++) {
+            if(pre === hier[i][j].pre) {
+                id = hier[i][j].id;
+            }
+        }
+        var pos = {
+            x: r * Math.cos((this.perDegree * id - 90) / 180 * Math.PI),
+            y: r * Math.sin((this.perDegree * id - 90) / 180 * Math.PI)
+        };
+        path.push(pos);
     }
     for(var i = parentdepth + 1; i < obj2.depth; i++) {
         pre = obj2.pre[i];
@@ -291,8 +330,8 @@ edgeBundle.prototype.getPath = function (name1, name2) {
             y: r * Math.sin((this.perDegree * id - 90) / 180 * Math.PI)
         };
         path.push(pos);
-        console.log(pre);
-        console.log(r);
+        // console.log(pre);
+        // console.log(r);
     }
     var r = this.layerwidth * (this.maxdepth - 1);
     var pos = {
@@ -300,27 +339,15 @@ edgeBundle.prototype.getPath = function (name1, name2) {
         y: r * Math.sin((this.perDegree * obj2.id - 90) / 180 * Math.PI)
     };
     path.push(pos);
-    console.log(obj2.name);
-    console.log(r);
+    // console.log(obj2.name);
+    // console.log(r);
 
-    console.log(path);
+    // console.log('');
+
+    // console.log(path);
     return path;
 }
 
-function N(i, k, t, u) {
-    if( k == 0 ) {
-        if( ( u[i] <= t ) && ( t <= u[i+1] ) ) return 1.0;
-        else return 0.0;
-    } else {
-        var len1 = (u[i+k]-u[i]);
-        var len2 = (u[i+k+1]-u[i+1]);
-        if( len1 == 0 ) len1 = 1;
-        if( len2 == 0 ) len2 = 1;
-        var c1 = 1.0*(t-u[i])/len1;
-        var c2 = 1.0*(u[i+k+1]-t)/len2;
-        return c1*N(i,k-1,t,u) + c2*N(i+1,k-1,t,u); 
-    }
-}
 
 
 
