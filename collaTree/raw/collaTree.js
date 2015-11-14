@@ -34,6 +34,7 @@ collaTree.prototype.start = function () {
     root.id = 1;
     this.collapse(root);
     this.update(root);
+    this.render(root);
 };
 
 collaTree.prototype.collapse = function (o) {
@@ -50,7 +51,6 @@ collaTree.prototype.update = function (source) {
     source.children = source._children;
     source._children = null;
 
-    var nodes = [source];
     var children = source.children;
     var thisobj;
     for(var i = 0, j = - (children.length - 1) / 2; i < children.length; i++, j++) {
@@ -67,33 +67,53 @@ collaTree.prototype.update = function (source) {
         }
         thisobj.parents.push(source);
         thisobj.x = source.x + (height / children.length > interval ? interval : (height / children.length)) * j;
-        nodes.push(thisobj);
     }
 
+    console.log(source);
+    
+}
 
+collaTree.prototype.render = function (source) {
+    if(!source.children) {
+        return ;
+    }
+
+    // nodes
+    var children = source.children;
     var nodesStr = '';
-    for(var i = nodes.length - 1; i >= 0; i--) {
-        thisobj = nodes[i];
-        this.container.innerHTML += '<g class="node" transform="translate(' + thisobj.y + ', ' + thisobj.x + ')">'
+    nodesStr += '<g class="node" transform="translate(' + source.y + ', ' + source.x + ')">'
+            + '<circle r="4.5" style="fill: ' + (source.children || source._children ? 'rgb(176, 196, 222)' : 'rgb(255, 255, 255)') + ';"></circle>'
+            + '<text x="-10" dy=".35em" text-anchor="end" style="fill-opacity: 1;">' + source.name + '</text>'
+            + '</g>';
+    var thisobj;
+    for(var i = children.length - 1; i >= 0; i--) {
+        thisobj = children[i];
+        nodesStr += '<g class="node" transform="translate(' + thisobj.y + ', ' + thisobj.x + ')">'
             + '<circle r="4.5" style="fill: ' + (thisobj.children || thisobj._children ? 'rgb(176, 196, 222)' : 'rgb(255, 255, 255)') + ';"></circle>'
             + '<text x="-10" dy=".35em" text-anchor="end" style="fill-opacity: 1;">' + thisobj.name + '</text>'
             + '</g>';
     }
     this.container.innerHTML += nodesStr;
 
-    console.log(nodes);
+    // links
     var linksStr = '';
-    var thisobj;
-    for(var i = 1; i < nodes.length; i++) {
-        thisobj = nodes[i];
-        linksStr += '<path class="link" d="M' + thisobj.parents[0].y + ' ' + thisobj.parents[0].x 
-                + ' C' + thisobj.parents[0].y + ' ' + (2 * thisobj.parents[0].x / 3 + (thisobj.x - thisobj.parents[0].x) / 3) 
-                + ' ' + thisobj.parents[0].y + ' ' + (thisobj.parents[0].x / 3 + 2 * (thisobj.x - thisobj.parents[0].x) / 3) 
+    for(var i = 0; i < children.length; i++) {
+        thisobj = children[i];
+        var dy = thisobj.y - source.y;
+        // linksStr += '<path class="link" d="M' + source.y + ' ' + source.x 
+        //         + ' C' + source.y + ' ' + (2 * source.x / 3 + (thisobj.x - source.x) / 3) 
+        //         + ' ' + source.y + ' ' + (source.x / 3 + 2 * (thisobj.x - source.x) / 3) 
+        //         + ' ' +  thisobj.y + ' ' + thisobj.x + ' " />';
+        linksStr += '<path class="link" d="M' + source.y + ' ' + source.x 
+                + ' C' + (source.y + dy / 3) + ' ' + (source.x)
+                + ' ' + (source.y + 2 * dy / 3) + ' ' + (thisobj.x) 
                 + ' ' +  thisobj.y + ' ' + thisobj.x + ' " />';
     }
     this.container.innerHTML += linksStr;
 
 
-    
+    for(var i = 0; i < source.children.length; i++) {
+        this.render(source.children[i]);
+    }
 
 }
