@@ -2,7 +2,7 @@ var svg,
     g,
     width,
     height,
-    interval = 60;
+    interval = 80;
 
 var colla;
 
@@ -32,6 +32,7 @@ collaTree.prototype.start = function () {
     root.x = root.x0;
     root.depth = 0;
     root.id = 1;
+    root.num = 0;
     this.collapse(root);
     this.update(root);
     this.render(root);
@@ -47,13 +48,27 @@ collaTree.prototype.collapse = function (o) {
     }
 }
 
+collaTree.prototype.getNum = function (source) {
+    if(!source.children) {
+        source.num = 1;
+        return 1;
+    }
+    var children = source.children;
+    for(var i = 0; i < children.length; i++) {
+        source.num += this.getNum(children[i]);
+    }
+    return source.num;
+}
+
 collaTree.prototype.update = function (source) {
     source.children = source._children;
     source._children = null;
 
+    source.num = this.getNum(this.data);
+
     var children = source.children;
     var thisobj;
-    for(var i = 0, j = - (children.length - 1) / 2; i < children.length; i++, j++) {
+    for(var i = 0, j = - (source.num - 1) / 2; i < children.length; i++, j++) {
         thisobj = children[i];
         thisobj.depth = source.depth + 1;
         thisobj.y = thisobj.depth * 180;
@@ -66,11 +81,9 @@ collaTree.prototype.update = function (source) {
             thisobj.parents = [];
         }
         thisobj.parents.push(source);
-        thisobj.x = source.x + (height / children.length > interval ? interval : (height / children.length)) * j;
-    }
-
-    console.log(source);
-    
+        thisobj.x = source.x + ((height / source.num) > interval ? interval : (height / source.num)) * j;
+        // thisobj.x = source.x + (interval) * j;
+    }    
 }
 
 collaTree.prototype.render = function (source) {
