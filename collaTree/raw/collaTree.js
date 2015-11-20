@@ -6,8 +6,9 @@ var svg,
 
 var colla;
 
-var r = 4.5;
-var count = 1;
+var r = 4.5,
+    count = 1,
+    tmpinterval = 0;
 
 window.onload = function () {
     svg = document.getElementsByTagName('svg')[0];
@@ -17,18 +18,7 @@ window.onload = function () {
     colla = new collaTree(data, g);
     colla.collapse(this.data);
     colla.start();
-
-    var nodes = g.getElementsByTagName('g');
-    // console.log(colla.data);
-
-    for(var i = 0; i < nodes.length; i++) {
-        nodes[i].onclick = function () {
-            var name = this.getElementsByTagName('text')[0].innerHTML;
-            colla.toggle(colla.data, name);
-            colla.start();
-        }
-    }
-
+    colla.addEvent();
 }
 
 function collaTree(data, g) {
@@ -46,7 +36,10 @@ collaTree.prototype.start = function () {
     root.depth = 0;
     root.id = 1;
     root.num = 0;
-    console.log(root);
+    if(!root.children) {
+        root.children = root._children;
+        root._children = null;
+    }
     this.update(root);
     this.render(root);
 };
@@ -62,11 +55,13 @@ collaTree.prototype.collapse = function (o) {
 }
 
 collaTree.prototype.getNum = function (source) {
-    if(!source.children) {
+    if((!source.children)) {
         source.num = 1;
         return 1;
     }
+
     var children = source.children;
+    source.num = 0;
     for(var i = 0; i < children.length; i++) {
         source.num += this.getNum(children[i]);
     }
@@ -74,17 +69,15 @@ collaTree.prototype.getNum = function (source) {
 }
 
 collaTree.prototype.update = function (source) {
-    if(!source.children) {
-        source.children = source._children;
-        source._children = null;
-    }
-
-    source.num = this.getNum(this.data);
-    // console.log(source);
+    this.getNum(this.data);
+    console.log(this.data);
+    tmpinterval = height / (this.data.num);
     var children = source.children;
     var thisobj;
-    for(var i = 0, j = - (source.num - 1) / 2; i < children.length; i++, j++) {
+
+    for(var i = 0, j = - (source.num) / 2; i < children.length; i++) {
         thisobj = children[i];
+        j += thisobj.num / 2;
         thisobj.depth = source.depth + 1;
         thisobj.y = thisobj.depth * 180;
         if(!thisobj.id) {
@@ -96,9 +89,14 @@ collaTree.prototype.update = function (source) {
             thisobj.parents = [];
         }
         thisobj.parents.push(source);
-        thisobj.x = source.x + ((height / source.num) > interval ? interval : (height / source.num)) * j;
-        // thisobj.x = source.x + (interval) * j;
-    }    
+        // thisobj.x = source.x + ((height / source.num) > interval ? interval : (height / source.num)) * j;
+        thisobj.x = source.x + j * tmpinterval;
+        j += thisobj.num / 2;
+        if(thisobj.children) {
+            this.update(thisobj);
+        }
+    }
+    
 }
 
 collaTree.prototype.render = function (source) {
@@ -112,10 +110,6 @@ collaTree.prototype.render = function (source) {
     for(var i = 0; i < children.length; i++) {
         thisobj = children[i];
         var dy = thisobj.y - source.y;
-        // linksStr += '<path class="link" d="M' + source.y + ' ' + source.x 
-        //         + ' C' + source.y + ' ' + (2 * source.x / 3 + (thisobj.x - source.x) / 3) 
-        //         + ' ' + source.y + ' ' + (source.x / 3 + 2 * (thisobj.x - source.x) / 3) 
-        //         + ' ' +  thisobj.y + ' ' + thisobj.x + ' " />';
         linksStr += '<path class="link" d="M' + source.y + ' ' + source.x 
                 + ' C' + (source.y + dy / 3) + ' ' + (source.x)
                 + ' ' + (source.y + 2 * dy / 3) + ' ' + (thisobj.x) 
@@ -139,34 +133,43 @@ collaTree.prototype.render = function (source) {
     }
     this.container.innerHTML += nodesStr;
 
-
     for(var i = 0; i < source.children.length; i++) {
         this.render(source.children[i]);
     }
+
+    this.addEvent();
 }
 
 collaTree.prototype.toggle = function (obj, name) {
-    // console.log(obj);
     if(obj.name === name) {
         if(obj.children) {
+            obj.num = 1;
             obj._children = obj.children;
             obj.children = null;
         } else {
+            obj.num = obj._children.length;
             obj.children = obj._children;
             obj._children = null;
         }
-        // console.log(this.data);
-        return true;
+        return ;
     }
-    
-
     if (!obj.children) {
         return ;
     }
-
     for(var i = 0; i < obj.children.length; i++) {
         this.toggle(obj.children[i], name);
     }
 }
 
+collaTree.prototype.addEvent = function () {
+    var nodes = this.container.getElementsByTagName('g');
+    var obj = this;
+    for(var i = 0; i < nodes.length; i++) {
+        nodes[i].onclick = function () {
+            var name = this.getElementsByTagName('text')[0].innerHTML;
+            obj.toggle(obj.data, name);
+            obj.start();
+        }
+    }
+}
 
