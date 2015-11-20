@@ -45,6 +45,7 @@ function update(source) {
     // Compute the new tree layout.
     var nodes = tree.nodes(root).reverse(),
         links = tree.links(nodes);
+    console.log(nodes);
 
     // Normalize for fixed-depth.
     nodes.forEach(function (d) { 
