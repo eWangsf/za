@@ -15,7 +15,6 @@ window.onload = function () {
     paracoor.start();
 }
 
-
 function paraCoor(data, svg) {
     this.data = data;
     this.container = svg;
@@ -54,7 +53,6 @@ paraCoor.prototype.start = function () {
     }
     this.ranges = ranges;
 
-    this.renderAxis();
     this.renderLines({});
     this.addEvent();
 }
@@ -63,15 +61,22 @@ paraCoor.prototype.renderAxis = function () {
     var ranges = this.ranges;
     var interval = this.interval;
     var axisStr = '';
+    var txtStr = '';
     var i = 0;
     for(var key in ranges) {
         axisStr += '<line id="' + i + '" class="axis" x1="' + ((i + 0.5) * interval)  + '" y1="' + this.padding.top + '" x2="' + ((i + 0.5) * interval) + '" y2="' + (height - this.padding.bottom) + '" />';
+        txtStr += '<text x="' + ((i + 0.5) * interval - 15) + '" y="30" fill="black">' + key + '(' + ranges[key][0] + ', ' + ranges[key][1] + ')' + '</text>';
         i++;
     }
-    this.container.innerHTML += axisStr;
+    this.container.innerHTML += axisStr + txtStr;
+
 }
 
 paraCoor.prototype.renderLines = function (opt) {
+    console.log(opt);
+    this.container.innerHTML = '';
+    this.renderAxis();
+
     var data = this.data,
         ranges = this.ranges,
         axnum = this.axnum,
@@ -79,11 +84,28 @@ paraCoor.prototype.renderLines = function (opt) {
     var axHeight = height - this.padding.top - this.padding.bottom,
         top = this.padding.top;
 
-    var linesStr = '';
-    var thisobj,
-        color = '';
+    var validData = [],
+        thisobj;
     for(var i = 0; i < data.length; i++) {
         thisobj = data[i];
+        var flag = true;
+        for(var key in opt) {
+            if ( (thisobj[key] < opt[key][0]) || (thisobj[key] > opt[key][1]) ) {
+                flag = false;
+                break;
+            }
+        }
+        if(flag) {
+            validData.push(thisobj);
+        }
+    }
+
+    var linesStr = '';
+    for(var i = 0; i < validData.length; i++) {
+        thisobj = validData[i];
+        var thisstr = '<polyline class="link" points="',
+            j = 0,
+            color = '';
         if(ranges['mpg'][1] === ranges['mpg'][0]) {
             color = 'rgb(120, 120, 120)';
         } else {
@@ -92,24 +114,24 @@ paraCoor.prototype.renderLines = function (opt) {
                     + parseInt(177 - 80 * (thisobj['mpg'] - ranges['mpg'][0]) * inter) + ', ' 
                     + parseInt(36 + 200 * (thisobj['mpg'] - ranges['mpg'][0]) * inter) + ')';
         }
-        linesStr += '<polyline class="link" points="';
-        var j = 0;
 
         for(var key in thisobj) {
-            if(key === "name") {
+            if(key === 'name') {
                 continue;
             }
-            if (ranges[key][1] === ranges[key][0]) {
-                linesStr += ((j + 0.5) * interval) + ',' + (axHeight * 0.5 + top) + ' ';
-            } else if (!thisobj[key]) {
-                linesStr += '" stroke="' + color + '" /><polyline class="link" points="';
+            if(!thisobj[key]) {
+                thisstr += '" stroke="' + color + '" /><polyline class="link" points="';
+            } else if (ranges[key][1] === ranges[key][0]) {
+                thisstr += ((j + 0.5) * interval) + ',' + (axHeight * 0.5 + top) + ' ';
             } else {
-                linesStr += ((j + 0.5) * interval) + ',' + (axHeight * (thisobj[key] - ranges[key][0]) / (ranges[key][1] - ranges[key][0]) + top) + ' ';
+                thisstr += ((j + 0.5) * interval) + ',' + (axHeight * (thisobj[key] - ranges[key][0]) / (ranges[key][1] - ranges[key][0]) + top) + ' ';
             }
             j++;
         }
-        linesStr += '" stroke="' + color + '" />';
+        thisstr += '" stroke="' + color + '" />'
+        linesStr += thisstr;
     }
+
     this.container.innerHTML += linesStr;
 }
 
@@ -119,12 +141,14 @@ paraCoor.prototype.addEvent = function () {
     var obj = this;
 
     this.container.onmousedown = function (event) {
-        thisSelect.x1 = event.clientX;
-        thisSelect.y1 = event.clientY;
+        thisSelect.x1 = event.clientX + document.body.scrollLeft;
+        thisSelect.y1 = event.clientY + document.body.scrollTop;
+        obj.container.style.cursor = 'crosshair';
     }
     this.container.onmouseup = function (event) {
-        thisSelect.x2 = event.clientX;
-        thisSelect.y2 = event.clientY;
+        thisSelect.x2 = event.clientX + document.body.scrollLeft;
+        thisSelect.y2 = event.clientY + document.body.scrollTop;
+        obj.container.style.cursor = 'default';
         if(thisSelect.x1 && thisSelect.y1 && thisSelect.x2 && thisSelect.y2) {
             obj.compute(thisSelect);
         }
@@ -132,7 +156,6 @@ paraCoor.prototype.addEvent = function () {
 }
 
 paraCoor.prototype.compute = function (thisSelect) {
-    // console.log(thisSelect);
     var indexes = [];
     var interval = this.interval,
         axnum = this.axnum,
@@ -141,11 +164,12 @@ paraCoor.prototype.compute = function (thisSelect) {
     for(var i = 0; i < axnum; i++) {
         if(((thisSelect.x2 - (i + 0.5) * interval) * (thisSelect.x1 - (i + 0.5) * interval) < 0) ) {
             indexes.push(i);
+            break;
         }
     }
-    // console.log(indexes);
     var i = 0;
     var j = 0;
+
     for(var key in ranges) {
         if(i === indexes[j]) {
             selectArea[key] = ranges[key];
@@ -153,14 +177,14 @@ paraCoor.prototype.compute = function (thisSelect) {
         }
         i++;
     }
-    // console.log(selectArea);
+    var opt = {};
     for(var key in selectArea) {
         var interv = selectArea[key][1] - selectArea[key][0];
-        selectArea[key][0] = interv * (thisSelect.y1 - padding.top) / (height - padding.top - padding.bottom);
-        selectArea[key][1] = interv * (thisSelect.y2 - padding.top) / (height - padding.top - padding.bottom);
+        opt[key] = [];
+        opt[key][0] = interv * (thisSelect.y1 - padding.top) / (height - padding.top - padding.bottom) + selectArea[key][0];
+        opt[key][1] = interv * (thisSelect.y2 - padding.top) / (height - padding.top - padding.bottom) + selectArea[key][0];
     }
-    console.log(selectArea);
-    renderLines(selectArea);
+    this.renderLines(opt);
 }
 
 
