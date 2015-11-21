@@ -73,7 +73,7 @@ paraCoor.prototype.renderAxis = function () {
 }
 
 paraCoor.prototype.renderLines = function (opt) {
-    console.log(opt);
+    // console.log(opt);
     this.container.innerHTML = '';
     this.renderAxis();
 

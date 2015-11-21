@@ -9,4 +9,9 @@
 .axis {
     stroke: #555;
     stroke-width: 4;
+    /*cursor: crosshair;*/
+}
+
+text {
+    font-size: 14px;
 }
