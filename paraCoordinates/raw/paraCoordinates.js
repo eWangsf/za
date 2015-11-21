@@ -4,6 +4,8 @@ var svg,
 
 var paracoor;
 
+var selectArea = {};
+
 window.onload = function () {
     svg = document.getElementsByTagName('svg')[0];
     width = svg.getAttribute('width');
@@ -53,7 +55,7 @@ paraCoor.prototype.start = function () {
     this.ranges = ranges;
 
     this.renderAxis();
-    this.renderLines();
+    this.renderLines({});
     this.addEvent();
 }
 
@@ -69,7 +71,7 @@ paraCoor.prototype.renderAxis = function () {
     this.container.innerHTML += axisStr;
 }
 
-paraCoor.prototype.renderLines = function () {
+paraCoor.prototype.renderLines = function (opt) {
     var data = this.data,
         ranges = this.ranges,
         axnum = this.axnum,
@@ -112,20 +114,53 @@ paraCoor.prototype.renderLines = function () {
 }
 
 paraCoor.prototype.addEvent = function () {
-    var nodes = this.container.getElementsByTagName('line');
-    for(var i = 0; i < nodes.length; i++) {
-        var obj = nodes[i];
-        nodes[i].onmousedown = function () {
-            console.log(this.getAttribute('id'));
-        }
-        nodes[i].onmouseup = function () {
-            console.log(this.getAttribute('id') + ' up');
-        }
-        nodes[i].onmousemove = function () {
-            console.log('move');
-        }
+    selectArea = {};
+    var thisSelect = {};
+    var obj = this;
 
+    this.container.onmousedown = function (event) {
+        thisSelect.x1 = event.clientX;
+        thisSelect.y1 = event.clientY;
     }
+    this.container.onmouseup = function (event) {
+        thisSelect.x2 = event.clientX;
+        thisSelect.y2 = event.clientY;
+        if(thisSelect.x1 && thisSelect.y1 && thisSelect.x2 && thisSelect.y2) {
+            obj.compute(thisSelect);
+        }
+    }
+}
+
+paraCoor.prototype.compute = function (thisSelect) {
+    // console.log(thisSelect);
+    var indexes = [];
+    var interval = this.interval,
+        axnum = this.axnum,
+        padding = this.padding,
+        ranges = this.ranges;
+    for(var i = 0; i < axnum; i++) {
+        if(((thisSelect.x2 - (i + 0.5) * interval) * (thisSelect.x1 - (i + 0.5) * interval) < 0) ) {
+            indexes.push(i);
+        }
+    }
+    // console.log(indexes);
+    var i = 0;
+    var j = 0;
+    for(var key in ranges) {
+        if(i === indexes[j]) {
+            selectArea[key] = ranges[key];
+            j++;
+        }
+        i++;
+    }
+    // console.log(selectArea);
+    for(var key in selectArea) {
+        var interv = selectArea[key][1] - selectArea[key][0];
+        selectArea[key][0] = interv * (thisSelect.y1 - padding.top) / (height - padding.top - padding.bottom);
+        selectArea[key][1] = interv * (thisSelect.y2 - padding.top) / (height - padding.top - padding.bottom);
+    }
+    console.log(selectArea);
+    renderLines(selectArea);
 }
 
 
