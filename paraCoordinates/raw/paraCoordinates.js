@@ -170,19 +170,19 @@ paraCoor.prototype.compute = function (thisSelect) {
     var i = 0;
     var j = 0;
 
+    var opt = {};
+    for(var key in selectArea) {
+        opt[key] = selectArea[key];
+    }
     for(var key in ranges) {
         if(i === indexes[j]) {
-            selectArea[key] = ranges[key];
+            selectArea[key] = [];
+            opt[key] = [];
+            selectArea[key][0] = opt[key][0] = (ranges[key][1] - ranges[key][0]) * (thisSelect.y1 - padding.top) / (height - padding.top - padding.bottom) + ranges[key][0];
+            selectArea[key][1] = opt[key][1] = (ranges[key][1] - ranges[key][0]) * (thisSelect.y2 - padding.top) / (height - padding.top - padding.bottom) + ranges[key][0];
             j++;
         }
         i++;
-    }
-    var opt = {};
-    for(var key in selectArea) {
-        var interv = selectArea[key][1] - selectArea[key][0];
-        opt[key] = [];
-        opt[key][0] = interv * (thisSelect.y1 - padding.top) / (height - padding.top - padding.bottom) + selectArea[key][0];
-        opt[key][1] = interv * (thisSelect.y2 - padding.top) / (height - padding.top - padding.bottom) + selectArea[key][0];
     }
     this.renderLines(opt);
 }
