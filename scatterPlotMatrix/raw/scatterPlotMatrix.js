@@ -5,10 +5,9 @@ var svg,
         top: 0,
         left: 200
     };
+    padding = 10;
 
 var scattermatrix;
-
-var r = 3;
 
 window.onload = function () {
     svg = document.getElementsByTagName('svg')[0];
@@ -26,7 +25,6 @@ function scatterMatrix(data, dims, svg) {
     this.container = svg;
     this.ranges = {};
 }
-
 
 scatterMatrix.prototype.start = function () {
     var dims = this.dims,
@@ -54,7 +52,7 @@ scatterMatrix.prototype.start = function () {
 
     this.renderRects();
     this.renderCircles();
-
+    this.addEvent();
 }
 
 scatterMatrix.prototype.renderRects = function () {
@@ -99,16 +97,65 @@ scatterMatrix.prototype.renderCircles = function () {
                 var y_key = dims[k+1],
                     y_range = ranges[y_key],
                     y_offset = 150 * ((thisobj[k + 1] - ranges[y_key][0]) / (ranges[y_key][1] - ranges[y_key][0]));
-                recordStr += '<circle class="' + thisobj[0] + '" cx="' + (160 * j + x_offset) + '" cy="' + (160 * k + 150 - y_offset) + '" r="3" />';
+                // recordStr += '<circle' + ((j === 0) && (k === 0) ? (' id="' + i + '" ') : '' ) + ' class="' + thisobj[0] + '" cx="' + (160 * j + x_offset) + '" cy="' + (160 * k + 150 - y_offset) + '" r="3" />';
+                recordStr += '<circle class="' + ('' + i + ' ' + thisobj[0]) + '" cx="' + (160 * j + x_offset) + '" cy="' + (160 * k + 150 - y_offset) + '" r="3" />';
 
             }
         }
         // record render finish
     }
     this.container.innerHTML += recordStr;
-
 }
 
+scatterMatrix.prototype.addEvent = function () {
+    var obj = this;
+    var svg = this.container;
+    var area = {};
+    svg.onmousedown = function (event) {
+        area.x1 = event.clientX + document.body.scrollLeft - margin.left - padding;
+        area.y1 = event.clientY + document.body.scrollTop - padding;
+        svg.style.cursor = 'crosshair';
+    }
+    svg.onmouseup = function (event) {
+        area.x2 = event.clientX + document.body.scrollLeft - margin.left - padding;
+        area.y2 = event.clientY + document.body.scrollTop - padding;
+        svg.style.cursor = 'default';
+        if(area.x1 && area.y1 && area.x2 && area.y2) {
+            obj.compute(area);
+        }   
+    }
+}
+
+scatterMatrix.prototype.compute = function (area) {
+    var circledoms = document.getElementsByTagName('circle'),
+        length = circledoms.length;
+
+    var nums = [];
+    var thisobj;
+    for(var i = 0; i < length; i++) {
+        thisobj = circledoms[i];
+        var cx = thisobj.getAttribute('cx'),
+            cy = thisobj.getAttribute('cy');
+        if((cx < area.x1) || (cx > area.x2) || (cy < area.y1) || (cy > area.y2)) {
+        } else {
+            var num = parseInt(thisobj.getAttribute('class'));
+            nums.push(num);
+        }
+    }
+
+    var j = 0;
+    for(var i = 0; i < length; i++) {
+        thisobj = circledoms[i];
+        var num = parseInt(thisobj.getAttribute('class'));
+        if(num == nums[j]) {
+            i = i + 15;
+            j++;
+        } else {
+            thisobj.setAttribute('class', thisobj.getAttribute('class') + ' unable');
+        }
+    }
+
+}
 
 
 

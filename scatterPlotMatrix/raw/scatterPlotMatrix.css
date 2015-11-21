@@ -1,5 +1,6 @@
 
 svg {
+    padding: 10px;
     margin: 0px 200px;
     overflow: visible;
 }
@@ -20,6 +21,13 @@ circle.versicolor {
 circle.virginica {
     fill: #008;
 }
+
+.setosa.unable,
+.versicolor.unable,
+.virginica.unable {
+    fill: #ccc;
+}
+
 
 rect {
     fill: none;
