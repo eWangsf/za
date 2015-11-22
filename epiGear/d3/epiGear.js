@@ -1,10 +1,3 @@
-// var svg,
-//     width = 960,
-//     height = 500;
-
-
-// var 
-
 
 var width = 960,
     height = 500,
@@ -13,7 +6,7 @@ var width = 960,
     y = Math.cos(2 * Math.PI / 3);
 
 var offset = 0,
-    speed = 2,
+    speed = 4,
     start = Date.now();
 
 
@@ -131,7 +124,11 @@ d3.selectAll('input[name=reference]')//选择三个radio元素
     .data([radius * 5,Infinity, -radius])//对应radio元素绑定数组中每一项
     .on('change',                     
         function(radius1) {
-            var radius0 = frame.datum().radius, angle = (Date.now() - start) * speed;
+            console.log(radius1);
+            var radius0 = frame.datum().radius, 
+            angle = (Date.now() - start) * speed;
+            // console.log(radius0);
+            // console.log(radius1);
             svg.attr('transform', 'rotate(' + (offset += angle / radius0 - angle / radius1) + ")");//画布转，每换一个模式的时候转动,这里svg可以改成frame
             frame.datum({radius: radius1});//每换一个模式变动整体转的半径率
         }
@@ -140,6 +137,7 @@ d3.selectAll('input[name=reference]')//选择三个radio元素
 d3.timer(function(){
     var angle = (Date.now() - start) * speed,
         transform = function (d) { return 'rotate(' + angle / d.radius + ')'; };
+        // transform = function (d) {console.log(d.radius); return 'rotate(' + angle / d.radius + ')'; };
     frame.selectAll('path').attr('transform', transform);//每个元素转
     frame.attr('transform',transform);//整体转
 });
