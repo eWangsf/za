@@ -124,7 +124,6 @@ d3.selectAll('input[name=reference]')//选择三个radio元素
     .data([radius * 5,Infinity, -radius])//对应radio元素绑定数组中每一项
     .on('change',                     
         function(radius1) {
-            console.log(radius1);
             var radius0 = frame.datum().radius, 
             angle = (Date.now() - start) * speed;
             // console.log(radius0);
