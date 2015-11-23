@@ -13,7 +13,7 @@ var projects = {
     },
     'tree map': {
         'raw': 'treemap/raw/treemap.html',
-        'd3': 'treemap/d3/Greemap.html'
+        'd3': 'treemap/d3/treemap.html'
     },
     'Hierarchical edge bundling': {
         'raw': 'edgeBundle/raw/edgeBundle.html',
@@ -47,7 +47,7 @@ for(var key in projects) {
     domstr += '<h4>' + key + '</h4><ul>';
     var value = projects[key];
     for(var k2 in value) {
-        domstr += '<li><a href="' + value[k2] + '">' + k2 + '</a></li>';
+        domstr += '<li><a href="codingPractice/' + value[k2] + '">' + k2 + '</a></li>';
     }
     domstr += '</ul>';
 }

@@ -14,7 +14,6 @@ var names = [
         "Adipisicing", "elit", 
         "Eiusmod tempor", "Incididunt"
     ],
-    data = [],
     colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5"];
 
 var eventdrops;
@@ -29,10 +28,6 @@ var yAxis,
 window.onload = function () {
     width = document.getElementsByTagName('svg')[0].getAttribute('width');
     height = document.getElementsByTagName('svg')[0].getAttribute('height');
-    // data initiate
-    for (var i = 0; i < names.length; i++) {
-        data.push(createEvent(names[i]));
-    }
 
     yAxis = document.getElementById('y_axis').getElementsByTagName('g')[0];
     bodyAxis = document.getElementById('graph_body');
@@ -40,23 +35,28 @@ window.onload = function () {
     bottomAxis = document.getElementById('bottom');
     delimiter = document.getElementById('delimiter');
 
-    eventdrops = new eventDrops(names, data, startTime, endTime);
-    eventdrops.start();
-    
+    eventdrops = new eventDrops(names, startTime, endTime);
+    eventdrops.start();    
 }
 
-function eventDrops(names, data, startTime, endTime) {
+function eventDrops(names, startTime, endTime) {
     this.names = names;
-    this.data = data;
+    this.data = [];
     this.startTime = startTime;
     this.endTime = endTime;
-    this.valid_data = this.data;
+    this.valid_data = [];
     this.valid_start = this.startTime;
     this.valid_end = this.endTime;
     this.lineDoms = [];
 }
 
 eventDrops.prototype.start = function () {
+    var names = this.names;
+    for (var i = 0; i < names.length; i++) {
+        var ret = createEvent(names[i]);
+        this.data.push(ret);
+        this.valid_data.push(ret);
+    }
     this.renderAxis();
     this.renderEvents();
     this.addEvents();
@@ -147,11 +147,15 @@ eventDrops.prototype.renderEvents = function () {
 eventDrops.prototype.addEvents = function () {
     var svg = document.getElementsByTagName('svg')[0];
     var obj = this;
-    var totalTime;        
-    svg.onclick = function () {
-        totalTime = obj.valid_end - obj.valid_start;
-        obj.valid_start += totalTime * .2;
-        obj.valid_end -= totalTime * .2;
+    svg.onmousewheel = function (event) {
+        if(event.wheelDelta < 0) {
+            var totalTime = obj.valid_end - obj.valid_start;
+            obj.valid_start += totalTime * .1;
+            obj.valid_end -= totalTime * .1;
+        } else {
+            obj.valid_start -= (obj.valid_start - obj.startTime) * .2;
+            obj.valid_end +=  (obj.endTime - obj.valid_end) * .2;
+        }
         obj.renderAxis();
         obj.renderEvents();
     }
