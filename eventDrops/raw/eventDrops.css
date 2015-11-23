@@ -19,3 +19,10 @@
     height: 20px;
     padding: 10px;
 }
+
+
+.top text,
+.bottom text {
+    font-size: 12px;
+}
+

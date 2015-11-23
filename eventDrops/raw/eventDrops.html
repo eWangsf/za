@@ -16,11 +16,12 @@
                 </filter>
             </defs>
             <g id="axis" transform="translate(0, 25)">
-                <g class="y-axis" transform="translate(0, 60)"></g>
-                <g class="x-axis top" transform="translate(200, 20)"></g>
-                <g class="x-axis bottom" transform="translate(200, 420)"></g>
-                <g class="graph-body" transform="translate(200, 45)"></g>
+                <g id="y_axis" class="y-axis" transform="translate(0, 60)"><g></g></g>
+                <g id="top" class="x-axis top" transform="translate(200, 20)"></g>
+                <g id="bottom" class="x-axis bottom" transform="translate(200, 420)"></g>
+                <g id="graph_body" class="graph-body" transform="translate(200, 45)"></g>
             </g>
+            <!-- <rect class="zoom" width="750" height="500" transform="translate(200, 35)" filter="url(#metaball)"></rect> -->
             <rect class="zoom" width="750" height="500" transform="translate(200, 35)"></rect>
             <g id="delimiter" class="delimiter" width="750" height="10" transform="translate(200, 15)">
                 <text class="start">01 January 1970</text>
