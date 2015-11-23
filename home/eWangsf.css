@@ -1,0 +1,25 @@
+#project_title,
+#project_tagline {
+    text-align: center;
+}
+
+#projects {
+    margin: 0 auto;
+    width: 70%;
+}
+
+ul {
+    list-style: none;
+    font-size: 16px;
+}
+
+a,
+a:hover,
+a:visited,
+a:active {
+    text-decoration: none;
+}
+
+
+
+
