@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="shortcut icon" href="../../pic.png" >
+        <link rel="stylesheet" href="eventDrops.css" >
+    </head>
+    <body>
+
+        <svg width="1000" height="500">
+            <defs>
+                <filter id="metaball">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"></feGaussianBlur>
+                    <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 80 -7" result="contrast"></feColorMatrix>
+                    <feBlend in="SourceGraphic" in2="contrast"></feBlend>
+                </filter>
+            </defs>
+            <g id="axis" transform="translate(0, 25)">
+                <g id="y_axis" class="y-axis" transform="translate(0, 60)"><g></g></g>
+                <g id="top" class="x-axis top" transform="translate(200, 20)"></g>
+                <g id="bottom" class="x-axis bottom" transform="translate(200, 420)"></g>
+                <g id="graph_body" class="graph-body" transform="translate(200, 45)"></g>
+            </g>
+            <!-- <rect class="zoom" width="750" height="500" transform="translate(200, 35)" filter="url(#metaball)"></rect> -->
+            <rect class="zoom" width="750" height="500" transform="translate(200, 35)"></rect>
+            <g id="delimiter" class="delimiter" width="750" height="10" transform="translate(200, 15)">
+                <text class="start">01 January 1970</text>
+                <text text-anchor="end" transform="translate(750)" class="end">23 November 2015</text>
+            </g>
+        </svg>
+        
+        <script src="eventDrops.js"></script>
+ 
+    </body>
+</html>
