@@ -1,0 +1,21 @@
+.zoom {
+    fill: transparent;
+    cursor: pointer;
+}
+
+.y-tick {
+    stroke: black;
+    fill: none;
+    stroke-width: 1px;
+}
+
+.y-axis g line {
+    stroke: grey;
+    fill: none;
+    stroke-width: 1px;
+}
+
+.graph-body .line {
+    height: 20px;
+    padding: 10px;
+}
