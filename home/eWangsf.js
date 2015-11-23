@@ -8,12 +8,12 @@ var projects = {
         'd3': 'wordCloud/with_d3/wordle_d3.html'
     },
     'Stacked Graph': {
-        'raw': 'stackedgraph/raw/stackedgraph.html',
-        'd3': 'stackedgraph/d3/stackedgraph.html'
+        'raw': 'stackedGraph/raw/stackedgraph.html',
+        'd3': 'stackedGraph/d3/stackedgraph.html'
     },
     'tree map': {
         'raw': 'treemap/raw/treemap.html',
-        'd3': 'treemap/d3/treemap.html'
+        'd3': 'treemap/d3/Greemap.html'
     },
     'Hierarchical edge bundling': {
         'raw': 'edgeBundle/raw/edgeBundle.html',
