@@ -3,7 +3,7 @@
     text-align: center;
 }
 
-#projects {
+#projects {gi
     margin: 0 auto;
     width: 70%;
 }
@@ -18,6 +18,11 @@ a:hover,
 a:visited,
 a:active {
     text-decoration: none;
+}
+
+image {
+    width: 30px;
+    height: 30px;
 }
 
 
