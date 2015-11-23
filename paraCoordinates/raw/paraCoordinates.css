@@ -1,0 +1,17 @@
+.link {
+    /*stroke: green;*/
+    opacity: .5;
+    stroke-width: 1;
+    fill: none;
+    pointer-events: none;
+}
+
+.axis {
+    stroke: #555;
+    stroke-width: 4;
+    /*cursor: crosshair;*/
+}
+
+text {
+    font-size: 14px;
+}
