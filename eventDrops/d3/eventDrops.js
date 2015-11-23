@@ -1,13 +1,37 @@
+// time duration: 6 months
+var endTime = Date.now(),
+    startTime = endTime - 6 * (30 * 24 * 60 * 60 * 1000),
+    color = d3.scale.category20();
 
 // create dataset
-var data = [];
-var names = ["Lorem", "Ipsum", "Dolor", "Sit", "Amet", "Consectetur", "Adipisicing", "elit", "Eiusmod tempor", "Incididunt"];
-var endTime = Date.now();
-var month = 30 * 24 * 60 * 60 * 1000;
-var startTime = endTime - 6 * month;
+var names = [
+        "Lorem", "Ipsum", 
+        "Dolor", "Sit", 
+        "Amet", "Consectetur", 
+        "Adipisicing", "elit", 
+        "Eiusmod tempor", "Incididunt"
+    ],
+    data = [];
 
-function createEvent (name, maxNbEvents) {
-    maxNbEvents = maxNbEvents | 200;
+for (var i = 0; i < names.length; i++) {
+    data.push(createEvent(names[i]));
+}
+
+// create chart function
+var eventDropsChart = d3.chart.eventDrops()
+    .eventLineColor(function (datum, index) {
+        return color(index);
+    })
+    .start(new Date(startTime))
+    .end(new Date(endTime));
+
+var element = d3.select('body').append('div').datum(data);
+
+eventDropsChart(element);
+
+
+function createEvent (name) {
+    var maxNbEvents = 200;
     var event = {
         name: name,
         dates: []
@@ -20,25 +44,3 @@ function createEvent (name, maxNbEvents) {
     }
     return event;
 }
-for (var i = 0; i < 10; i++) {
-    data.push(createEvent(names[i]));
-}
-
-console.log(data);
-
-var color = d3.scale.category20();
-// create chart function
-
-var eventDropsChart = d3.chart.eventDrops()
-    .eventLineColor(function (datum, index) {
-        return color(index);
-    })
-    .start(new Date(startTime))
-    .end(new Date(endTime));
-
-// bind data with DOM
-var body = document.getElementsByTagName('body')[0];
-var element = d3.select(body).append('div').datum(data);
-
-// draw the chart
-eventDropsChart(element);
