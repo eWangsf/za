@@ -40,6 +40,19 @@ var projects = {
     }
 };
 
+// var cover = d3.select('#cover'),
+//     main = d3.select('#body');
+
+// var body = d3.select('body')
+//             .on('mousewheel', function () {
+//                 cover.transition()
+//                     .duration(2000)
+//                     .classed('active', false);
+//                 main.transition()
+//                     .duration(2000)
+//                     .classed('active', true);
+//             });
+
 var container = d3.select('#projects');
 
 var domstr = '';
@@ -47,11 +60,12 @@ for(var key in projects) {
     domstr += '<h4>' + key + '</h4><ul>';
     var value = projects[key];
     for(var k2 in value) {
-        domstr += '<li><a href="codingPractice/' + value[k2] + '">' + k2 + '</a></li>';
+        domstr += '<li><a href="codingPractice/' + value[k2] + '" target="_blank">' + k2 + '</a></li>';
     }
     domstr += '</ul>';
 }
 container.html(domstr);
+
 
 
 
