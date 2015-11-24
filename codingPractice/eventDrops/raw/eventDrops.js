@@ -159,6 +159,28 @@ eventDrops.prototype.addEvents = function () {
         obj.renderAxis();
         obj.renderEvents();
     }
+    var down = false;
+    var pre = {};
+    svg.onmousedown = function (event) {
+        down = true;
+        pre.x = event.x;
+        pre.y = event.y;
+    }
+    svg.onmouseup = function (event) {
+        down = false;
+        pre = {};
+    }
+    svg.onmousemove = function (event) {
+        if (down) {
+            var dx = event.x - pre.x;
+            obj.valid_start -= (obj.valid_start - obj.startTime) * (10 * dx / width);
+            obj.valid_end -= (obj.endTime - obj.valid_end) * (10 * dx / width);
+            obj.renderAxis();
+            obj.renderEvents();
+            pre.x = event.x;
+            pre.y = event.y;
+        }
+    }
 }
 
 
