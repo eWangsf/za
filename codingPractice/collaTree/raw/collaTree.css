@@ -1,5 +1,9 @@
 .node {
     cursor: pointer;
+    transition: all 2s;
+    -moz-transition: all 2s; 
+    -webkit-transition: all 2s; 
+    -o-transition: all 2s; 
 }
 
 
@@ -7,10 +11,18 @@
     fill: #fff;
     stroke: steelblue;
     stroke-width: 1.5px;
+    transition: all 2s;
+    -moz-transition: all 2s; 
+    -webkit-transition: all 2s; 
+    -o-transition: all 2s; 
 }
 
 .node text {
     font: 10px sans-serif;
+    transition: all 2s;
+    -moz-transition: all 2s; 
+    -webkit-transition: all 2s; 
+    -o-transition: all 2s; 
 }
 
 .link {
