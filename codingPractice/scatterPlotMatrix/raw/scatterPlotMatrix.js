@@ -4,8 +4,9 @@ var svg,
     margin = {
         top: 0,
         left: 200
-    };
+    },
     padding = 10;
+    // padding = 0;
 
 var scattermatrix;
 
@@ -50,7 +51,7 @@ scatterMatrix.prototype.start = function () {
     }
     this.ranges = ranges;
 
-    this.renderRects();
+    // this.renderRects();
     this.renderCircles();
     this.addEvent();
 }
@@ -79,6 +80,8 @@ scatterMatrix.prototype.renderRects = function () {
 }
 
 scatterMatrix.prototype.renderCircles = function () {
+    this.container.innerHTML = '';
+    this.renderRects();
     var dims = this.dims,
         data = this.data,
         ranges = this.ranges;
@@ -111,26 +114,36 @@ scatterMatrix.prototype.addEvent = function () {
     var obj = this;
     var svg = this.container;
     var area = {};
+    var down = false;
+    var nums = [];
     svg.onmousedown = function (event) {
-        area.x1 = event.clientX + document.body.scrollLeft - margin.left - padding;
-        area.y1 = event.clientY + document.body.scrollTop - padding;
+        down = true;
+        area.x1 = event.x - margin.left - padding;
+        area.y1 = event.y - padding;
         svg.style.cursor = 'crosshair';
+        // console.log(area);
+    }
+    svg.onmousemove = function (event) {
+        if(down) {
+            area.x2 = event.x - margin.left - padding;
+            area.y2 = event.y - padding;
+            svg.style.cursor = 'default';
+        }
     }
     svg.onmouseup = function (event) {
-        area.x2 = event.clientX + document.body.scrollLeft - margin.left - padding;
-        area.y2 = event.clientY + document.body.scrollTop - padding;
-        svg.style.cursor = 'default';
+        down = false;
         if(area.x1 && area.y1 && area.x2 && area.y2) {
-            obj.compute(area);
-        }   
+            nums = obj.compute(area, nums);
+        }
     }
 }
 
-scatterMatrix.prototype.compute = function (area) {
+scatterMatrix.prototype.compute = function (area, pre) {
+    var empty = !pre.length;
+    this.renderCircles();
     var circledoms = document.getElementsByTagName('circle'),
         length = circledoms.length;
 
-    var nums = [];
     var thisobj;
     for(var i = 0; i < length; i++) {
         thisobj = circledoms[i];
@@ -139,21 +152,35 @@ scatterMatrix.prototype.compute = function (area) {
         if((cx < area.x1) || (cx > area.x2) || (cy < area.y1) || (cy > area.y2)) {
         } else {
             var num = parseInt(thisobj.getAttribute('class'));
-            nums.push(num);
+            pre.push(num);
         }
+    }
+    pre.sort(function (a, b) {
+        return (a - b);
+    });
+    
+    if(!empty) {
+        var nums = [];
+        for(var i = 1; i < pre.length; i++) {
+            if(pre[i] == pre[i - 1]) {
+                nums.push(pre[i]);
+            }
+        }
+        pre = nums;
     }
 
     var j = 0;
     for(var i = 0; i < length; i++) {
         thisobj = circledoms[i];
         var num = parseInt(thisobj.getAttribute('class'));
-        if(num == nums[j]) {
+        if(num == pre[j]) {
             i = i + 15;
             j++;
         } else {
             thisobj.setAttribute('class', thisobj.getAttribute('class') + ' unable');
         }
     }
+    return pre;
 
 }
 
