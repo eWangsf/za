@@ -16,7 +16,7 @@ window.onload = function () {
     width = svg.getAttribute('width');
     height = svg.getAttribute('height');
     colla = new collaTree(data, g);
-    colla.collapse();
+    colla.collapse(this.data);
     colla.start();
     colla.addEvent();
 }
@@ -27,22 +27,24 @@ function collaTree(data, g) {
 }
 
 collaTree.prototype.start = function () {
+    this.container.innerHTML = '';
+    var root = this.data;
     this.data.x0 = height / 2;
     this.data.y0 = 0;
-    this.data.x = this.data.x0;
     this.data.y = this.data.y0;
+    this.data.x = this.data.x0;
     this.data.depth = 0;
     this.data.id = 1;
     this.data.num = 0;
-
-    this.toggle(this.data, 'flare');
-    this.getNum();
-    this.update();
-    this.render();
+    if(!root.children) {
+        this.data.children = this.data._children;
+        this.data._children = null;
+    }
+    this.update(this.data);
+    this.render(this.data);
 };
 
 collaTree.prototype.collapse = function (o) {
-    o = o || this.data;
     if (o.children) {
       o._children = o.children;
       for(var i = 0; i < o._children.length; i++) {
@@ -53,7 +55,6 @@ collaTree.prototype.collapse = function (o) {
 }
 
 collaTree.prototype.getNum = function (source) {
-    source = source || this.data;
     if((!source.children)) {
         source.num = 1;
         return 1;
@@ -68,31 +69,29 @@ collaTree.prototype.getNum = function (source) {
 }
 
 collaTree.prototype.update = function (source) {
-    source = source || this.data;
+    this.getNum(this.data);
+    console.log(this.data);
     tmpinterval = height / (this.data.num);
-
-    // update source's children
     var children = source.children;
     var thisobj;
+
     for(var i = 0, j = - (source.num) / 2; i < children.length; i++) {
         thisobj = children[i];
+        j += thisobj.num / 2;
         thisobj.depth = source.depth + 1;
-        thisobj.x0 = source.x;
-        thisobj.y0 = source.y;
-
         thisobj.y = thisobj.depth * 180;
         if(!thisobj.id) {
             thisobj.id = ++count;
         }
+        thisobj.x0 = source.x0;
+        thisobj.y0 = source.y0;
         if(!thisobj.parents) {
             thisobj.parents = [];
         }
         thisobj.parents.push(source);
-
-        j += thisobj.num / 2;
+        // thisobj.x = source.x + ((height / source.num) > interval ? interval : (height / source.num)) * j;
         thisobj.x = source.x + j * tmpinterval;
         j += thisobj.num / 2;
-
         if(thisobj.children) {
             this.update(thisobj);
         }
@@ -100,12 +99,7 @@ collaTree.prototype.update = function (source) {
     
 }
 
-
 collaTree.prototype.render = function (source) {
-    if(!source) {
-        source = source || this.data;
-        this.container.innerHTML = '';
-    }
     if(!source.children) {
         return ;
     }
@@ -126,36 +120,32 @@ collaTree.prototype.render = function (source) {
     // nodes
     var nodesStr = '';
     nodesStr += '<g class="node" transform="translate(' + source.y + ', ' + source.x + ')">'
-            + '<animateTransform attributeName="transform" begin="0s" dur="0.5s"  type="translate" from="' + source.y0 + ', ' + source.x0 + '" to="' + source.y + ', ' + source.x + '" repeatCount="1"/>'
-            + '<circle r="4.5" style="fill: ' + (source.children || source._children ? 'rgb(176, 196, 222)' : 'rgb(255, 255, 255)') + ';">'
-            + '</circle>'
-            + '<text x="-10" dy=".35em" text-anchor="end" style="fill-opacity: 1;">' 
-            + source.name 
-            + '</text>'
+            + '<circle r="4.5" style="fill: ' + (source.children || source._children ? 'rgb(176, 196, 222)' : 'rgb(255, 255, 255)') + ';"></circle>'
+            + '<text x="-10" dy=".35em" text-anchor="end" style="fill-opacity: 1;">' + source.name + '</text>'
             + '</g>';
-
     var thisobj;
-    for(var i = 0; i < children.length; i++) {
+    for(var i = children.length - 1; i >= 0; i--) {
         thisobj = children[i];
         nodesStr += '<g class="node" transform="translate(' + thisobj.y + ', ' + thisobj.x + ')">'
-            + '<animateTransform attributeName="transform" begin="0s" dur="0.5s"  type="translate" from="' + thisobj.y0 + ', ' + thisobj.x0 + '" to="' + thisobj.y + ', ' + thisobj.x + '" repeatCount="1"/>'
-            + '<circle r="4.5" style="fill: ' + (thisobj.children || thisobj._children ? 'rgb(176, 196, 222)' : 'rgb(255, 255, 255)') + ';">'
-            + '</circle>'
-            + '<text x="-10" dy=".35em" text-anchor="end" style="fill-opacity: 1;">' 
-            + thisobj.name 
-            + '</text>'
+            + '<circle r="4.5" style="fill: ' + (thisobj.children || thisobj._children ? 'rgb(176, 196, 222)' : 'rgb(255, 255, 255)') + ';"></circle>'
+            + '<text x="-10" dy=".35em" text-anchor="end" style="fill-opacity: 1;">' + thisobj.name + '</text>'
             + '</g>';
-        thisobj.x0 = thisobj.x;
-        thisobj.y0 = thisobj.y;
-        this.render(thisobj);
     }
     this.container.innerHTML += nodesStr;
+
+    for(var i = 0; i < source.children.length; i++) {
+        this.render(source.children[i]);
+    }
+
     this.addEvent();
 }
 
 collaTree.prototype.toggle = function (obj, name) {
     if(obj.name === name) {
         if(obj.children) {
+            for(var i = 0; i < obj.children.length; i++) {
+                this.clearNode(obj.children[i]);
+            }
             obj.num = 1;
             obj._children = obj.children;
             obj.children = null;
@@ -174,6 +164,19 @@ collaTree.prototype.toggle = function (obj, name) {
     }
 }
 
+collaTree.prototype.clearNode = function (obj) {
+    if(!obj.children) {
+        return;
+    }
+    for(var i = 0; i < obj.children.length; i++) {
+        this.clearNode(obj.children[i]);
+    }
+    obj._children = obj.children;
+    obj.children = null;
+    obj.sum = 1;
+
+}
+
 collaTree.prototype.addEvent = function () {
     var nodes = this.container.getElementsByTagName('g');
     var obj = this;
@@ -181,9 +184,7 @@ collaTree.prototype.addEvent = function () {
         nodes[i].onclick = function () {
             var name = this.getElementsByTagName('text')[0].innerHTML;
             obj.toggle(obj.data, name);
-            obj.getNum();
-            obj.update();
-            obj.render();        
+            obj.start();
         }
     }
 }
