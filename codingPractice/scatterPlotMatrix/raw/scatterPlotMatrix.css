@@ -1,0 +1,54 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+svg {
+    padding: 10px;
+    margin: 0px 200px;
+    overflow: visible;
+}
+
+circle {
+    pointer-events: none;
+    z-index: 2;
+}
+
+circle.setosa {
+    fill: #800;
+}
+
+circle.versicolor {
+    fill: #080;
+}
+
+circle.virginica {
+    fill: #008;
+}
+
+.setosa.unable,
+.versicolor.unable,
+.virginica.unable {
+    fill: #ccc;
+}
+
+
+rect {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1;
+}
+
+text {
+    font-size: 14px;
+}
+
+.ruler {
+    font-size: 12px;
+}
+
+circle {
+    stroke: none;
+}
+
+
