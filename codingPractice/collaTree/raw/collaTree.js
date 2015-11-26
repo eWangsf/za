@@ -18,12 +18,12 @@ window.onload = function () {
     colla = new collaTree(data, g);
     colla.collapse(this.data);
     colla.start();
+    colla.addEvent();
 }
 
 function collaTree(data, g) {
     this.data = data;
     this.container = g;
-    this.nodedoms = {};
 }
 
 collaTree.prototype.start = function () {
@@ -36,16 +36,12 @@ collaTree.prototype.start = function () {
     this.data.depth = 0;
     this.data.id = 1;
     this.data.num = 0;
-
-    this.container.innerHTML = '<g class="node" transform="translate(' + this.data.y + ', ' + this.data.x + ')">'
-            + '<animateTransform attributeName="transform" begin="0;circle.click" dur="0.5s" type="translate" from="' + this.data.y0 + ', ' + this.data.x0 + '" to="' + this.data.y + ', ' + this.data.x + '" repeatCount="1"></animateTransform>'
-            + '<circle class="circle" id="circle" r="4.5" style="fill: ' + (this.data.children || this.data._children ? 'rgb(176, 196, 222)' : 'rgb(255, 255, 255)') + ';"></circle>'
-            + '<text x="-10" dy=".35em" text-anchor="end" style="fill-opacity: 1;">' + this.data.name + '</text>'
-            + '</g>';
-    this.nodedoms['flare'] = this.container.getElementsByTagName('g')[0];
-    var test = this.nodedoms['flare'];
-    console.log(this.nodedoms);
-    this.addEvent();
+    if(!root.children) {
+        this.data.children = this.data._children;
+        this.data._children = null;
+    }
+    this.update(this.data);
+    this.render(this.data);
 };
 
 collaTree.prototype.collapse = function (o) {
@@ -74,24 +70,25 @@ collaTree.prototype.getNum = function (source) {
 
 collaTree.prototype.update = function (source) {
     this.getNum(this.data);
+    console.log(this.data);
     tmpinterval = height / (this.data.num);
-    if(!source.children) {
-        return;
-    }
     var children = source.children;
     var thisobj;
 
     for(var i = 0, j = - (source.num) / 2; i < children.length; i++) {
         thisobj = children[i];
-        thisobj.x0 = thisobj.x || source.x0;
-        thisobj.y0 = thisobj.y || source.y0;
         j += thisobj.num / 2;
         thisobj.depth = source.depth + 1;
         thisobj.y = thisobj.depth * 180;
         if(!thisobj.id) {
             thisobj.id = ++count;
         }
-        
+        thisobj.x0 = source.x0;
+        thisobj.y0 = source.y0;
+        if(!thisobj.parents) {
+            thisobj.parents = [];
+        }
+        thisobj.parents.push(source);
         thisobj.x = source.x + j * tmpinterval;
         j += thisobj.num / 2;
         if(thisobj.children) {
@@ -102,68 +99,41 @@ collaTree.prototype.update = function (source) {
 }
 
 collaTree.prototype.render = function (source) {
-    // console.log('render');
-    // console.log(source);
-    // nodes
-    var nodesStr = '';
-    var nodedoms = this.nodedoms;
-    if(nodedoms[source.name]) {
-        var thisnode = nodedoms[source.name];
-        var animate = thisnode.getElementsByTagName('animateTransform')[0];
-        animate.setAttribute('from', animate.getAttribute('to'));
-        animate.setAttribute('to', source.y + ', ' + source.x);
-        thisnode.setAttribute('transform', 'translate(' + source.y + ', ' + source.x + ')');
-    } else {
-        nodesStr += '<g class="node" transform="translate(' + source.y + ', ' + source.x + ')">'
-            + '<animateTransform attributeName="transform" begin="0;circle.click" dur="0.5s" type="translate" from="' + source.y0 + ', ' + source.x0 + '" to="' + source.y + ', ' + source.x + '" repeatCount="1"></animateTransform>'
-            + '<circle class="circle" id="circle" r="4.5" style="fill: ' + (source.children || source._children ? 'rgb(176, 196, 222)' : 'rgb(255, 255, 255)') + ';"></circle>'
-            + '<text x="-10" dy=".35em" text-anchor="end" style="fill-opacity: 1;">' + source.name + '</text>'
-            + '</g>';
-    }
-    source.x0 = source.x;
-    source.y0 = source.y;
-
     if(!source.children) {
-        this.container.innerHTML += nodesStr;
-        var gnodes = this.container.getElementsByTagName('g');
-        for(var i = 0; i < gnodes.length; i++) {
-            var index = gnodes[i].getElementsByTagName('text')[0].innerHTML;
-            if(!nodedoms[index]) {
-                nodedoms[index] = gnodes[i];
-            }
-        }
         return ;
     }
     var children = source.children;
-
-    var thisobj;
+    
+    // links
+    var linksStr = '';
     for(var i = 0; i < children.length; i++) {
         thisobj = children[i];
-        if(nodedoms[thisobj.name]) {
-            var thisnode = nodedoms[thisobj.name];
-            var animate = thisnode.getElementsByTagName('animateTransform')[0];
-            animate.setAttribute('from', animate.getAttribute('to'));
-            animate.setAttribute('to', thisobj.y + ', ' + thisobj.x);
-            thisnode.setAttribute('transform', 'translate(' + thisobj.y + ', ' + thisobj.x + ')');
-        } else {
-            nodesStr += '<g class="node" transform="translate(' + thisobj.y + ', ' + thisobj.x + ')">'
-                + '<animateTransform attributeName="transform" begin="0;circle.click" dur="0.5s" type="translate" from="' + thisobj.y0 + ', ' + thisobj.x0 + '" to="' + thisobj.y + ', ' + thisobj.x + '" repeatCount="1"></animateTransform>'
-                + '<circle class="circle" id="circle" r="4.5" style="fill: ' + (thisobj.children || thisobj._children ? 'rgb(176, 196, 222)' : 'rgb(255, 255, 255)') + ';"></circle>'
-                + '<text x="-10" dy=".35em" text-anchor="end" style="fill-opacity: 1;">' + thisobj.name + '</text>'
-                + '</g>';
-        }
-        // thisobj.x0 = thisobj.x;
-        // thisobj.y0 = thisobj.y;
-        this.render(thisobj);
+        var dy = thisobj.y - source.y;
+        linksStr += '<path class="link" d="M' + source.y + ' ' + source.x 
+                + ' C' + (source.y + dy / 3) + ' ' + (source.x)
+                + ' ' + (source.y + 2 * dy / 3) + ' ' + (thisobj.x) 
+                + ' ' +  thisobj.y + ' ' + thisobj.x + ' " />';
+    }
+    this.container.innerHTML += linksStr;
+
+    // nodes
+    var nodesStr = '';
+    nodesStr += '<g class="node" transform="translate(' + source.y + ', ' + source.x + ')">'
+            + '<circle r="4.5" style="fill: ' + (source.children || source._children ? 'rgb(176, 196, 222)' : 'rgb(255, 255, 255)') + ';"></circle>'
+            + '<text x="-10" dy=".35em" text-anchor="end" style="fill-opacity: 1;">' + source.name + '</text>'
+            + '</g>';
+    var thisobj;
+    for(var i = children.length - 1; i >= 0; i--) {
+        thisobj = children[i];
+        nodesStr += '<g class="node" transform="translate(' + thisobj.y + ', ' + thisobj.x + ')">'
+            + '<circle r="4.5" style="fill: ' + (thisobj.children || thisobj._children ? 'rgb(176, 196, 222)' : 'rgb(255, 255, 255)') + ';"></circle>'
+            + '<text x="-10" dy=".35em" text-anchor="end" style="fill-opacity: 1;">' + thisobj.name + '</text>'
+            + '</g>';
     }
     this.container.innerHTML += nodesStr;
 
-    var gnodes = this.container.getElementsByTagName('g');
-    for(var i = 0; i < gnodes.length; i++) {
-        var index = gnodes[i].getElementsByTagName('text')[0].innerHTML;
-        if(!nodedoms[index]) {
-            nodedoms[index] = gnodes[i];
-        }
+    for(var i = 0; i < source.children.length; i++) {
+        this.render(source.children[i]);
     }
 
     this.addEvent();
@@ -172,24 +142,18 @@ collaTree.prototype.render = function (source) {
 collaTree.prototype.toggle = function (obj, name) {
     if(obj.name === name) {
         if(obj.children) {
-            console.log(this.nodedoms);
-            console.log('clear...');
             for(var i = 0; i < obj.children.length; i++) {
                 this.clearNode(obj.children[i]);
             }
             obj.num = 1;
             obj._children = obj.children;
             obj.children = null;
-            this.update(this.data);
         } else {
-            console.log('render...');
             obj.num = obj._children.length;
             obj.children = obj._children;
             obj._children = null;
-            this.update(this.data);
-            this.render(obj);
         }
-        return false;
+        return ;
     }
     if (!obj.children) {
         return ;
@@ -200,18 +164,12 @@ collaTree.prototype.toggle = function (obj, name) {
 }
 
 collaTree.prototype.clearNode = function (obj) {
-    console.log(this.nodedoms);
     if(!obj.children) {
-        var thisnode = this.nodedoms[obj.name];
-        var par = thisnode.parentNode;
-        console.log(par);
-        
-        return false;
+        return;
     }
     for(var i = 0; i < obj.children.length; i++) {
         this.clearNode(obj.children[i]);
     }
-
     obj._children = obj.children;
     obj.children = null;
     obj.sum = 1;
@@ -224,8 +182,8 @@ collaTree.prototype.addEvent = function () {
     for(var i = 0; i < nodes.length; i++) {
         nodes[i].onclick = function () {
             var name = this.getElementsByTagName('text')[0].innerHTML;
-            console.log(name);
             obj.toggle(obj.data, name);
+            obj.start();
         }
     }
 }
