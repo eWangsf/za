@@ -18,7 +18,6 @@ window.onload = function () {
     colla = new collaTree(data, g);
     colla.collapse(this.data);
     colla.start();
-    // colla.addEvent();
 }
 
 function collaTree(data, g) {
@@ -44,7 +43,8 @@ collaTree.prototype.start = function () {
             + '<text x="-10" dy=".35em" text-anchor="end" style="fill-opacity: 1;">' + this.data.name + '</text>'
             + '</g>';
     this.nodedoms['flare'] = this.container.getElementsByTagName('g')[0];
-    // this.nodedoms['flare'].getElementsByTagName('text')[0].innerHTML = 'hajsbd';
+    var test = this.nodedoms['flare'];
+    console.log(this.nodedoms);
     this.addEvent();
 };
 
@@ -200,6 +200,7 @@ collaTree.prototype.toggle = function (obj, name) {
 }
 
 collaTree.prototype.clearNode = function (obj) {
+    console.log(this.nodedoms);
     if(!obj.children) {
         var thisnode = this.nodedoms[obj.name];
         var par = thisnode.parentNode;
