@@ -29,7 +29,6 @@ function collaTree(data, g) {
     this.data = data;
     this.container = g;
     this.nodedoms = {};
-    this.dataindex = {};
 }
 
 collaTree.prototype.start = function () {
@@ -40,10 +39,6 @@ collaTree.prototype.start = function () {
     this.data.depth = 0;
     this.data.id = 1;
     this.data.num = 0;
-    // if(!this.data.children) {
-    //     this.data.children = this.data._children;
-    //     this.data._children = null;
-    // }
     var gnode = document.createElementNS('http://www.w3.org/2000/svg','g');
     gnode.setAttribute('class', 'node');
     gnode.setAttribute('transform', 'translate(' + this.data.y0 + ', ' + this.data.x0 + ')');
@@ -62,8 +57,6 @@ collaTree.prototype.start = function () {
     gnode.appendChild(textnode);
     this.container.appendChild(gnode);
     this.nodedoms[this.data.name] = gnode;
-
-    this.dataindex[this.data.name] = this.data;
     this.addEvent();
 }
 
@@ -95,12 +88,13 @@ collaTree.prototype.getNum = function (source) {
 collaTree.prototype.update = function (source) {
     this.getNum();
     tmpinterval = height / (this.data.num);
+
     if(!source.children) {
         return;
     }
+    var dataindex = this.dataindex;
     var children = source.children;
     var thisobj;
-
     for(var i = 0, j = - (source.num) / 2; i < children.length; i++) {
         thisobj = children[i];
         thisobj.x0 = thisobj.x || source.x;
@@ -111,13 +105,8 @@ collaTree.prototype.update = function (source) {
         if(!thisobj.id) {
             thisobj.id = ++count;
         }
-        if(!thisobj.parents) {
-            thisobj.parents = [];
-        }
-        thisobj.parents.push(source);
         thisobj.x = source.x + j * tmpinterval;
         j += thisobj.num / 2;
-        this.dataindex[thisobj.name] = thisobj;
         this.update(thisobj);
     }
 }
@@ -153,18 +142,18 @@ collaTree.prototype.render = function (source) {
     }
 
     // links
-    for(var i = 0; i < children.length; i++) {
-        thisobj = children[i];
-        var dy = thisobj.y - source.y;
-        var dstr = 'M' + source.y + ' ' + source.x 
-                + ' C' + (source.y + dy / 3) + ' ' + (source.x)
-                + ' ' + (source.y + 2 * dy / 3) + ' ' + (thisobj.x) 
-                + ' ' +  thisobj.y + ' ' + thisobj.x + '';
-        var pathnode = document.createElementNS('http://www.w3.org/2000/svg','path');
-        pathnode.setAttribute('class', 'link');
-        pathnode.setAttribute('d', dstr);
-        this.container.appendChild(pathnode);
-    }
+    // for(var i = 0; i < children.length; i++) {
+    //     thisobj = children[i];
+    //     var dy = thisobj.y - source.y;
+    //     var dstr = 'M' + source.y + ' ' + source.x 
+    //             + ' C' + (source.y + dy / 3) + ' ' + (source.x)
+    //             + ' ' + (source.y + 2 * dy / 3) + ' ' + (thisobj.x) 
+    //             + ' ' +  thisobj.y + ' ' + thisobj.x + '';
+    //     var pathnode = document.createElementNS('http://www.w3.org/2000/svg','path');
+    //     pathnode.setAttribute('class', 'link');
+    //     pathnode.setAttribute('d', dstr);
+    //     this.container.appendChild(pathnode);
+    // }
 }
 
 collaTree.prototype.addEvent = function () {
@@ -180,45 +169,25 @@ collaTree.prototype.addEvent = function () {
 
 collaTree.prototype.toggle = function (obj, name) {
     if(obj.name === name) {
-        var nodedoms = this.nodedoms,
-            dataindex = this.dataindex;
+        var nodedoms = this.nodedoms;
         if(obj.children) {
-            for(var key in dataindex) {
-                dataindex[key].y = dataindex[name].y;
-                dataindex[key].x = dataindex[name].x;
-            }
-            tick = setInterval(function() {
-                for(var key in nodedoms) {
-                    if(dataindex[key].y0 != dataindex[key].y) {
-                        nodedoms[key].setAttribute('transform', 'translate(' + (dataindex[key].y += (dataindex[name].y - dataindex[key].y) / 4) + ', ' + (dataindex[key].x += (dataindex[name].x - dataindex[key].x) / 4) + ')')
-                        if(Math.abs(dataindex[key].y - dataindex[name].y) < .1) {
-                            dataindex[key].y = dataindex[key].y0 = dataindex[name].y;
-                            dataindex[key].x = dataindex[key].x0 = dataindex[name].x;
-                            nodedoms[key].parentNode.removeChild(nodedoms[key]);
-                            delete dataindex[key];
-                            delete nodedoms[key];
-                        }
-                    }
-                }
-            }, 20);
-
-            obj.num = 1;
-            obj._children = obj.children;
-            obj.children = null;
-            this.update(this.data);
+            this.clearNode(obj);
         } else {
             obj.num = obj._children.length;
             obj.children = obj._children;
             obj._children = null;
             this.update(this.data);
             this.render(obj);
-            tick = setInterval(function() {
-                for(var key in nodedoms) {
-                    if(dataindex[key].y0 != dataindex[key].y) {
-                        nodedoms[key].setAttribute('transform', 'translate(' + (dataindex[key].y0 += (dataindex[key].y - dataindex[key].y0) / 4) + ', ' + (dataindex[key].x0 += (dataindex[key].x - dataindex[key].x0) / 4) + ')')
-                    }
+            var tick = window.setInterval(function () {
+                var thisobj,
+                    key;
+                for(var i = 0; i < obj.children.length; i++) {
+                    thisobj = obj.children[i];
+                    key = thisobj.name; 
+                    nodedoms[key].setAttribute('transform', 'translate(' + (thisobj.y0 += (thisobj.y - thisobj.y0) / 4) + ', ' + (thisobj.x0 += (thisobj.x - thisobj.x0) / 4) + ')')
                 }
-            }, 20);
+            }, 30);
+
         }
         this.addEvent();
         console.log(this.data);
