@@ -57,6 +57,10 @@ collaTree.prototype.start = function () {
     gnode.appendChild(textnode);
     this.container.appendChild(gnode);
     this.nodedoms[this.data.name] = gnode;
+    obj = this;
+    var tick = window.setInterval(function() {
+        obj.tickFunc(obj.data);
+    }, 50);
     this.addEvent();
 }
 
@@ -92,7 +96,6 @@ collaTree.prototype.update = function (source) {
     if(!source.children) {
         return;
     }
-    var dataindex = this.dataindex;
     var children = source.children;
     var thisobj;
     for(var i = 0, j = - (source.num) / 2; i < children.length; i++) {
@@ -171,29 +174,24 @@ collaTree.prototype.toggle = function (obj, name) {
     if(obj.name === name) {
         var nodedoms = this.nodedoms;
         if(obj.children) {
-            this.clearNode(obj);
+            console.log(obj);
+            for(var i = 0; i < obj.children.length; i++) {
+                this.clearNode(obj.children[i], obj.x, obj.y);
+            }
+            // obj._children = obj.children;
+            // obj.children = null;
+            // obj.num = 1;
+            // this.update(this.data);
+            
         } else {
             obj.num = obj._children.length;
             obj.children = obj._children;
             obj._children = null;
             this.update(this.data);
             this.render(obj);
-            var tick = window.setInterval(function () {
-                var thisobj,
-                    key;
-                for(var i = 0; i < obj.children.length; i++) {
-                    thisobj = obj.children[i];
-                    key = thisobj.name; 
-                    nodedoms[key].setAttribute('transform', 'translate(' + (thisobj.y0 += (thisobj.y - thisobj.y0) / 4) + ', ' + (thisobj.x0 += (thisobj.x - thisobj.x0) / 4) + ')')
-                }
-            }, 30);
-
         }
         this.addEvent();
-        console.log(this.data);
-        console.log(this.dataindex);
-        console.log(this.nodedoms);
-        return false;
+        return ;
     }
     if (!obj.children) {
         return ;
@@ -201,6 +199,67 @@ collaTree.prototype.toggle = function (obj, name) {
     for(var i = 0; i < obj.children.length; i++) {
         this.toggle(obj.children[i], name);
     }
+}
+
+collaTree.prototype.clearNode = function (obj, basex, basey) {
+    obj.x = basex;
+    obj.y = basey;
+    obj.beDeleted = true;
+    obj.standard = basey;
+    if(!obj.children) {
+        return ;
+    }
+    var children = obj.children;
+    for(var i = 0; i < children.length; i++) {
+        this.clearNode(children[i], basex, basey);
+    }
+}
+
+
+
+collaTree.prototype.tickFunc = function (source) {
+    var obj = this;
+    var nodedoms = this.nodedoms;
+    var thisnode = nodedoms[source.name];
+    thisnode.setAttribute('transform', 'translate(' + (source.y0 += (source.y - source.y0) / 3) + ', ' + (source.x0 += (source.x - source.x0) / 3) + ')');
+    if ((source.beDeleted) && (Math.abs(source.y0 - source.standard) < 5)) {
+        // source.beDeleted = false;
+        // var th = this;
+        // setTimeout(function () {
+        //     th.deleteAllChild(source);
+        // }, 0);
+    }
+    if(!source.children) {
+        return;
+    }
+    var children = source.children,
+        thisobj;
+    for(var i = 0; i < children.length; i++) {
+        thisobj = children[i];
+        this.tickFunc(thisobj);
+    }
+
+}
+
+
+collaTree.prototype.deleteAllChild = function(source) {
+    var nodedoms = this.nodedoms;
+    if(!source.children) {
+        console.log(source.name);
+        source.beDeleted = false;
+        var thisnode = nodedoms[source.name];
+        thisnode.parentNode.removeChild(thisnode);
+        delete nodedoms[source.name];
+        return;
+    }
+    var children = source.children;
+    for(var i = 0; i < children.length; i++) {
+        this.deleteAllChild(children[i]);
+    }
+    source.beDeleted = false;
+    var thisnode = nodedoms[source.name];
+    thisnode.parentNode.removeChild(thisnode);
+    delete nodedoms[source.name];
 }
 
 
