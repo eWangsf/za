@@ -22,7 +22,6 @@ a:active {
     justify-content: space-around;
     align-items: flex-start;
 }
-
 .category {
     display: flex;
     flex-direction: row;
@@ -35,8 +34,3 @@ a:active {
     margin: 20px auto;
     max-width: 60%;
 }
-
-
-
-
-
