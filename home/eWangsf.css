@@ -3,12 +3,6 @@
     text-align: center;
 }
 
-#projects {
-    margin: 0 auto;
-    padding: 10px 0 40px;
-    max-width: 70%;
-}
-
 ul {
     list-style: none;
     font-size: 18px;
@@ -19,7 +13,24 @@ a:hover,
 a:visited,
 a:active {
     text-decoration: none;
+    color: #369;
 }
+
+#main_content_wrap {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: flex-start;
+}
+
+.category {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: flex-start;
+    min-width: 400px;
+}
+
 
 
 
