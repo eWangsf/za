@@ -19,6 +19,14 @@ a:active {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+    align-items: flex-start;
+}*/
+
+
+/*#main_content_wrap {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
     justify-content: space-around;
     align-items: flex-start;
 }
