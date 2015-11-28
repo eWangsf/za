@@ -181,10 +181,12 @@ collaTree.prototype.toggle = function (obj, name) {
             for(var i = 0; i < obj.children.length; i++) {
                 this.clearNode(obj.children[i], obj.x, obj.y);
             }
-            // obj._children = obj.children;
-            // obj.children = null;
-            // obj.num = 1;
-            // this.update(this.data);      
+            setTimeout(function () {
+                obj._children = obj.children;
+                obj.children = null;
+                obj.num = 1;
+                th.update(th.data); 
+            }, 500);
             
         } else {
             obj.num = obj._children.length;
