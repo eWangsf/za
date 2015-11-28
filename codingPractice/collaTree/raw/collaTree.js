@@ -58,9 +58,10 @@ collaTree.prototype.start = function () {
     this.container.appendChild(gnode);
     this.nodedoms[this.data.name] = gnode;
     obj = this;
-    var tick = window.setInterval(function() {
+    setTimeout(function () {
         obj.tickFunc(obj.data);
-    }, 50);
+        setTimeout(arguments.callee, 30);
+    }, 30);
     this.addEvent();
 }
 
@@ -174,7 +175,6 @@ collaTree.prototype.toggle = function (obj, name) {
     if(obj.name === name) {
         var nodedoms = this.nodedoms;
         if(obj.children) {
-            console.log(obj);
             for(var i = 0; i < obj.children.length; i++) {
                 this.clearNode(obj.children[i], obj.x, obj.y);
             }
@@ -204,7 +204,7 @@ collaTree.prototype.toggle = function (obj, name) {
 collaTree.prototype.clearNode = function (obj, basex, basey) {
     obj.x = basex;
     obj.y = basey;
-    obj.beDeleted = true;
+    obj.beDeleted = 1;
     obj.standard = basey;
     if(!obj.children) {
         return ;
@@ -222,12 +222,13 @@ collaTree.prototype.tickFunc = function (source) {
     var nodedoms = this.nodedoms;
     var thisnode = nodedoms[source.name];
     thisnode.setAttribute('transform', 'translate(' + (source.y0 += (source.y - source.y0) / 3) + ', ' + (source.x0 += (source.x - source.x0) / 3) + ')');
-    if ((source.beDeleted) && (Math.abs(source.y0 - source.standard) < 5)) {
+    if ((source.beDeleted === 1) && (Math.abs(source.y0 - source.standard) < 5)) {
+        console.log(source);
         // source.beDeleted = false;
-        // var th = this;
-        // setTimeout(function () {
-        //     th.deleteAllChild(source);
-        // }, 0);
+        // console.log(nodedoms);
+        // thisnode.parentNode.removeChild(thisnode);
+        // delete nodedoms[source.name];
+        // console.log(nodedoms);
     }
     if(!source.children) {
         return;
@@ -238,18 +239,19 @@ collaTree.prototype.tickFunc = function (source) {
         thisobj = children[i];
         this.tickFunc(thisobj);
     }
-
 }
+
+
 
 
 collaTree.prototype.deleteAllChild = function(source) {
     var nodedoms = this.nodedoms;
     if(!source.children) {
         console.log(source.name);
-        source.beDeleted = false;
         var thisnode = nodedoms[source.name];
         thisnode.parentNode.removeChild(thisnode);
         delete nodedoms[source.name];
+        source.beDeleted = 2;
         return;
     }
     var children = source.children;
