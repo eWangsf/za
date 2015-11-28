@@ -40,31 +40,34 @@ var projects = {
     }
 };
 
-// var cover = d3.select('#cover'),
-//     main = d3.select('#body');
+var blogs = [
+    {
+        'title': 'flex_tips',
+        'href': 'blogs/flex/flex.html'
+    }
+];
 
-// var body = d3.select('body')
-//             .on('mousewheel', function () {
-//                 cover.transition()
-//                     .duration(2000)
-//                     .classed('active', false);
-//                 main.transition()
-//                     .duration(2000)
-//                     .classed('active', true);
-//             });
+var projectsdom = d3.select('#projects');
+var blogsdom = d3.select('#blogs');
 
-var container = d3.select('#projects');
-
-var domstr = '';
+var proStr = '';
 for(var key in projects) {
-    domstr += '<h4>' + key + '</h4><ul>';
+    proStr += '<h4>' + key + '</h4><ul>';
     var value = projects[key];
     for(var k2 in value) {
-        domstr += '<li><a href="codingPractice/' + value[k2] + '" target="_blank">' + k2 + '</a></li>';
+        proStr += '<li><a href="codingPractice/' + value[k2] + '" target="_blank">' + k2 + '</a></li>';
     }
-    domstr += '</ul>';
+    proStr += '</ul>';
 }
-container.html(domstr);
+projectsdom.html(proStr);
+
+var blogsStr = '',
+    thisobj;
+for(var i = 0; i < blogs.length; i++) {
+    thisobj = blogs[i];
+    blogsStr += '<h4><a href="' + thisobj['href'] + '" target="_blank">' + thisobj['title'] + '</a></h4>';
+}
+blogsdom.html(blogsStr);
 
 
 
