@@ -58,11 +58,12 @@ collaTree.prototype.start = function () {
     this.container.appendChild(gnode);
     this.nodedoms[this.data.name] = gnode;
     obj = this;
-    setTimeout(function () {
+    tick = setTimeout(function () {
         obj.tickFunc(obj.data);
-        setTimeout(arguments.callee, 30);
+        tick = setTimeout(arguments.callee, 30);
     }, 30);
     this.addEvent();
+    console.log(this.data);
 }
 
 collaTree.prototype.collapse = function (o) {
@@ -91,9 +92,9 @@ collaTree.prototype.getNum = function (source) {
 }
 
 collaTree.prototype.update = function (source) {
+    var th = this;
     this.getNum();
     tmpinterval = height / (this.data.num);
-
     if(!source.children) {
         return;
     }
@@ -173,6 +174,8 @@ collaTree.prototype.addEvent = function () {
 
 collaTree.prototype.toggle = function (obj, name) {
     if(obj.name === name) {
+        console.log(this.data);
+        var th = this;
         var nodedoms = this.nodedoms;
         if(obj.children) {
             for(var i = 0; i < obj.children.length; i++) {
@@ -181,7 +184,7 @@ collaTree.prototype.toggle = function (obj, name) {
             // obj._children = obj.children;
             // obj.children = null;
             // obj.num = 1;
-            // this.update(this.data);
+            // this.update(this.data);      
             
         } else {
             obj.num = obj._children.length;
@@ -202,6 +205,9 @@ collaTree.prototype.toggle = function (obj, name) {
 }
 
 collaTree.prototype.clearNode = function (obj, basex, basey) {
+    // if(obj.x == basex) {
+    //     clearTimeout(tick);
+    // }
     obj.x = basex;
     obj.y = basey;
     obj.beDeleted = 1;
@@ -221,14 +227,15 @@ collaTree.prototype.tickFunc = function (source) {
     var obj = this;
     var nodedoms = this.nodedoms;
     var thisnode = nodedoms[source.name];
-    thisnode.setAttribute('transform', 'translate(' + (source.y0 += (source.y - source.y0) / 3) + ', ' + (source.x0 += (source.x - source.x0) / 3) + ')');
+    if(thisnode) {
+        thisnode.setAttribute('transform', 'translate(' + (source.y0 += (source.y - source.y0) / 3) + ', ' + (source.x0 += (source.x - source.x0) / 3) + ')');
+    }
     if ((source.beDeleted === 1) && (Math.abs(source.y0 - source.standard) < 5)) {
-        console.log(source);
-        // source.beDeleted = false;
-        // console.log(nodedoms);
-        // thisnode.parentNode.removeChild(thisnode);
-        // delete nodedoms[source.name];
-        // console.log(nodedoms);
+        if(thisnode) {
+            thisnode.parentNode.removeChild(thisnode);
+            delete nodedoms[source.name];
+            source.standard = source.beDeleted = source.x = source.x0 = source.y = source.y0 = source.num = source.id = source.depth = undefined;
+        }
     }
     if(!source.children) {
         return;
