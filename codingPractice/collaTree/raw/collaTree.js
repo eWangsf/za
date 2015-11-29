@@ -30,6 +30,7 @@ function collaTree(data, g) {
     this.data = data;
     this.container = g;
     this.nodedoms = {};
+    this.linkdoms = {};
 }
 
 collaTree.prototype.start = function () {
@@ -64,7 +65,6 @@ collaTree.prototype.start = function () {
         tick = setTimeout(arguments.callee, 30);
     }, 30);
     this.addEvent();
-    // console.log(this.data);
 }
 
 collaTree.prototype.collapse = function (o) {
@@ -124,6 +124,24 @@ collaTree.prototype.render = function (source) {
     var children = source.children;
 
     var thisobj;
+    // links
+    for(var i = 0; i < children.length; i++) {
+        thisobj = children[i];
+        var dy = thisobj.y0 - source.y;
+        var dstr = 'M' + source.y + ' ' + source.x 
+                + ' C' + (source.y + dy / 3) + ' ' + (source.x)
+                + ' ' + (source.y + 2 * dy / 3) + ' ' + (thisobj.x) 
+                + ' ' +  thisobj.y + ' ' + thisobj.x + '';
+        var pathnode = document.createElementNS('http://www.w3.org/2000/svg','path');
+        pathnode.setAttribute('class', 'link');
+        pathnode.setAttribute('d', dstr);
+        this.container.appendChild(pathnode);
+        this.linkdoms[thisobj.name] = {
+            'dom': pathnode,
+            'a_end': source,
+            'b_end': thisobj
+        };
+    }
     // nodes
     for(var i = 0; i < children.length; i++) {
         thisobj = children[i];
@@ -147,19 +165,7 @@ collaTree.prototype.render = function (source) {
         this.nodedoms[thisobj.name] = gnode;
     }
 
-    // links
-    // for(var i = 0; i < children.length; i++) {
-    //     thisobj = children[i];
-    //     var dy = thisobj.y - source.y;
-    //     var dstr = 'M' + source.y + ' ' + source.x 
-    //             + ' C' + (source.y + dy / 3) + ' ' + (source.x)
-    //             + ' ' + (source.y + 2 * dy / 3) + ' ' + (thisobj.x) 
-    //             + ' ' +  thisobj.y + ' ' + thisobj.x + '';
-    //     var pathnode = document.createElementNS('http://www.w3.org/2000/svg','path');
-    //     pathnode.setAttribute('class', 'link');
-    //     pathnode.setAttribute('d', dstr);
-    //     this.container.appendChild(pathnode);
-    // }
+    
 }
 
 collaTree.prototype.addEvent = function () {
@@ -215,10 +221,23 @@ collaTree.prototype.clearNode = function (obj, basex, basey) {
 }
 
 collaTree.prototype.tickFunc = function (source) {
-    var nodedoms = this.nodedoms;
-    var thisnode = nodedoms[source.name];
+    var nodedoms = this.nodedoms,
+        linkdoms = this.linkdoms;
+    var thisnode = nodedoms[source.name],
+        thislink = linkdoms[source.name];
     if(thisnode) {
         thisnode.setAttribute('transform', 'translate(' + (source.y0 += (source.y - source.y0) / 3) + ', ' + (source.x0 += (source.x - source.x0) / 3) + ')');
+    }
+    if(thislink) {
+       var linkdom = thislink.dom;
+       var a_end = thislink.a_end;
+       var b_end = thislink.b_end;
+       var dy = b_end.y0 - a_end.y;
+       var dstr = 'M' + a_end.y + ' ' + a_end.x 
+                + ' C' + (a_end.y + dy / 3) + ' ' + (a_end.x)
+                + ' ' + (a_end.y + 2 * dy / 3) + ' ' + (b_end.x0) 
+                + ' ' +  b_end.y0 + ' ' + b_end.x0 + '';
+        linkdom.setAttribute('d', dstr);
     }
     
     if(source.beDeleted && (Math.abs(source.y0 - source.y) < 5)) {
