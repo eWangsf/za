@@ -11,6 +11,7 @@ var r = 4.5,
     tmpinterval = 0;
 
 var tick;
+var togglename;
 
 window.onload = function () {
     svg = document.getElementsByTagName('svg')[0];
@@ -29,6 +30,7 @@ function collaTree(data, g) {
     this.data = data;
     this.container = g;
     this.nodedoms = {};
+    this.linkdoms = {};
 }
 
 collaTree.prototype.start = function () {
@@ -58,9 +60,9 @@ collaTree.prototype.start = function () {
     this.container.appendChild(gnode);
     this.nodedoms[this.data.name] = gnode;
     obj = this;
-    setTimeout(function () {
+    tick = setTimeout(function () {
         obj.tickFunc(obj.data);
-        setTimeout(arguments.callee, 30);
+        tick = setTimeout(arguments.callee, 30);
     }, 30);
     this.addEvent();
 }
@@ -91,9 +93,9 @@ collaTree.prototype.getNum = function (source) {
 }
 
 collaTree.prototype.update = function (source) {
+    var th = this;
     this.getNum();
     tmpinterval = height / (this.data.num);
-
     if(!source.children) {
         return;
     }
@@ -122,6 +124,24 @@ collaTree.prototype.render = function (source) {
     var children = source.children;
 
     var thisobj;
+    // links
+    for(var i = 0; i < children.length; i++) {
+        thisobj = children[i];
+        var dy = thisobj.y0 - source.y;
+        var dstr = 'M' + source.y + ' ' + source.x 
+                + ' C' + (source.y + dy / 3) + ' ' + (source.x)
+                + ' ' + (source.y + 2 * dy / 3) + ' ' + (thisobj.x) 
+                + ' ' +  thisobj.y + ' ' + thisobj.x + '';
+        var pathnode = document.createElementNS('http://www.w3.org/2000/svg','path');
+        pathnode.setAttribute('class', 'link');
+        pathnode.setAttribute('d', dstr);
+        this.container.appendChild(pathnode);
+        this.linkdoms[thisobj.name] = {
+            'dom': pathnode,
+            'a_end': source,
+            'b_end': thisobj
+        };
+    }
     // nodes
     for(var i = 0; i < children.length; i++) {
         thisobj = children[i];
@@ -145,19 +165,7 @@ collaTree.prototype.render = function (source) {
         this.nodedoms[thisobj.name] = gnode;
     }
 
-    // links
-    // for(var i = 0; i < children.length; i++) {
-    //     thisobj = children[i];
-    //     var dy = thisobj.y - source.y;
-    //     var dstr = 'M' + source.y + ' ' + source.x 
-    //             + ' C' + (source.y + dy / 3) + ' ' + (source.x)
-    //             + ' ' + (source.y + 2 * dy / 3) + ' ' + (thisobj.x) 
-    //             + ' ' +  thisobj.y + ' ' + thisobj.x + '';
-    //     var pathnode = document.createElementNS('http://www.w3.org/2000/svg','path');
-    //     pathnode.setAttribute('class', 'link');
-    //     pathnode.setAttribute('d', dstr);
-    //     this.container.appendChild(pathnode);
-    // }
+    
 }
 
 collaTree.prototype.addEvent = function () {
@@ -173,17 +181,15 @@ collaTree.prototype.addEvent = function () {
 
 collaTree.prototype.toggle = function (obj, name) {
     if(obj.name === name) {
+        var th = this;
         var nodedoms = this.nodedoms;
         if(obj.children) {
+            togglename = obj.name;
             for(var i = 0; i < obj.children.length; i++) {
                 this.clearNode(obj.children[i], obj.x, obj.y);
             }
-            // obj._children = obj.children;
-            // obj.children = null;
-            // obj.num = 1;
-            // this.update(this.data);
-            
         } else {
+            togglename = undefined;
             obj.num = obj._children.length;
             obj.children = obj._children;
             obj._children = null;
@@ -204,8 +210,7 @@ collaTree.prototype.toggle = function (obj, name) {
 collaTree.prototype.clearNode = function (obj, basex, basey) {
     obj.x = basex;
     obj.y = basey;
-    obj.beDeleted = 1;
-    obj.standard = basey;
+    obj.beDeleted = true;
     if(!obj.children) {
         return ;
     }
@@ -215,23 +220,48 @@ collaTree.prototype.clearNode = function (obj, basex, basey) {
     }
 }
 
-
-
 collaTree.prototype.tickFunc = function (source) {
-    var obj = this;
-    var nodedoms = this.nodedoms;
-    var thisnode = nodedoms[source.name];
-    thisnode.setAttribute('transform', 'translate(' + (source.y0 += (source.y - source.y0) / 3) + ', ' + (source.x0 += (source.x - source.x0) / 3) + ')');
-    if ((source.beDeleted === 1) && (Math.abs(source.y0 - source.standard) < 5)) {
-        console.log(source);
-        // source.beDeleted = false;
-        // console.log(nodedoms);
-        // thisnode.parentNode.removeChild(thisnode);
-        // delete nodedoms[source.name];
-        // console.log(nodedoms);
+    var nodedoms = this.nodedoms,
+        linkdoms = this.linkdoms;
+    var thisnode = nodedoms[source.name],
+        thislink = linkdoms[source.name];
+    if(thisnode) {
+        thisnode.setAttribute('transform', 'translate(' + (source.y0 += (source.y - source.y0) / 3) + ', ' + (source.x0 += (source.x - source.x0) / 3) + ')');
+    }
+    if(thislink) {
+       var linkdom = thislink.dom;
+       var a_end = thislink.a_end;
+       var b_end = thislink.b_end;
+       var dy = b_end.y0 - a_end.y;
+       var dstr = 'M' + a_end.y + ' ' + a_end.x 
+                + ' C' + (a_end.y + dy / 3) + ' ' + (a_end.x)
+                + ' ' + (a_end.y + 2 * dy / 3) + ' ' + (b_end.x0) 
+                + ' ' +  b_end.y0 + ' ' + b_end.x0 + '';
+        linkdom.setAttribute('d', dstr);
+    }
+    
+    if(source.beDeleted && (Math.abs(source.y0 - source.y) < 5)) {
+        if(!source.children) {
+            thisnode.parentNode.removeChild(thisnode);
+            delete nodedoms[source.name];
+            source.beDeleted = source.x = source.x0 = source.y = source.y0 = source.num = source.id = source.depth = undefined;
+        } else {
+            var children = source.children,
+                flag = true;
+            for(var i = 0; i < children.length; i++) {
+                if(nodedoms[children[i].name]) {
+                    flag = false;
+                }
+            }
+            if(flag) {
+                source._children = source.children;
+                source.children = null;
+                source.num = 1;
+            }
+        }
     }
     if(!source.children) {
-        return;
+        return ;
     }
     var children = source.children,
         thisobj;
@@ -239,30 +269,20 @@ collaTree.prototype.tickFunc = function (source) {
         thisobj = children[i];
         this.tickFunc(thisobj);
     }
-}
-
-
-
-
-collaTree.prototype.deleteAllChild = function(source) {
-    var nodedoms = this.nodedoms;
-    if(!source.children) {
-        console.log(source.name);
-        var thisnode = nodedoms[source.name];
-        thisnode.parentNode.removeChild(thisnode);
-        delete nodedoms[source.name];
-        source.beDeleted = 2;
-        return;
+    if(source.name === togglename) {
+        var children = source.children,
+            flag = true;
+        for(var i = 0; i < children.length; i++) {
+            if(nodedoms[children[i].name]) {
+                flag = false;
+            }
+        }
+        if(flag) {
+            source._children = source.children;
+            source.children = null;
+            source.num = 1;
+            this.update(this.data);
+        }
     }
-    var children = source.children;
-    for(var i = 0; i < children.length; i++) {
-        this.deleteAllChild(children[i]);
-    }
-    source.beDeleted = false;
-    var thisnode = nodedoms[source.name];
-    thisnode.parentNode.removeChild(thisnode);
-    delete nodedoms[source.name];
+    
 }
-
-
-
