@@ -243,7 +243,9 @@ collaTree.prototype.tickFunc = function (source) {
     if(source.beDeleted && (Math.abs(source.y0 - source.y) < 5)) {
         if(!source.children) {
             thisnode.parentNode.removeChild(thisnode);
+            thislink['dom'].parentNode.removeChild(thislink['dom']);
             delete nodedoms[source.name];
+            delete linkdoms[source.name];
             source.beDeleted = source.x = source.x0 = source.y = source.y0 = source.num = source.id = source.depth = undefined;
         } else {
             var children = source.children,
