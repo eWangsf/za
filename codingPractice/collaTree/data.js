@@ -62,7 +62,7 @@ var data = {
             ]
         },
         {
-            "name": "data",
+            "name": "data1",
             "children": [
                 {
                     "name": "converters",
@@ -270,9 +270,9 @@ var data = {
                     ]
                 },
                 {
-                    "name": "data",
+                    "name": "data2",
                     "children": [
-                        {"name": "Data", "size": 20544},
+                        {"name": "Data3", "size": 20544},
                         {"name": "DataList", "size": 19788},
                         {"name": "DataSprite", "size": 10349},
                         {"name": "EdgeSprite", "size": 3301},

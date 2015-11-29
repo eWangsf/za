@@ -64,7 +64,7 @@ collaTree.prototype.start = function () {
         tick = setTimeout(arguments.callee, 30);
     }, 30);
     this.addEvent();
-    console.log(this.data);
+    // console.log(this.data);
 }
 
 collaTree.prototype.collapse = function (o) {
@@ -92,7 +92,7 @@ collaTree.prototype.getNum = function (source) {
     return source.num;
 }
 
-collaTree.prototype.update = function (source, f) {
+collaTree.prototype.update = function (source) {
     var th = this;
     this.getNum();
     tmpinterval = height / (this.data.num);
@@ -105,7 +105,6 @@ collaTree.prototype.update = function (source, f) {
         thisobj = children[i];
         thisobj.x0 = thisobj.x || source.x;
         thisobj.y0 = thisobj.y || source.y;
-        thisobj.ok = f ? thisobj.ok : undefined;
         j += thisobj.num / 2;
         thisobj.depth = source.depth + 1;
         thisobj.y = thisobj.depth * 180;
@@ -114,7 +113,7 @@ collaTree.prototype.update = function (source, f) {
         }
         thisobj.x = source.x + j * tmpinterval;
         j += thisobj.num / 2;
-        this.update(thisobj, f);
+        this.update(thisobj);
     }
 }
 
@@ -176,18 +175,13 @@ collaTree.prototype.addEvent = function () {
 
 collaTree.prototype.toggle = function (obj, name) {
     if(obj.name === name) {
-        console.log(this.data);
         var th = this;
         var nodedoms = this.nodedoms;
         if(obj.children) {
-            obj.ok = false;
             togglename = obj.name;
             for(var i = 0; i < obj.children.length; i++) {
                 this.clearNode(obj.children[i], obj.x, obj.y);
             }
-            setTimeout(function () {
-                console.log(th.data);
-            }, 5000);
         } else {
             togglename = undefined;
             obj.num = obj._children.length;
@@ -210,7 +204,7 @@ collaTree.prototype.toggle = function (obj, name) {
 collaTree.prototype.clearNode = function (obj, basex, basey) {
     obj.x = basex;
     obj.y = basey;
-    obj.ok = false;
+    obj.beDeleted = true;
     if(!obj.children) {
         return ;
     }
@@ -220,76 +214,56 @@ collaTree.prototype.clearNode = function (obj, basex, basey) {
     }
 }
 
-
-
 collaTree.prototype.tickFunc = function (source) {
-    var obj = this;
     var nodedoms = this.nodedoms;
     var thisnode = nodedoms[source.name];
     if(thisnode) {
         thisnode.setAttribute('transform', 'translate(' + (source.y0 += (source.y - source.y0) / 3) + ', ' + (source.x0 += (source.x - source.x0) / 3) + ')');
     }
-    if ((source.ok === true || source.ok === false) && (Math.abs(source.y0 - source.y) < 5)) {
-            if(!source.children) {
-                source.ok = true;
-                if(thisnode && (source.name != togglename)) {
-                    thisnode.parentNode.removeChild(thisnode);
-                    delete nodedoms[source.name];
-                    source.x = source.x0 = source.y = source.y0 = source.num = source.id = source.depth = undefined;
+    
+    if(source.beDeleted && (Math.abs(source.y0 - source.y) < 5)) {
+        if(!source.children) {
+            thisnode.parentNode.removeChild(thisnode);
+            delete nodedoms[source.name];
+            source.beDeleted = source.x = source.x0 = source.y = source.y0 = source.num = source.id = source.depth = undefined;
+        } else {
+            var children = source.children,
+                flag = true;
+            for(var i = 0; i < children.length; i++) {
+                if(nodedoms[children[i].name]) {
+                    flag = false;
                 }
-            } else if(source.ok && source.children) {
-                for(var i = 0; i < source.children.length; i++) {
-                    source.children[i].ok = undefined;
-                }
+            }
+            if(flag) {
                 source._children = source.children;
                 source.children = null;
-                source.num = 1; 
-                console.log(source);
-                if(thisnode && (source.name != togglename)) {
-                    thisnode.parentNode.removeChild(thisnode);
-                    delete nodedoms[source.name];
-                    source.x = source.x0 = source.y = source.y0 = source.num = source.id = source.depth = undefined;
-                }
-                this.update(this.data, 1);
-
+                source.num = 1;
             }
+        }
     }
     if(!source.children) {
         return ;
     }
     var children = source.children,
-        thisobj,
-        flag = true;
+        thisobj;
     for(var i = 0; i < children.length; i++) {
         thisobj = children[i];
         this.tickFunc(thisobj);
-        flag = flag && thisobj.ok;
     }
-    if(source.ok === false) {
-        source.ok = flag;
+    if(source.name === togglename) {
+        var children = source.children,
+            flag = true;
+        for(var i = 0; i < children.length; i++) {
+            if(nodedoms[children[i].name]) {
+                flag = false;
+            }
+        }
+        if(flag) {
+            source._children = source.children;
+            source.children = null;
+            source.num = 1;
+            this.update(this.data);
+        }
     }
+    
 }
-
-
-
-
-collaTree.prototype.deleteAllChild = function(source) {
-    var nodedoms = this.nodedoms;
-    if(!source.children) {
-        console.log(source.name);
-        var thisnode = nodedoms[source.name];
-        thisnode.parentNode.removeChild(thisnode);
-        delete nodedoms[source.name];
-        return;
-    }
-    var children = source.children;
-    for(var i = 0; i < children.length; i++) {
-        this.deleteAllChild(children[i]);
-    }
-    var thisnode = nodedoms[source.name];
-    thisnode.parentNode.removeChild(thisnode);
-    delete nodedoms[source.name];
-}
-
-
-
