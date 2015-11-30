@@ -41,6 +41,7 @@ collaTree.prototype.start = function () {
     this.data.depth = 0;
     this.data.id = 1;
     this.data.num = 0;
+
     var gnode = document.createElementNS('http://www.w3.org/2000/svg','g');
     gnode.setAttribute('class', 'node');
     gnode.setAttribute('transform', 'translate(' + this.data.y0 + ', ' + this.data.x0 + ')');
@@ -62,11 +63,11 @@ collaTree.prototype.start = function () {
     obj = this;
     tick = setTimeout(function () {
         obj.tickFunc(obj.data);
-        tick = setTimeout(arguments.callee, 30);
-    }, 30);
+        tick = setTimeout(arguments.callee, 40);
+    }, 40);
     this.addEvent();
 }
-
+g
 collaTree.prototype.collapse = function (o) {
     if (o.children) {
       o._children = o.children;
@@ -164,8 +165,6 @@ collaTree.prototype.render = function (source) {
         this.container.appendChild(gnode);
         this.nodedoms[thisobj.name] = gnode;
     }
-
-    
 }
 
 collaTree.prototype.addEvent = function () {
@@ -226,7 +225,7 @@ collaTree.prototype.tickFunc = function (source) {
     var thisnode = nodedoms[source.name],
         thislink = linkdoms[source.name];
     if(thisnode) {
-        thisnode.setAttribute('transform', 'translate(' + (source.y0 += (source.y - source.y0) / 3) + ', ' + (source.x0 += (source.x - source.x0) / 3) + ')');
+        thisnode.setAttribute('transform', 'translate(' + (source.y0 += (source.y - source.y0) / 2) + ', ' + (source.x0 += (source.x - source.x0) / 2) + ')');
     }
     if(thislink) {
        var linkdom = thislink.dom;
@@ -285,6 +284,5 @@ collaTree.prototype.tickFunc = function (source) {
             source.num = 1;
             this.update(this.data);
         }
-    }
-    
+    }  
 }
