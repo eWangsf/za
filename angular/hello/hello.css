@@ -3,9 +3,16 @@ table, th , td {
   border-collapse: collapse;
   padding: 5px;
 }
-/*table tr:nth-child(odd) {
+table tr:nth-child(odd) {
   background-color: #f1f1f1;
 }
 table tr:nth-child(even) {
   background-color: #ffffff;
-}*/
+}
+
+#testForm span {
+    color: red;
+}
+
+
+
