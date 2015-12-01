@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="shortcut icon" href="../../pic.png">
+        <link rel="stylesheet" href="hello.css">
+    </head>
+    <body>
+        <!-- <div ng-app="nameApp" ng-controller="myCtrl">
+            <input type="text" ng-model="firstName" >
+            <input type="text" ng-model="lastName" >
+            <p>hello {{firstName + ', ' + lastName}}</p>
+        </div> -->
+        <div ng-app="tableApp" ng-controller="tableCtrl">
+            <p><input type="text" ng-model="query"></p>
+            <table>
+                <tr ng-repeat="obj in json['records'] | filter: {Country: query || ''} "> 
+                    <!-- <td>{{obj.Name}}</td>
+                    <td>{{obj.City}}</td>
+                    <td>{{obj.Country}}</td> -->
+                    <td ng-if="$odd" style="background-color:#f1f1f1">{{ obj.Name }}</td>
+                    <td ng-if="$even">{{ obj.Name }}</td>
+                    <td ng-if="$odd" style="background-color:#f1f1f1">{{ obj.Country }}</td>
+                    <td ng-if="$even">{{ obj.Country }}</td>
+                </tr>
+            </table>
+            <p id="test">key:   {{query}}</p>
+        </div>
+
+        
+
+    <script src="../angular.js"></script>
+
+    <script src="hello.js"></script>
+
+    </body>
+</html>
