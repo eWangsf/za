@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="shortcut icon" href="../../pic.png" >
+        <link rel="stylesheet" href="firstApp.css">
+    </head>
+    <body>
+        <script src="../angular.js"></script>
+        <div ng-app="firstApp" ng-controller="firstCtrl">
+            <h3>我的笔记</h3>
+            <p>
+                <textarea ng-model="message" cols="40" rows="10">
+                </textarea>
+            </p>
+            <p>
+                <button ng-click="save()">保存</button>
+                <button ng-click="clear()">清除</button>
+            </p>
+            <p>剩余字数：{{100-message.length}}</p>
+        </div>
+
+        <script src="firstApp.js"></script>
+    </body>
+</html>

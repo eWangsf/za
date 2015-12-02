@@ -42,7 +42,7 @@
             <p>master = {{master}}</p>
         </div> -->
 
-        <form ng-app="formApp" ng-controller="formCtrl" id="testForm" name='testForm' novalidate>
+        <!-- <form ng-app="formApp" ng-controller="formCtrl" id="testForm" name='testForm' novalidate>
             <p>
                 <label for="username">用户名：</label>
                 <input type="text" ng-model="username" id="username" name="username" required>
@@ -56,8 +56,21 @@
             </p>
             <p>
                 <button ng-disabled="testForm.$pristine || testForm.username.$dirty && testForm.username.$invalid || testForm.email.$dirty && testForm.email.$invalid">提交</button>
-                <!-- <button ng-disabled="testForm.$pristine">提交</button> -->
             </p>
+        </form> -->
+        <!-- <input type="search" id='s' required > -->
+        <form action="" method="get" autocomplete="on">
+            Name:<input type="text" name="name" /><br />
+            E-mail: <input type="email" name="email" autocomplete="off" required="required"/><br />
+            Webpage: <input type="url" list="url_list" name="link" />
+                    <datalist id="url_list">
+                        <option label="W3School" value="http://www.w3school.com.cn" />
+                        <option label="Google" value="http://www.google.com" />
+                        <option label="Microsoft" value="http://www.microsoft.com" />
+                    </datalist>
+            <input name="variable" title="label" type="type" value="value" default="default" format="specifier" emptyok="false|true" size="n" maxlength="n" tabindex="n"/>
+            <input type="submit" />
+
         </form>
 
 
