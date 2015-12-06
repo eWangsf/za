@@ -49,9 +49,10 @@ function growTree(depth, uId) {
     var i = 0;
     var id = '';
     var intervalId = window.setInterval(function () {    
-        id = i == 0 ? i : i + '_' + uId
+        id = i == 0 ? i : i + '_' + uId;
+        console.log(id);
         document.getElementById(uId).setAttributeNS(xlinkns, "xlink:href", "#" + id);
-        if (++i > depth) clearInterval(intervalId)
+        if (++i > depth) clearInterval(intervalId);
     }, 120);
 }
 
