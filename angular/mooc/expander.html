@@ -9,15 +9,21 @@
     </head>
     <body>
 
+        <!-- <div ng-controller="expanderCtrl">
+            <expander class="expander" expander-title="title">
+                <h1>jajaj</h1>
+                <h3>{{text}}</h3>
+            </expander>
+        </div>
+ -->        
         <div ng-controller="expanderCtrl">
             <accordion>
                 <expander class="expander" ng-repeat="obj in expanders" expander-title="obj.title" >
-                    {{obj.text}}
+                    <p>{{obj.text}}</p>
                 </expander>
-
             </accordion>
         </div>
-        
+
 
         <script src="expander.js"></script>
 
