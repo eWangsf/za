@@ -1,16 +1,5 @@
 
 svg line {
     pointer-events: none;
+    stroke: #999;
 }
-
-circle,
-line {
-    -moz-transition: all 0.0001s;
-    -o-transition: all 0.0001s;
-    -webkit-transition: all 0.0001s;
-    transition: all 0.0001s;
-}
-/*
-circle {
-    z-index: 100;
-}*/
