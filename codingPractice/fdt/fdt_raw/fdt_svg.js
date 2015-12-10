@@ -18,14 +18,13 @@ var zero = .01,
     linkStrength = .0004;
 
 // dom
-var circles,
+var offset = 0,
+    circles,
     links,
     circleNumber,
     linkNumber,
     circledoms = {},
     linkdoms = {};
-    // sourcedoms = {},
-    // targetdoms = {};
 
 window.onload = function () {
     svg = document.getElementsByTagName('svg')[0];
@@ -63,17 +62,12 @@ window.onload = function () {
         circledoms[i] = circleele;
     }
 
-    var clock = setTimeout(toBeBalance, zero);
+    var clock = setTimeout(toBeBalance, 0);
     addEvent();
+
 }
 
 function toBeBalance() {
-    // attract
-    var j = -1;
-    while (++j < linkNumber) {
-        attract(j);
-    }
-
     // repulse
     var i = -1;
     while (++i < circleNumber) {
@@ -97,7 +91,17 @@ function toBeBalance() {
         thislink.setAttribute('y2', y2);
     }
 
-    clock = setTimeout(toBeBalance, zero);
+    // attract
+    var j = -1;
+    while (++j < linkNumber) {
+        attract(j);
+    }
+   
+    clock = setTimeout(toBeBalance, 0);
+    // console.log(offset);
+    // if(offset > 0 && offset < 10) {
+    //     addEvent();
+    // }
 }
 
 function repulse(node1, node2) {
@@ -109,7 +113,11 @@ function repulse(node1, node2) {
     var dx = node2_cx - node1_cx, dy = node2_cy - node1_cy, dn = dx * dx + dy * dy;
     var repweight = charge / dn;
     var x = repweight * dx * .8;
+    // x %= 0.3;
     var y = repweight * dy * .8;
+    // y %= 0.3;
+    offset += Math.sqrt(dn);
+    // console.log(x);
     if((Math.abs(x) >= zero)) {
         circledoms[node1].setAttribute('cx', parseFloat(circledoms[node1].getAttribute('cx')) - x);
         circledoms[node2].setAttribute('cx', parseFloat(circledoms[node2].getAttribute('cx')) + x);
@@ -129,12 +137,15 @@ function attract(link) {
         tar_y = linkdoms[link].getAttribute('y2') || 0,
         dx = (tar_x - sr_x) - (linkDistance), dy = (tar_y - sr_y) - (linkDistance), dn = dx * dx + dy * dy,
         attractweight = linkStrength * Math.sqrt(dn);
-
-    var x = attractweight * dx * .8,
-        y = attractweight * dy * .8;
+    offset += Math.sqrt(dn);
     if((Math.abs(attractweight) < zero)) {
         return;
     }
+    var x = attractweight * dx * .8,
+        y = attractweight * dy * .8;
+    // x %= 2;
+    // y %= 2;
+    // console.log(x);
 
     srcircle.setAttribute('cx', parseFloat(srcircle.getAttribute('cx')) + x);
     srcircle.setAttribute('cy', parseFloat(srcircle.getAttribute('cy')) + y);
@@ -182,8 +193,4 @@ function addEvent() {
             }
         }
     }
-
-
-
-
 }
