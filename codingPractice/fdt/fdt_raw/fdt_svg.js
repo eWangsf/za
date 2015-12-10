@@ -12,10 +12,7 @@ var radium = 5,
     linkwidth = 1,
     linkopacity = .9;
 
-
-var maxOffset = 50,
-    offset = maxOffset + 1,
-    zero = .001,
+var zero = .01,
     charge = 10,
     linkDistance = 15,
     linkStrength = .0004;
@@ -27,13 +24,13 @@ var circles,
     linkNumber,
     circledoms = {},
     linkdoms = {};
-
+    // sourcedoms = {},
+    // targetdoms = {};
 
 window.onload = function () {
-    var svg = document.getElementsByTagName('svg')[0];
-    var width = svg.getAttribute('width'),
-        height = svg.getAttribute('height'),
-        padding = 20;
+    svg = document.getElementsByTagName('svg')[0];
+    width = svg.getAttribute('width');
+    height = svg.getAttribute('height');
     circles = dataset.nodes;
     links = dataset.links;
     circleNumber = circles.length;
@@ -60,16 +57,23 @@ window.onload = function () {
         circleele.setAttribute('cx', circles[i].x);
         circleele.setAttribute('cy', circles[i].y);
         circleele.setAttribute('r', radium);
+        circleele.setAttribute('id', i);
         circleele.setAttribute('fill', circlecolor[circles[i].group]);
         svg.appendChild(circleele);
         circledoms[i] = circleele;
     }
 
-    
-    var clock = setTimeout(toBeBalance, 0);
+    var clock = setTimeout(toBeBalance, zero);
+    addEvent();
 }
 
 function toBeBalance() {
+    // attract
+    var j = -1;
+    while (++j < linkNumber) {
+        attract(j);
+    }
+
     // repulse
     var i = -1;
     while (++i < circleNumber) {
@@ -93,13 +97,7 @@ function toBeBalance() {
         thislink.setAttribute('y2', y2);
     }
 
-    // attract
-    var j = -1;
-    while (++j < linkNumber) {
-        attract(j);
-    }
-
-    clock = setTimeout(toBeBalance, 0);
+    clock = setTimeout(toBeBalance, zero);
 }
 
 function repulse(node1, node2) {
@@ -110,16 +108,16 @@ function repulse(node1, node2) {
     var node2_cy = circledoms[node2].getAttribute('cy');
     var dx = node2_cx - node1_cx, dy = node2_cy - node1_cy, dn = dx * dx + dy * dy;
     var repweight = charge / dn;
-    var x = repweight * dx;
-    var y = repweight * dy;
-    if((Math.abs(x) < zero) || (Math.abs(y) < zero)) {
-        return;
+    var x = repweight * dx * .8;
+    var y = repweight * dy * .8;
+    if((Math.abs(x) >= zero)) {
+        circledoms[node1].setAttribute('cx', parseFloat(circledoms[node1].getAttribute('cx')) - x);
+        circledoms[node2].setAttribute('cx', parseFloat(circledoms[node2].getAttribute('cx')) + x);
     }
-
-    circledoms[node1].setAttribute('cx', parseFloat(circledoms[node1].getAttribute('cx')) - x);
-    circledoms[node1].setAttribute('cy', parseFloat(circledoms[node1].getAttribute('cy')) - y);
-    circledoms[node2].setAttribute('cx', parseFloat(circledoms[node2].getAttribute('cx')) + x);
-    circledoms[node2].setAttribute('cy', parseFloat(circledoms[node2].getAttribute('cy')) + y);
+    if((Math.abs(y) >= zero)) {
+        circledoms[node1].setAttribute('cy', parseFloat(circledoms[node1].getAttribute('cy')) - y);
+        circledoms[node2].setAttribute('cy', parseFloat(circledoms[node2].getAttribute('cy')) + y);
+    }
 }
 
 function attract(link) {
@@ -132,12 +130,60 @@ function attract(link) {
         dx = (tar_x - sr_x) - (linkDistance), dy = (tar_y - sr_y) - (linkDistance), dn = dx * dx + dy * dy,
         attractweight = linkStrength * Math.sqrt(dn);
 
+    var x = attractweight * dx * .8,
+        y = attractweight * dy * .8;
     if((Math.abs(attractweight) < zero)) {
         return;
     }
 
-    srcircle.setAttribute('cx', parseFloat(srcircle.getAttribute('cx')) + attractweight * dx);
-    srcircle.setAttribute('cy', parseFloat(srcircle.getAttribute('cy')) + attractweight * dy);
-    tarcircle.setAttribute('cx', parseFloat(tarcircle.getAttribute('cx')) - attractweight * dx);
-    tarcircle.setAttribute('cy', parseFloat(tarcircle.getAttribute('cy')) - attractweight * dy);
+    srcircle.setAttribute('cx', parseFloat(srcircle.getAttribute('cx')) + x);
+    srcircle.setAttribute('cy', parseFloat(srcircle.getAttribute('cy')) + y);
+    tarcircle.setAttribute('cx', parseFloat(tarcircle.getAttribute('cx')) - x);
+    tarcircle.setAttribute('cy', parseFloat(tarcircle.getAttribute('cy')) - y);
+}
+
+function addEvent() {
+    var down = false;
+    var thisnode,
+        thisnodeid,
+        thislinks;
+    for(var key in circledoms) {
+        circledoms[key].onmousedown = function (e) {
+            thisnode = this;
+            thisnodeid = thisnode.getAttribute('id');
+            thislinks = {
+                'source': [],
+                'target': []
+            };
+            down = true;
+        }     
+    }
+
+    svg.onmouseup = function (e) {
+        thisnode = undefined;
+        thisnodeid = undefined;
+        thislinks = undefined;
+        down = false;
+        // clock = setTimeout(toBeBalance, zero);
+    }
+    svg.onmousemove = function (e) {
+        if(down) {
+            var x = e.pageX,
+                y = e.pageY;
+            thisnode.setAttribute('cx', x);
+            thisnode.setAttribute('cy', y);
+            for(var i = 0; i < thislinks['source'].length; i++) {
+                thislinks['source'].setAttribute('x1', x);
+                thislinks['source'].setAttribute('y1', y);
+            }
+            for(var i = 0; i < thislinks['target'].length; i++) {
+                thislinks['target'].setAttribute('x2', x);
+                thislinks['target'].setAttribute('y2', y);
+            }
+        }
+    }
+
+
+
+
 }
