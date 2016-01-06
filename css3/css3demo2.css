@@ -46,7 +46,136 @@
     background: #df4e4e;
 }
 #goliath img {
+    height: calc(100% + 80px);
     opacity: 0.8;
-    transition: opacity 0.35s;
+    transform: translate3d(0, 0, 0);
+    transition: transform 0.35s;
 }
+#goliath:hover img {
+    transform: translate3d(0, -80px, 0);
+}
+#goliath .tips {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: translate3d(0, 100px, 0);
+    transition: transform 0.35s;
+}
+
+#goliath .tips h2 {
+    margin: 0;
+    padding: 0 20px;
+    height: 100px;
+    line-height: 100px;
+    text-align: left;
+}
+
+#goliath .tips p {
+    margin: 0;
+    height: 80px;
+    line-height: 80px;
+    font-size: 16px;
+    background: #df4e4e;
+}
+
+#goliath:hover .tips {
+    transform: translate3d(0, 0, 0);
+}
+
+/*hera*/
+#hera {
+    background: #303fa9;
+}
+#hera img {
+    opacity: 0.8;
+}
+
+#hera .tips {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    font-size: 18px;
+    transform: translate3d(0, -50%, 0);
+}
+#hera:before {
+    content: '';
+    border: 1px solid #fff;
+    transform: translate3d(-50%, -50%, 0) rotate(45deg) scale(0, 0);
+}
+#hera .tips p {
+    margin: 0;
+    padding: 0;
+    transform: translate3d(-50%, -50%, 0) scale(0, 0);
+}
+#hera .tips p i {
+    padding: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 26px;
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+    transition: opacity 0.35s, transform 0.35s;
+}
+#hera:hover .tips p i {
+    opacity: 1;
+}
+#hera:hover .tips p i:nth-of-type(1) {
+    transform: translate3d(-100%, -100%, 0);
+}
+#hera .tips p i:nth-of-type(1) {
+    transform: translate3d(-250%, -250%, 0);
+}
+#hera:hover .tips p i:nth-of-type(2) {
+    transform: translate3d(0, -100%, 0);
+}
+#hera .tips p i:nth-of-type(2) {
+    transform: translate3d(150%, -250%, 0);
+}
+#hera:hover .tips p i:nth-of-type(3) {
+    transform: translate3d(0, 0, 0);
+}
+#hera .tips p i:nth-of-type(3) {
+    transform: translate3d(150%, 150%, 0);
+}
+#hera:hover .tips p i:nth-of-type(4) {
+    transform: translate3d(-100%, 0, 0);
+}
+#hera .tips p i:nth-of-type(4) {
+    transform: translate3d(-250%, 150%, 0);
+}
+#hera .tips p,
+#hera:before {
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 5;
+    opacity: 0;
+    transition: opacity 0.35s, transform 0.35s;
+}
+#hera:hover:before {
+    opacity: 1;
+    transform: translate3d(-50%, -50%, 0) rotate(45deg) scale(1, 1);
+}
+#hera:hover .tips p {
+    opacity: 1;
+    transform: translate3d(-50%, -50%, 0) scale(1, 1);
+}
+
+
+#hera .tips h2 {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.35s, transform 0.35s;
+}
+#hera:hover .tips h2 {
+    opacity: 0;
+    transform: scale(0.5);
+}
+
+
 
