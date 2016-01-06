@@ -1,0 +1,904 @@
+html {
+    background: #333;
+}
+
+.section {
+    margin: 40px 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: space-around;
+    
+}
+
+.demo {
+    position: relative;
+    overflow: hidden;
+    width: 480px;
+    height: 360px;
+    background: #3085a3;
+    text-align: center;
+    cursor: pointer;
+}
+
+.tips {
+    color: #fff;
+    text-transform: uppercase;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.tips::before,
+.tips::after {
+    pointer-events: none;
+}
+
+.tips h2,
+.tips p {
+    margin: 8px;
+}
+
+.tips h2 {
+    font-size: 175%;
+}
+
+.tips p {
+    letter-spacing: 1px;
+    font-size: 70%;
+}
+
+img {
+    position: relative;
+    display: block;
+    min-width: 100%;
+    min-height: 100%;
+    opacity: 0.8;
+}
+
+/*lily*/
+#lily img {
+    width: calc(100% + 80px);
+    opacity: 0.8;
+    transition: opacity 0.35s, transform 0.35s;
+    transform: translate3d(-40px, 0, 0);
+}
+
+#lily .tips {
+    margin: 1em;
+    padding: 2em;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    text-align: left;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+#lily .tips h2,
+#lily .tips p {
+    -webkit-transform: translate3d(0, 40px, 0);
+    transform: translate3d(0, 40px, 0);
+}
+
+#lily .tips h2 {
+    -webkit-transition: -webkit-transform 0.35s;
+    transition: transform 0.35s;
+}
+
+#lily .tips p {
+    color: rgba(255,255,255,0.8);
+    opacity: 0;
+    -webkit-transition: opacity 0.2s, -webkit-transform 0.35s;
+    transition: opacity 0.2s, transform 0.35s;
+}
+
+#lily:hover img {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+#lily:hover .tips h2,
+#lily:hover .tips p {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+
+#lily:hover .tips p {
+    -webkit-transition-delay: 0.05s;
+    transition-delay: 0.05s;
+    opacity: 1;
+}
+
+/*sadie*/
+#sadie .tips:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: -webkit-linear-gradient(top, rgba(72,76,97,0) 0%, rgba(72,76,97,0.8) 75%);
+    background: linear-gradient(to bottom, rgba(72,76,97,0) 0%, rgba(72,76,97,0.8) 75%);
+    opacity: 0;
+    -webkit-transform: translate3d(0, 50%, 0);
+    transform: translate3d(0, 50%, 0);
+    -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+    transition: opacity 0.35s, transform 0.35s;
+}
+
+#sadie h2 {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    color: #484c61;
+    transform: translate3d(0, -50%, 0), color 0.35s;
+    transition: transform 0.35s, color 0.35s;
+}
+
+#sadie p {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    opacity: 0;
+    transform: translate3d(0, 0, 0);
+    transition: transform 0.35s, opacity 0.35s;
+}
+
+#sadie:hover h2 {
+    color: #fff;
+    transform: translate3d(0, -50%, 0) translate3d(0, -40%, 0);
+}
+
+#sadie:hover p {
+    opacity: 1;
+    transform: translate3d(0, -50%, 0);
+}
+
+#sadie:hover .tips:before {
+    opacity: 1;
+    -webkit-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
+}
+
+/*honey*/
+#honey {
+    position: relative;
+    background: #4a3753;
+}
+
+#honey img {
+    opacity: 0.9;
+    transition: opacity 0.35s;
+}
+#honey:hover img {
+    opacity: 0.5;
+}
+
+#honey:before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 10px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: #fff;
+    transform: translate3d(0, 10px, 0);
+    z-index: 2;
+    transition: transform 0.35s;
+}
+#honey:hover:before {
+    transform: translate3d(0, 0, 0);
+}
+
+#honey .tips {
+    position: absolute;
+    width: 80%;
+    bottom: 0;
+    transform: translate3d(0, -100%, 0);
+    transition: transform 0.35s;
+}
+#honey:hover .tips {
+    transform: translate3d(0, -40%, 0);
+}
+
+#honey .tips i {
+    transform: translate3d(0, -30px, 0);
+    opacity: 0;
+    transition: transform 0.35s, opacity 0.35s;
+}
+#honey:hover .tips i {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+}
+
+/*layla*/
+#layla img {
+    height: calc(100% + 30px);
+    opacity: 0.8;
+    transform: translate3d(0, -30px, 0);
+    transition: transform 0.35s;
+}
+#layla:hover img{
+    transform: translate3d(0, 0, 0);
+}
+
+#layla .tips {
+    padding: 3em;
+    width: calc(100% - 6em);
+    height: calc(100% - 6em);
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+#layla h2 {
+    padding-top: 26%;
+    transform: translate3d(0, -30px, 0);
+    transition: transform 0.35s;
+}
+#layla p {
+    margin: auto;
+    max-width: 70%;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+#layla:hover h2 {
+    transform: translate3d(0, 0, 0);
+}
+#layla:hover p {
+    opacity: 1;
+}
+
+#layla .tips:before,
+#layla .tips:after {
+    position: absolute;
+    content: '';
+    opacity: 0;
+    transition: transform 0.35s;
+    transition-delay: 0.15s;
+}
+#layla .tips:before {
+    top: 50px;
+    right: 30px;
+    bottom: 50px;
+    left: 30px;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    transform: scale(0, 1);
+    transform-origin: 0 0;
+}
+#layla .tips:after {
+    top: 30px;
+    right: 50px;
+    bottom: 30px;
+    left: 50px;
+    border-right: 1px solid #fff;
+    border-left: 1px solid #fff;
+    transform: scale(1, 0);
+    transform-origin: 100% 0;
+}
+
+#layla:hover .tips:before,
+#layla:hover .tips:after {
+    opacity: 1;
+    -webkit-transform: scale(1, 1);
+    transform: scale(1, 1);
+}
+
+/*zoe*/
+#zoe {
+    position: relative;
+}
+
+#zoe .description {
+    position: absolute;
+    top: 50%;
+    color: #fff;
+    font-size: 20px;
+    opacity: 0;
+    transform: translate3d(0, calc(-50% + 40px), 0);
+    transition: opacity 0.35s, transform 0.35s;
+}
+#zoe .tips {
+    padding: 0 1em;
+    width: calc(100% - 2em);
+    height: 80px;
+    position: absolute;
+    bottom: 0;
+    background: #fff;
+    color: #000;
+    transform: translate3d(0, 100%, 0);
+    transition: transform 0.35s;
+    display: flex;
+    justify-content: space-between;
+}
+#zoe .tips h2,
+#zoe .tips ul {
+    margin: 0;
+    padding: 0;
+    height: 80px;
+    line-height: 80px;
+    vertical-align: middle;
+    display: inline-block;
+}
+#zoe ul li {
+    margin: 0  0.2em;
+    display: inline-block;
+    font-size: 1.25em;
+    cursor: pointer;
+}
+#zoe .tips h2,
+#zoe .tips li {
+    transform: translate3d(0, 80px, 0);
+    transition: transform 0.35s;
+}
+
+#zoe:hover .tips {
+    transform: translate3d(0, 0, 0);
+}
+#zoe:hover .description {
+    opacity: 1;
+    transform: translate3d(0, calc(-50% - 40px), 0);
+}
+#zoe:hover .tips h2,
+#zoe:hover .tips li {
+    transform: translate3d(0, 0, 0);
+}
+#zoe:hover ul li {
+    transition-delay: 0.05s;
+}
+#zoe:hover ul li:nth-child(1) {
+    transition-delay: 0.1s;
+}
+#zoe:hover ul li:nth-child(2) {
+    transition-delay: 0.12s;
+}
+#zoe:hover ul li:nth-child(3) {
+    transition-delay: 0.14s;
+}
+
+/*oscar*/
+#oscar {
+    background: -webkit-linear-gradient(45deg, #22682a 0%, #9b4a1b 40%, #3a342a 100%);
+    background: linear-gradient(45deg, #22682a 0%,#9b4a1b 40%,#3a342a 100%);
+}
+#oscar img {
+    opacity: 0.9;
+    transition: opacity 0.35s;
+}
+#oscar:hover img {
+    opacity: 0.4;
+}
+
+#oscar .tips {
+    padding: 1em 2em;
+    width: calc(100% - 4em);
+    position: absolute;
+    top: 50%;
+    transform: translate3d(0, -50%, 0);
+}
+
+#oscar .tips h2 {
+    margin: 10px 0;
+    transform: translate3d(0, 100%, 0);
+    transition: transform 0.35s;
+}
+#oscar:hover .tips h2 {
+    transform: translate3d(0, 0, 0);
+}
+
+#oscar .tips p {
+    opacity: 0;
+    transform: scale(0);
+    transition: opacity 0.35s, transform 0.35s;
+}
+
+#oscar:hover .tips p {
+    opacity: 1;
+    transform: scale(1);
+}
+
+#oscar:before {
+    content: '';
+    position: absolute;
+    top: 30px;
+    bottom: 30px;
+    left: 30px;
+    right: 30px;
+    border: 1px solid #fff;
+    transform: scale(0);
+    transition: transform 0.35s;
+}
+#oscar:hover:before {
+    transform: scale(1);
+}
+
+
+/*marley*/
+#marley {
+    background: #3085a3;
+}
+#marley img {
+    opacity: 0.8;
+}
+
+#marley .tips {
+    padding: 1em;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: right;
+}
+
+
+#marley .tips h2 {
+    position: relative;
+    top: 20px;
+    transform: translate3d(0, 30px, 0);
+    transition: transform 0.35s;
+}
+#marley:hover .tips h2 {
+    transform: translate3d(0, 0, 0);
+}
+
+#marley .tips h2:before {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 4px;
+    background: #fff;
+    opacity: 0;
+    transform: translate3d(0, 60px, 0);
+    transition: opacity 0.35s, transform 0.35s;
+}
+#marley:hover .tips h2:before {
+    opacity: 1;
+    transform: translate3d(0, 10px, 0);
+}
+
+#marley .tips p {
+    position: absolute;
+    bottom: 30px;
+    right: 1em;
+    font-size: 16px;
+    opacity: 0;
+    transform: translate3d(0, 50px, 0);
+    transition: opacity 0.35s, transform 0.35s;
+}
+#marley:hover .tips p {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+/*ruby*/
+#ruby {
+    background-color: #17819c;
+}
+#ruby img {
+    opacity: 0.7;
+    transform: scale(1.15);
+    transition: opacity 0.35s, transform 0.35s;
+}
+#ruby:hover img {
+    opacity: 0.5;
+    transform: scale(1);
+}
+
+#ruby .tips {
+    padding: 2em;
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    box-sizing: border-box;
+    transform: translate3d(0, -40%, 0);
+}
+
+#ruby .tips h2 {
+    margin: 20px 0;
+    transform: translate3d(0, 10px, 0);
+    transition: transform 0.35s;
+}
+
+#ruby:hover .tips h2 {
+    transform: translate3d(0, 0, 0);
+}
+
+#ruby .tips p {
+    padding: 3em 4em;
+    border: 1px solid #fff;
+    font-size: 14px;
+    opacity: 0;
+    transform: scale(1.1);
+    transition: opacity 0.35s, transform 0.35s;
+}
+#ruby:hover .tips p {
+    opacity: 1;
+    transform: scale(1);
+}
+
+
+/*roxy*/
+#roxy {
+    background: linear-gradient(45deg, #ff89e9 0%, #05abe0 100%);
+}
+#roxy img {
+    width: calc(100% + 60px);
+    height: 100%;
+    opacity: 0.8;
+    transform: translate3d(-60px, 0, 0);
+    transition: opacity 0.35s, transform 0.35s;
+}
+#roxy:hover img {
+    opacity: 0.7;
+    transform: translate3d(0, 0, 0);
+}
+
+#roxy .tips {
+    position: absolute;
+    top: 50%;
+    padding: 3em;
+    box-sizing: border-box;
+    transform: translate3d(0, -50%, 0);
+}
+
+#roxy .tips p {
+    opacity: 0;
+    transform: translate3d(-20px, 0, 0);
+    transition: opacity 0.35s, transform 0.35s;
+}
+#roxy:hover .tips p {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+#roxy:before {
+    content: '';
+    position: absolute;
+    top: 2em;
+    bottom: 2em;
+    left: 2em;
+    right: 2em;
+    border: 1px solid #fff;
+    opacity: 0;
+    z-index: 5;
+    transform: translate3d(-2em, 0, 0);
+    transition: opacity 0.35s, transform 0.35s;
+}
+#roxy:hover:before {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+/*bubba*/
+#bubba {
+    background: #9e5406;
+}
+#bubba img {
+    opacity: 0.7;
+    transition: opacity 0.35s;
+}
+#bubba:hover img {
+    opacity: 0.4;
+}
+
+#bubba .tips {
+    padding: 3em;
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    transform: translate3d(0, -50%, 0);
+    text-align: center;
+    font-size: 110%;
+}
+#bubba h2 {
+    margin: 20px 0;
+    transform: translate3d(0, -20px, 0);
+    transition: transform 0.35s;
+}
+#bubba p {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+    transition: opacity 0.35s, transform 0.35s;
+}
+#bubba:hover h2,
+#bubba:hover p {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+#bubba:before,
+#bubba:after {
+    content: '';
+    position: absolute;
+    top: 30px;
+    bottom: 30px;
+    left: 30px;
+    right: 30px;
+    z-index: 5;
+    transition: opacity 0.35s, transform 0.35s;
+}
+#bubba:before {
+    transform: scale(0, 1);
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+}
+#bubba:after {
+    transform: scale(1, 0);
+    border-left: 1px solid #fff;
+    border-right: 1px solid #fff;
+}
+
+#bubba:hover:before,
+#bubba:hover:after {
+    transform: scale(1, 1);
+}
+
+/*romeo*/
+#romeo {
+    background: #3085a3;
+}
+#romeo img {
+    opacity: 0.8;
+    transition: opacity 0.35s;
+}
+#romeo:hover img {
+    opacity: 0.6;
+}
+
+#romeo .tips {
+    position: absolute;
+    top: 50%;
+    box-sizing: border-box;
+    transform: translate3d(0, -50%, 0);
+}
+
+#romeo .tips h2,
+#romeo .tips p {
+    margin: 50px 0;
+    transition: transform 0.35s;
+}
+#romeo .tips h2 {
+    transform: translate3d(0, -50%, 0);
+}
+#romeo .tips p {
+    padding: 0 3em;
+    transform: translate3d(0, 50%, 0);
+}
+#romeo:hover .tips h2 {
+    transform: translate3d(0, 0, 0);
+}
+#romeo:hover .tips p {
+    transform: translate3d(0, 0, 0);
+}
+
+#romeo .tips:before,
+#romeo .tips:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    width: 80%;
+    height: 1px;
+    background: #fff;
+    transform: rotate(0);
+    transition: opacity 0.35s, transform 0.35s;
+}
+#romeo:hover .tips:before {
+    opacity: 0.6;
+    transform: rotate(45deg);
+}
+#romeo:hover .tips:after {
+    opacity: 0.6;
+    transform: rotate(-45deg);
+}
+
+/*dexter*/
+#dexter {
+    background: linear-gradient(to bottom, rgba(37,141,200,1) 0%,rgba(104,60,19,1) 100%);
+}
+#dexter img {
+    opacity: 0.8;
+    transition: opacity 0.35s;
+}
+#dexter:hover img {
+    opacity: 0.6;
+}
+
+#dexter .tips {
+    padding: 0 1em;
+    position: absolute;
+    top: 30px;
+    bottom: 30px;
+    left: 30px;
+    right: 30px;
+    box-sizing: border-box;
+}
+#dexter .tips:before {
+    content: '';
+    width: 100%;
+    height: calc(50% - 30px);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border: 7px solid #fff;
+    transform: translate3d(0, -100%, 0);
+    transition: transform 0.35s;
+}
+#dexter:hover .tips:before {
+    transform: translate3d(0, 0, 0);
+}
+
+#dexter .tips h2,
+#dexter .tips p {
+    position: absolute;
+}
+
+#dexter .tips h2 {
+    top: 60px;
+}
+
+#dexter .tips p {
+    bottom: 30px;
+    opacity: 0;
+    transform: translate3d(0, -100px, 0);
+    transition: opacity 0.35s, transform 0.35s;
+    transition-delay: 0.05s;
+}
+#dexter:hover .tips p {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+/*sarah*/
+#sarah {
+    background: #42b078;
+}
+#sarah img {
+    opacity: 0.8;
+    transition: opacity 0.35s;
+}
+#sarah:hover img {
+    opacity: 0.4;
+}
+
+#sarah .tips {
+    position: absolute;
+    top: 30px;
+    bottom: 30px;
+    left: 30px;
+    right: 30px;
+    text-align: left;
+}
+
+#sarah .tips h2,
+#sarah .tips p {
+    padding: 15px 0;
+    position: relative;
+}
+
+#sarah .tips h2:after {
+    content: '';
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-bottom: 3px solid #fff;
+    transform: scale(0, 1);
+    transform-origin: left;
+    transition: transform 0.35s;
+}
+#sarah:hover .tips h2:after {
+    transform: scale(1, 1);
+}
+
+#sarah .tips p {
+    transform: translate3d(calc(100% + 30px + 1em), 0, 0);
+    transition: transform 0.35s;
+}
+#sarah:hover .tips p {
+    transform: translate3d(0, 0, 0);
+}
+
+
+/*chico*/
+#chico {
+    background: #3085a3;
+}
+#chico img {
+    opacity: 0.8;
+    transition: opacity 0.35s;
+}
+#chico:hover img {
+    opacity: 0.6;
+}
+
+#chico .tips {
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    font-size: 120%;
+    box-sizing: border-box;
+    transform: translate3d(0, -50%, 0);
+}
+#chico .tips p {
+    margin: 20px 0;
+    padding: 0 30%;
+    opacity: 0;
+    transform: scale(1.5);
+    transition: opacity 0.35s, transform 0.35s;
+}
+#chico:hover .tips p {
+    opacity: 1;
+    transform: scale(1);
+}
+
+#chico:before {
+    content: '';
+    position: absolute;
+    top: 30px;
+    bottom: 30px;
+    left: 30px;
+    right: 30px;
+    border: 2px solid #fff;
+    z-index: 5;
+    opacity: 0;
+    transform: scale(1.15);
+    transition: opacity 0.35s, transform 0.35s;
+}
+#chico:hover:before {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/*milo*/
+#milo {
+    background: #2e5d5a;
+}
+#milo img {
+    width: calc(100% + 50px);
+    opacity: 0.8;
+    transform: scale(1.1);
+    transform-origin: right top;
+    transition: opacity 0.35s, transform 0.35s;
+}
+#milo:hover img {
+    opacity: 0.6;
+    transform: scale(1);
+}
+
+#milo .tips {
+    position: absolute;
+    top: 30px;
+    bottom: 30px;
+    left: 30px;
+    right: 30px;
+}
+
+#milo .tips h2 {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+#milo .tips p {
+    padding: 0 10px;
+    width: 40%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: right;
+    border-right: 1px solid #fff;
+    opacity: 0;
+    transform: translate3d(-60%, 0, 0);
+    transition: opacity 0.35s, transform 0.35s;
+}
+#milo:hover .tips p {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
