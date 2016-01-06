@@ -1,0 +1,52 @@
+/*julia*/
+#julia {
+    background: #2f3238;
+}
+#julia img {
+    opacity: 0.8;
+    transform: scale(1.1);
+    transition: opacity 0.35s, transform 0.35s;
+}
+#julia:hover img {
+    opacity: 0.6;
+    transform: scale(1);
+}
+#julia .tips {
+    position: absolute;
+    top: 30px;
+    bottom: 30px;
+    left: 30px;
+    right: 30px;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+#julia .tips p {
+    margin: 3px 8px;
+    padding: 0.6em;
+    display: inline-block;
+    background: rgba(255, 255, 255, .9);
+    color: #000;
+    transform: translate3d(-120%, 0, 0);
+    transition: transform 0.35s;
+}
+#julia .tips p:nth-of-type(2) {
+    transition-delay: 0.1s;
+}
+#julia .tips p:nth-of-type(3) {
+    transition-delay: 0.2s;
+}
+
+#julia:hover .tips p {
+    transform: translate3d(0, 0, 0);
+}
+
+/*goliath*/
+#goliath {
+    background: #df4e4e;
+}
+#goliath img {
+    opacity: 0.8;
+    transition: opacity 0.35s;
+}
+
