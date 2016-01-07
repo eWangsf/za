@@ -874,6 +874,52 @@
     transform: translate3d(0, 0, 0);
 }
 
+/*duke*/
+#duke {
+    background: linear-gradient(-45deg, #34495e 0%,#cc6055 100%);
+}
+#duke img {
+    opacity: 0.9;
+    transform: scale(1);
+    transition: opacity 0.35s, transform 0.35s;
+}
+#duke:hover img {
+    transform: scale(2);
+    opacity: 0.1;
+}
+
+#duke .tips {
+    position: absolute;
+    top: 30px;
+    bottom: 30px;
+    left: 30px;
+    right: 30px;
+}
+
+#duke .tips h2 {
+    margin: 15px;
+    transform: scale(1);
+    transition: transform 0.35s;
+}
+#duke:hover .tips h2 {
+    transform: scale(1.2);
+}
+
+#duke .tips p {
+    padding: 30px 50px;
+    position: absolute;
+    bottom: 0;
+    font-size: 16px;
+    border: 2px solid #fff;
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity 0.35s, transform 0.35s;
+}
+#duke:hover .tips p {
+    opacity: 1;
+    transform: scale(1);
+}
+
 
 
 
