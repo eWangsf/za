@@ -1,6 +1,6 @@
 # zaza
 - Demos
-- CSS / JS 
+- css / js 
 
 # list
 - [d3 practices](https://github.com/eWangsf/za/tree/master/codingPractice)
